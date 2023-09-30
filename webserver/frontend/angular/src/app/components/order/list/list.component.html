@@ -1,0 +1,14 @@
+<!-- <order-course *ngFor="let c of courses" [dishes]="c.dishes"></order-course>
+    <order-course *ngFor="let c of courses" [dishes]="c.dishes"></order-course>
+    <order-course *ngFor="let c of courses" [dishes]="c.dishes"></order-course> -->
+<div class="courses">
+    <order-course *ngFor="let c of courses" [dishes]="c.dishes" [name]="c.name"></order-course>
+</div>
+
+<div class="container">
+    <app-button class="btn" size="" (leftClick)="showModal()">Add course</app-button>
+</div>
+
+<app-modal (onButtonPress)="addCourse($event)">
+    <app-select></app-select>
+</app-modal>

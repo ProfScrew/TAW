@@ -1,0 +1,365 @@
+@import "../../../../assets/palette"
+    
+.item
+    width: 100%
+    background: $sky-400
+    aspect-ratio: 7/5
+    box-sizing: border-box
+    padding: 0.5rem
+    padding-bottom: 2rem
+    display: flex
+    flex-direction: row
+    justify-content: center
+    align-items: center
+    cursor: pointer
+    border-radius: 7px
+    position: relative
+    transition: all 0.2s ease-in-out
+    user-select: none
+    border: 2px solid $sky-800
+    overflow: hidden
+    font-size: 0.75rem
+
+    // Display only 2 rows of text, then cut off
+    // word-wrap: break-word
+    // display: -webkit-box
+    // text-overflow: ellipsis
+    // -webkit-line-clamp: 3
+
+    &.unavailable
+        opacity: 0.25
+        pointer-events: none
+
+    .price 
+        content: ''
+        width: 100%
+        height: 1.5rem
+        position: absolute
+        bottom: 0rem
+        left: 0
+        background: $sky-600
+        z-index: 2
+        transition: all 0.2s ease-in-out
+        box-sizing: border-box
+        font-size: 0.9rem
+        text-align: right
+        display: flex
+        justify-content: flex-end
+        align-items: center
+        padding-right: 0.5rem
+        font-weight: 700
+        color: $sky-100
+
+
+    &:hover
+        background: $sky-500
+        .price
+            background: $sky-700
+
+    &:active
+        background: $sky-300
+        transition: all 0.05s ease-in-out
+        .price
+            background: $sky-500
+            transition: all 0.05s ease-in-out
+
+
+
+        transform: scale(0.95)
+
+
+    span
+        // Sets a maximum of 3 rows of text before it gets cut off
+        overflow: hidden
+        display: -webkit-box
+        -webkit-line-clamp: 3
+        -webkit-box-orient: vertical
+        text-overflow: ellipsis
+        text-align: center
+        font-size: 1rem
+        font-weight: 500
+
+    &.red
+        background: $red-300
+        border-color: $red-800
+        .price
+            background: $red-500
+            color: $red-100
+        &:hover
+            background: $red-400
+            .price
+                background: $red-500
+        &:active
+            background: $red-200
+            .price
+                background: $red-400
+
+    &.rose
+        background: $rose-300
+        border-color: $rose-800
+        .price
+            background: $rose-500
+            color: $rose-100
+        &:hover
+            background: $rose-400
+            .price
+                background: $rose-700
+        &:active
+            background: $rose-200
+            .price
+                background: $rose-400
+
+    &.pink
+        background: $pink-300
+        border-color: $pink-800
+        .price
+            background: $pink-500
+            color: $pink-100
+        &:hover
+            background: $pink-400
+            .price
+                background: $pink-600
+        &:active
+            background: $pink-200
+            .price
+                background: $pink-400
+
+    &.fuchsia
+        background: $fuchsia-300
+        border-color: $fuchsia-800
+        .price
+            background: $fuchsia-500
+            color: $fuchsia-100
+        &:hover
+            background: $fuchsia-400
+            .price
+                background: $fuchsia-600
+        &:active
+            background: $fuchsia-200
+            .price
+                background: $fuchsia-400
+
+    &.purple
+        background: $purple-300
+        border-color: $purple-800
+        .price
+            background: $purple-600
+            color: $purple-100
+        &:hover
+            background: $purple-500
+            .price
+                background: $purple-700
+        &:active
+            background: $purple-200
+            .price
+                background: $purple-500
+
+    &.violet
+        background: $violet-300
+        border-color: $violet-800
+        .price
+            background: $violet-500
+            color: $violet-100
+        &:hover
+            background: $violet-400
+            .price
+                background: $violet-600
+        &:active
+            background: $violet-200
+            .price
+                background: $violet-400
+
+    &.indigo
+        background: $indigo-300 
+        border-color: $indigo-800
+        .price
+            background: $indigo-500
+            color: $indigo-100
+        &:hover
+            background: $indigo-400
+            .price
+                background: $indigo-600
+        &:active
+            background: $indigo-200
+            .price
+                background: $indigo-400
+
+    &.blue
+        background: $blue-300
+        border-color: $blue-800
+        .price
+            background: $blue-600
+            color: $blue-100
+        &:hover
+            background: $blue-500
+            .price
+                background: $blue-700
+        &:active
+            background: $blue-200
+            .price
+                background: $blue-500
+
+    &.cyan
+        background: $cyan-300
+        border-color: $cyan-800
+        .price
+            background: $cyan-600
+            color: $cyan-100
+        &:hover
+            background: $cyan-500
+            .price
+                background: $cyan-700
+        &:active
+            background: $cyan-200
+            .price
+                background: $cyan-500
+
+    &.teal
+        background: $teal-300
+        border-color: $teal-800
+        .price
+            background: $teal-600
+            color: $teal-100
+        &:hover
+            background: $teal-500
+            .price
+                background: $teal-700
+        &:active
+            background: $teal-200
+            .price
+                background: $teal-500
+
+    &.emerald
+        background: $emerald-300
+        border-color: $emerald-800
+        .price
+            background: $emerald-600
+            color: $emerald-100
+        &:hover
+            background: $emerald-500
+            .price
+                background: $emerald-700
+        &:active
+            background: $emerald-200
+            .price
+                background: $emerald-500
+
+    &.green
+        background: $green-300
+        border-color: $green-800
+        .price
+            background: $green-600
+            color: $green-100
+        &:hover
+            background: $green-500
+            .price
+                background: $green-700
+        &:active
+            background: $green-200
+            .price
+                background: $green-500
+
+    &.lime
+        background: $lime-300
+        border-color: $lime-800
+        .price
+            background: $lime-600
+            color: $lime-100
+        &:hover
+            background: $lime-500
+            .price
+                background: $lime-700
+        &:active
+            background: $lime-200
+            .price
+                background: $lime-500
+
+    &.yellow
+        background: $yellow-300
+        border-color: $yellow-800
+        .price
+            background: $yellow-600
+            color: $yellow-100
+        &:hover
+            background: $yellow-500
+            .price
+                background: $yellow-700
+        &:active
+            background: $yellow-200
+            .price
+                background: $yellow-500
+
+    &.amber
+        background: $amber-300
+        border-color: $amber-800
+        .price
+            background: $amber-600
+            color: $amber-100
+        &:hover
+            background: $amber-500
+            .price
+                background: $amber-700
+        &:active
+            background: $amber-200
+            .price
+                background: $amber-500
+
+    &.orange
+        background: $orange-300
+        border-color: $orange-800
+        .price
+            background: $orange-600
+            color: $orange-100
+        &:hover
+            background: $orange-500
+            .price
+                background: $orange-700
+        &:active
+            background: $orange-200
+            .price
+                background: $orange-500
+
+    &.zinc
+        background: $zinc-300
+        border-color: $zinc-800
+        .price
+            background: $zinc-600
+            color: $zinc-100
+        &:hover
+            background: $zinc-500
+            .price
+                background: $zinc-700
+        &:active
+            background: $zinc-200
+            .price
+                background: $zinc-500
+
+    &.brown
+        background: $brown-300
+        border-color: $brown-800
+        .price
+            background: $brown-600
+            color: $brown-100
+        &:hover
+            background: $brown-500
+            .price
+                background: $brown-700
+        &:active
+            background: $brown-200
+            .price
+                background: $brown-500
+
+    &.slate
+        background: $slate-200
+        border-color: $slate-800
+        .price
+            background: $slate-500
+            color: $slate-100
+        &:hover
+            background: $slate-400
+            .price
+                background: $slate-600
+        &:active
+            background: $slate-100
+            .price
+                background: $slate-400

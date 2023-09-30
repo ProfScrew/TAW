@@ -1,0 +1,6 @@
+
+<span *ngIf="error">{{error}}</span>
+<select name="select" class="{{error ? 'err' : ''}}" id="select" #select>
+    <option value="" disabled selected>Select an option</option>
+    <option *ngFor="let option of options" [value]="option.value">{{option.name}}</option>
+</select>

@@ -1,0 +1,22 @@
+
+<div class="course__container">
+    <div class="heading">
+        <div class="name">{{name}}</div>
+        <i class="fa-duotone fa-pencil" (click)="options()"></i>
+        <div class="action">Status: <strong>Preparing</strong></div>
+    </div>
+    <div class="dishes">
+        <order-dish *ngFor="let dish of dishes" [name]=dish.name [mods]=dish.mods [price]=dish.price
+            [color]="dish.color"></order-dish>
+    </div>
+    <div class="controls">
+        <div class="add">Add dish</div>
+        <div class="delete">Delete</div>
+        <!-- <div class="send">Dispatch</div> -->
+        <!-- <div class="serve">Serve</div> -->
+    </div>
+    
+    <app-modal (onButtonPress)="handleRename($event)">
+        <app-input label="Course name" placeholder="Course name"></app-input>
+    </app-modal>
+</div>

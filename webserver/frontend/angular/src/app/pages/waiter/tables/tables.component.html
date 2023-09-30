@@ -1,0 +1,9 @@
+<app-navigation title="Tables"></app-navigation>
+
+<div class="tables">
+    <app-table 
+        *ngFor="let table of items; let idx=index;"
+        [id]="table.name"
+        [status]="table.status" />
+</div>
+

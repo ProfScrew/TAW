@@ -1,0 +1,177 @@
+@import '../../../assets/palette'
+    
+nav
+    width: 100dvw
+    height: $nav-height
+    z-index: 99
+    background: white
+    position: sticky
+    top: 0
+    left: 0
+    border-bottom: 2px solid $zinc-200
+    // box-shadow: 0 .25rem 0 0 transparentize($zinc-950, 0.85)
+
+    display: flex
+    justify-content: space-between
+    align-items: center
+    box-sizing: border-box
+
+    .title
+        font-size: 1.05rem
+        font-weight: 600
+        color: $zinc-950
+        margin-left: 1rem
+        width: 100%
+        text-align: center
+
+    .hamburger
+        margin-left: 1rem
+        font-size: 1.5rem
+        color: $zinc-900
+        cursor: pointer
+        user-select: none
+        transition: 0.5s ease
+
+        &:hover
+            color: $zinc-500
+
+        &.active
+            color: $rose-100
+            transform: rotate(90deg)
+            transition: 0.5s ease
+
+    .user
+        margin-right: 1rem
+        font-size: 1.25rem
+        color: $zinc-900
+        cursor: pointer
+        user-select: none
+        transition: 0.5s ease
+
+        &:hover
+            color: $zinc-500
+
+        &.active
+            color: $rose-100
+            transform: rotate(90deg)
+            transition: 0.5s ease
+
+
+
+.menu
+    position: fixed
+    top: 0
+    left: 0
+    width: 100dvw
+    height: 100dvh
+    backdrop-filter: blur(10px)
+    z-index: 100
+    background: transparentize($zinc-950, 0.75)
+    transition: 0.5s ease
+
+    .blur
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+        z-index: 97
+        transition: 0.5s ease
+
+    &.hidden
+        visibility: hidden
+        opacity: 0
+
+        .drawer
+            transform: translateX(-100%) scale(0.95)
+
+    .drawer
+        $distance: 0.5rem
+
+        width: min(30rem, calc(100dvw - ($distance * 2)))
+        height: calc(100dvh - ($distance * 2))
+        background: white
+        position: absolute
+        top: $distance
+        left: $distance
+        z-index: 98
+        border-radius: .5rem
+        border: 2px solid $zinc-950
+        transition: 1s ease
+        box-sizing: border-box
+        box-shadow: .25rem .25rem 0 0 transparentize($zinc-950, 0.75)
+        transform: translateX(0%) scale(1)
+        display: grid
+        grid-template-rows: 3rem 1fr
+        gap: 1rem
+        overflow: hidden
+
+        i.close
+            margin: 1rem
+            font-size: 2rem
+            color: $zinc-900
+            cursor: pointer
+            user-select: none
+            transition: 0.5s ease
+
+            &:hover
+                color: $zinc-500
+
+        .links
+            position: relative
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+            justify-content: flex-start
+            align-items: center
+            box-sizing: border-box
+
+            a
+                font-size: 1.25rem
+                color: $zinc-900
+                cursor: pointer
+                user-select: none
+                transition: 0.5s ease
+                text-decoration: none
+                width: 100%
+                padding: 1rem
+                box-sizing: border-box
+                background: $zinc-100
+                font-weight: 600
+
+                &:hover
+                    color: $zinc-500
+
+                &.selected
+                    color: $sky-600
+                    background: $sky-100
+
+                    .icon
+                        color: $sky-600
+
+                &.logout
+                    color: $rose-600
+                    background: $rose-100
+                    margin-top: auto
+
+                    .icon
+                        color: $rose-600
+
+                .icon
+                    width: 2rem
+                    font-size: 1.25rem
+                    color: $zinc-900
+                    cursor: pointer
+                    user-select: none
+                    transition: 0.5s ease
+                    text-align: center
+                    margin-right: 1rem
+
+
+                    &:hover
+                        color: $zinc-500
+
+
+
+        

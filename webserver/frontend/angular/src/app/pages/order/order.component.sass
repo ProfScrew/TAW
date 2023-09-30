@@ -1,0 +1,60 @@
+@import "../../../assets/palette"
+    
+.title
+    font-size: 0.95rem
+    font-weight: 400
+    
+
+
+.courses
+    height: calc(100dvh - 7rem)
+    width: 100dvw
+    overflow-y: auto
+    box-sizing: border-box
+
+
+
+.actions
+    height: 4rem
+    width: 100dvw
+    box-sizing: border-box
+    padding: 1rem
+    background: white
+    position: fixed
+    bottom: 0
+    left: 0
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+    & > div
+        border-radius: 0.25rem
+        padding: 0.5rem 1rem
+        font-size: 0.9rem
+        font-weight: 500
+        border: none
+        outline: none
+        cursor: pointer
+        transition: all 0.2s ease-in-out
+
+
+        &.delete
+            background: $red-500
+            color: $red-50
+            
+
+            &:hover
+                background: $red-600
+
+        &.checkout
+            background: $emerald-500
+            color: $emerald-50
+
+            &:hover
+                background:  $emerald-600
+
+        &.inactive
+            background: $gray-200
+            color: $gray-500
+            cursor: not-allowed
+            pointer-events: none
