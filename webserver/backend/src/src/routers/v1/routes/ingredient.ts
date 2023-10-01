@@ -25,7 +25,7 @@ function asIngredient(data: unknown): iIngredient{
 
 /**
  * @swagger
- * /ingredients/:
+ * /ingredients:
  *   get:
  *     tags:
  *       - Ingredients
@@ -85,7 +85,7 @@ ingredients.get("/", authorize, (req, res, next)=>{
 
 /**
  * @swagger
- * /ingredients/:
+ * /ingredients:
  *   post:
  *     tags:
  *       - Ingredients
