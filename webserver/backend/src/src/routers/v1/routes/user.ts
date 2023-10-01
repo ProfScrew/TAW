@@ -67,7 +67,7 @@ function is_new_user(data: unknown): boolean {
 /**
  * @swagger
  * /users/login:
- *  get:
+ *  post:
  *   tags: [Users]
  *   summary: Login to the system.
  *   description: Login to the system using the provided credentials.
@@ -85,7 +85,7 @@ function is_new_user(data: unknown): boolean {
  *     500:
  *      description: Internal Server Error. DB error. User does not have a role. Etc...
  */
-user.get('/login', passport.authenticate(authenticate, {session: false}), async (req, res, next) => {
+user.post('/login', passport.authenticate(authenticate, {session: false}), async (req, res, next) => {
     try{
         const user = req.user as iUser;
         const role = await Role.findOne({name: user.role}).maxTimeMS(1000).orFail().exec();
@@ -107,7 +107,7 @@ user.get('/login', passport.authenticate(authenticate, {session: false}), async 
 
 /**
  * @swagger
- * /users/create:
+ * /users:
  *   post:
  *     tags: [Users]
  *     summary: Create a new user.
@@ -133,7 +133,7 @@ user.get('/login', passport.authenticate(authenticate, {session: false}), async 
  *       404:
  *         description: Invalid user data.
  */
-user.post('/create', authorize, (req, res, next) => {
+user.post('/', authorize, (req, res, next) => {
     const user_data = req.body as iNewUser;
     const role = (req.user as iTokenData).role!;
 

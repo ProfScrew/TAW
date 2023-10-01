@@ -21,7 +21,7 @@ function asRole(data: unknown): iRole {
 
 /**
  * @swagger
- * /roles/:
+ * /roles:
  *   post:
  *     summary: Create a new role
  *     description: Create a new role
@@ -64,7 +64,7 @@ roles.post("/", authorize, (req, res, next) => {
 
 /**
  * @swagger
- * /roles/:
+ * /roles:
  *   get:
  *     tags:
  *       - Roles
