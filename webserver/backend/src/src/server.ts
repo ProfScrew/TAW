@@ -4,8 +4,8 @@ import mongoose   from 'mongoose'
 import cors       from 'cors'
 
 import { config } from 'dotenv'
-import { debug  } from './common/debug'
-import { PORT, CONNECTION_STRING } from './common/config'
+import { debug  } from './utilities/debug'
+import { PORT, CONNECTION_STRING } from './utilities/config'
 
 import v1 from './routers/v1/v1'
 

@@ -1,6 +1,6 @@
 import {Schema, model, Types} from 'mongoose';
 import mongoose from 'mongoose';
-import { iUserAction, UserAction } from '../common/typedef';
+import { iUserAction, UserAction } from '../utilities/typedef';
 
 export interface iIngredient {
     _id:            Types.ObjectId;

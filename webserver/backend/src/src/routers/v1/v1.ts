@@ -9,7 +9,7 @@ import physical_table from "./routes/physical_table";
 import ingredient from "./routes/ingredient";
 import swaggerSpec from "./swagger_config";
 import * as colors from 'colors'
-import { HttpResponse } from "../../common/util";
+import { HttpResponse } from "../../utilities/util";
 
 const v1 = Router();
 colors.enable();

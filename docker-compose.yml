@@ -43,33 +43,33 @@ services:
             - Internal
             - External
     
-    redis:
-        container_name: redis
-        image: redis:7.2.0-alpine
-        restart: always
-        ports:
-        - '6379:6379'
-        command: redis-server --save 20 1 --loglevel warning
-        volumes: 
-        - ./db/redis:/data/
-        networks:
-            - Internal
-            - External
-    reverseproxy:
-        build: reverseproxy/
-        image: reverseproxy
-        container_name: reverseproxy
-        networks:
-            - Internal
-            - External
-        ports:
-            - "80:80"
-            - "443:443"
-        volumes:
-        - ./reverseproxy/contents/certificates:/etc/nginx/ssl
-        depends_on:
-            - frontend
-        restart: unless-stopped          
+    # redis:
+    #     container_name: redis
+    #     image: redis:7.2.0-alpine
+    #     restart: always
+    #     ports:
+    #     - '6379:6379'
+    #     command: redis-server --save 20 1 --loglevel warning
+    #     volumes: 
+    #     - ./db/redis:/data/
+    #     networks:
+    #         - Internal
+    #         - External
+    # reverseproxy:
+    #     build: reverseproxy/
+    #     image: reverseproxy
+    #     container_name: reverseproxy
+    #     networks:
+    #         - Internal
+    #         - External
+    #     ports:
+    #         - "80:80"
+    #         - "443:443"
+    #     volumes:
+    #     - ./reverseproxy/contents/certificates:/etc/nginx/ssl
+    #     depends_on:
+    #         - frontend
+    #     restart: unless-stopped          
 
 
 networks:

@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import { iRecipe } from './recipe';
 import { iUser } from './user';
 import { iIngredient } from './ingredient';
-import { UserAction, iUserAction } from '../common/typedef';
+import { UserAction, iUserAction } from '../utilities/typedef';
 
 export type tDishStatus           = 'inserted' | 'dispatched' | 'ready' | 'served' | 'cancelled';
 export type tDishModificationType = 'add' | 'remove' | 'more' | 'less';

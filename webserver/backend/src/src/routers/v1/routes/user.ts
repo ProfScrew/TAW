@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { User, iUser } from '../../../base/user';
+import { User, iUser } from '../../../models/user';
 import passport from 'passport';
 
-import { authenticate, create_token, iTokenData, authorize } from '../../../common/authentication';
+import { authenticate, create_token, iTokenData, authorize } from '../../../utilities/authentication';
 
 import { expressjwt } from 'express-jwt';
-import { Role } from '../../../base/role';
-import { next_middleware } from '../../../common/util';
+import { Role } from '../../../models/role';
+import { next_middleware } from '../../../utilities/util';
 import { isNumeric } from 'validator';
 import { debug } from 'console';
 

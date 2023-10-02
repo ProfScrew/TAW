@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { BasicStrategy } from "passport-http";
 import { debug } from "./debug";
-import { User, iUser } from "../base/user";
+import { User, iUser } from "../models/user";
 import jwt from "jsonwebtoken";
-import { iRole } from "../base/role";
+import { iRole } from "../models/role";
 import { iHttpError } from "./util";
 
 import { JWT_SECRET } from "./config";
