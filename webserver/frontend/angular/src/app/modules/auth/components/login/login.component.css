@@ -1,0 +1,30 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    /* Horizontal centering */
+    align-items: center;
+    /* Vertical centering */
+    height: 100vh;
+    /* 100% viewport height to center vertically */
+}
+
+.mat-card-cool {
+    max-width: 400px;
+    background-color: lightslategrey;
+
+
+}
+
+.example-header-image {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+}
+
+.section-center {
+    display: flex;
+    justify-content: center;
+}
+
+.full-width {
+    width: 100%;
+}

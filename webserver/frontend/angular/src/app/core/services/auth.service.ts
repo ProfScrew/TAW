@@ -18,10 +18,6 @@ interface iTokenData {
   role: iRole
 }
 
-export class ciao{
-  ciao: string = "ciao";
-}
-
 @Injectable({
   providedIn: 'root'
 })

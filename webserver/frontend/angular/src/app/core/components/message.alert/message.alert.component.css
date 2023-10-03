@@ -1,0 +1,13 @@
+.button{
+    display: flex;
+    justify-content: center;
+}
+
+.error-message{
+    display: flex;
+    justify-content: center;
+    color: red;
+    font-size: 12px;
+    font-weight: bold;
+    
+}
