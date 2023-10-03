@@ -13,7 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatGridListModule} from '@angular/material/grid-list';
 
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-
+ 
 @NgModule({
   declarations: [
     LoginComponent
@@ -28,7 +28,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatCheckboxModule,
     MatFormFieldModule,
     MatGridListModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    
   ]
 })
 export class AuthModule { }

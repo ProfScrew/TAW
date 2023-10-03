@@ -54,9 +54,10 @@ export class AuthService implements token {
         'Content-Type': 'application/x-www-form-urlencoded',
       })
     }
-    return this.http.get(HttpService.API_ENDPOINT + '/users/login/', options).pipe(
+    console.log(options);
+    return this.http.post(HttpService.API_ENDPOINT + '/users/login/', options).pipe(
       tap((data) => {
-        console.debug(JSON.stringify(data));
+        console.log(JSON.stringify(data));
         const payload = (data as { payload: { token: tRawToken } }).payload;
         const token = payload.token;
         this.set_token(token, remember);

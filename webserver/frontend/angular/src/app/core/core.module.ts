@@ -5,6 +5,7 @@ import { HttpService } from './services/http.service';
 import { MessageAlertComponent } from './components/message.alert/message.alert.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     CommonModule,
     MatSnackBarModule,
-    MatButtonModule
+    MatButtonModule,
+    HttpClientModule,
   ],
   providers: [
     AuthService,

@@ -12,21 +12,44 @@ import { MessageAlertComponent } from 'src/app/core/components/message.alert/mes
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  
+
   username: string = '';
   password: string = '';
   rememberMe: boolean = true;
   durationInSeconds: number = 5;
-  constructor(private errorMessage: MatSnackBar) {}
+  constructor(private errorMessage: MatSnackBar, private auth: AuthService) { }
 
-    onSubmit() {
-      // Add your login logic here (e.g., send a request to the server).
-      console.log('Username:', this.username);
-      console.log('Password:', this.password);
+  onSubmit() {
+    // Add your login logic here (e.g., send a request to the server).
+    console.log('Username:', this.username);
+    console.log('Password:', this.password);
+    console.log('Remember Me:', this.rememberMe);
+    if (!this.username || !this.password) {
       this.errorMessage.openFromComponent(MessageAlertComponent, {
-        data: { message: "Error AAAAAAAAAAAAA" },
+        data: { message: "Error: Please fill out all fields" },
         duration: 10000, // Adjust the duration as needed
       });
+      return;
+    }else{ //ERROR HERE (GETTING 401 UNAUTHORIZED DUNNO WHY) AAAAAAAAAAAAAAAAAAAAAAAA
+      this.auth.login(this.username, this.password, this.rememberMe).subscribe({
+        next: (d) => {
+          this.errorMessage.openFromComponent(MessageAlertComponent, {
+            data: { message: "Login Successful" },
+            duration: 10000, // Adjust the duration as needed
+          });
+        },
+        error: (err) => {
+          console.log(err);
+          this.errorMessage.openFromComponent(MessageAlertComponent, {
+            data: { message: "Error: Login Failed" },
+            duration: 10000, // Adjust the duration as needed
+          });
+        }
+      });
+    }
+
+    
+    
   }
 }
 
