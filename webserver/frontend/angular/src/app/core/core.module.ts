@@ -13,18 +13,21 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {NgIf} from '@angular/common';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
+import { ToastrModule } from 'ngx-toastr';
 
 
 
 
 import { MasterContainerComponent } from './components/master-container/master-container.component';
 import { MessageAlertComponent } from './components/message.alert/message.alert.component';
+import { NotifierComponent } from './components/notifier/notifier.component';
 
 
 @NgModule({
   declarations: [
     MasterContainerComponent,
-    MessageAlertComponent
+    MessageAlertComponent,
+    NotifierComponent
   ],
   imports: [
     CommonModule,
@@ -39,6 +42,9 @@ import { MessageAlertComponent } from './components/message.alert/message.alert.
     MatSidenavModule,
     MatListModule,
     NgIf,
+
+    // Toastr
+    ToastrModule.forRoot(),
 
 
     

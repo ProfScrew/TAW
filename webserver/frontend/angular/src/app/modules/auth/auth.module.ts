@@ -29,7 +29,6 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatFormFieldModule,
     MatGridListModule,
     MatSnackBarModule,
-    
   ]
 })
 export class AuthModule { }
