@@ -11,8 +11,7 @@ import v1 from './routers/v1/v1'
 
 
 const server = express()
-
-server.use(cors())
+server.use(cors());
 server.use(bodyParser.urlencoded({ extended: true }))
 server.use(express.json())
 server.use('/v1', v1)

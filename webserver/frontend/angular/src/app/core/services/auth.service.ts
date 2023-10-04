@@ -46,18 +46,17 @@ export class AuthService implements token {
     }
   }
 
-  login(email: string, password: string, remember: boolean): Observable<unknown> {
+  login(username: string, password: string, remember: boolean): Observable<unknown> {
     const options = {
       headers: new HttpHeaders({
-        'Authorization': 'Basic ' + btoa(email + ':' + password),
+        'Authorization': 'Basic ' + btoa(username + ':' + password),
         'Cache-Control': 'no-cache',
         'Content-Type': 'application/x-www-form-urlencoded',
       })
     }
-    console.log(options);
-    return this.http.post(HttpService.API_ENDPOINT + '/users/login/', options).pipe(
+    return this.http.post(HttpService.API_ENDPOINT + '/users/login/',{}, options).pipe(
       tap((data) => {
-        console.log(JSON.stringify(data));
+        //console.debug(JSON.stringify(data));
         const payload = (data as { payload: { token: tRawToken } }).payload;
         const token = payload.token;
         this.set_token(token, remember);

@@ -1,0 +1,60 @@
+<mat-toolbar color="primary">
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon"
+        (click)="drawer.toggle()">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <span>Restaurant App</span>
+    <span class="example-spacer"></span>
+    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+        <mat-icon>favorite</mat-icon>
+    </button>
+    <button mat-icon-button class="example-icon" aria-label="Exit App" (click)="navigateToDashboard()">
+        <mat-icon>exit_to_app</mat-icon>
+    </button>
+</mat-toolbar>
+
+<mat-drawer-container class="example-container" autosize>
+    <mat-drawer #drawer class="example-sidenav" mode="side">
+
+        <p>Auto-resizing sidenav</p>
+        <br>
+        <p *ngIf="showFiller">Lorem, ipsum dolor sit amet consectetur.</p>
+        <button (click)="showFiller = !showFiller" mat-raised-button>
+            Toggle extra text
+        </button>
+
+
+        <p>Tables</p>
+        <p>Production</p>
+        <p>Administration</p>
+        <p>Orders</p>
+    </mat-drawer>
+
+    <router-outlet>
+        <div class="centered-container">
+            <p><b>Luigi:</b> <i>"Where am I?!"</i><br>
+                (Laughter sounds out. Luigi turns to see Lumalee spinning in his cage.)<br>
+                <b>Lumalee:</b> <i>"Home!"</i><br>
+                <b>Penguin King:</b> (to Luigi) <i>"Pay him no heed. He's cute,
+                    but
+                    he is (cuckoo whistle)."</i><br>
+                <b>Lumalee:</b> <i>"In an insane world, it is the sane who are crazy."</i><br>
+                <b>Luigi:</b> <i>"How long have you guys been in here?"</i><br>
+                <b>Lumalee:</b> <i>"Time, like hope, is an illusion."</i><br>
+                <b>Penguin King:</b> <i>"PLEASE! We are depressed enough!"</i><br>
+                <b>Luigi:</b> <i>"There's gotta be a way outta here!"</i><br>
+                <b>Lumalee:</b> <i>"There's no escape. The only hope is the sweet relief of death."</i><br>
+                (The prisoners moan in agony.)<br>
+                <b>Penguin King:</b> <i>"Oh,you've GOT to be kidding
+                    me!"</i><br>
+                (Luigi sighs in despair.)
+            </p>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/-xQa7dxpWYA?si=IgVFBmsR4ABSPgmf"
+                title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+        </div>
+    </router-outlet>
+
+
+</mat-drawer-container>

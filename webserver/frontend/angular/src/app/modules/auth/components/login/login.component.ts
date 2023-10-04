@@ -17,7 +17,7 @@ export class LoginComponent {
   password: string = '';
   rememberMe: boolean = true;
   durationInSeconds: number = 5;
-  constructor(private errorMessage: MatSnackBar, private auth: AuthService) { }
+  constructor(private router: Router, private errorMessage: MatSnackBar, private auth: AuthService) { }
 
   onSubmit() {
     // Add your login logic here (e.g., send a request to the server).
@@ -30,9 +30,10 @@ export class LoginComponent {
         duration: 10000, // Adjust the duration as needed
       });
       return;
-    }else{ //ERROR HERE (GETTING 401 UNAUTHORIZED DUNNO WHY) AAAAAAAAAAAAAAAAAAAAAAAA
+    } else {
       this.auth.login(this.username, this.password, this.rememberMe).subscribe({
         next: (d) => {
+          this.router.navigate(['/dashboard']);
           this.errorMessage.openFromComponent(MessageAlertComponent, {
             data: { message: "Login Successful" },
             duration: 10000, // Adjust the duration as needed
@@ -48,8 +49,8 @@ export class LoginComponent {
       });
     }
 
-    
-    
+
+
   }
 }
 
