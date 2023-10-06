@@ -1,20 +1,20 @@
 <mat-toolbar color="primary">
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon"
+    <button mat-icon-button class="icon" aria-label="menu"
         (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
     </button>
     <span>Restaurant App</span>
-    <span class="example-spacer"></span>
-    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+    <span class="spacer"></span>
+    <button mat-icon-button class="icon favorite-icon" aria-label="Delete?">
         <mat-icon>favorite</mat-icon>
     </button>
-    <button mat-icon-button class="example-icon" aria-label="Exit App" (click)="navigateToDashboard()">
+    <button mat-icon-button class="icon" aria-label="Exit App" (click)="exitApp()">
         <mat-icon>exit_to_app</mat-icon>
     </button>
 </mat-toolbar>
 
-<mat-drawer-container class="example-container" autosize>
-    <mat-drawer #drawer class="example-sidenav" mode="side">
+<mat-drawer-container class="container" autosize>
+    <mat-drawer #drawer class="sidenav" mode="side">
 
         <p>Auto-resizing sidenav</p>
         <br>
@@ -48,11 +48,11 @@
                 <b>Penguin King:</b> <i>"Oh,you've GOT to be kidding
                     me!"</i><br>
                 (Luigi sighs in despair.)
-            </p>
+            </p><!--
             <iframe width="560" height="315" src="https://www.youtube.com/embed/-xQa7dxpWYA?si=IgVFBmsR4ABSPgmf"
                 title="YouTube video player" frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen></iframe>
+                allowfullscreen></iframe>-->
         </div>
     </router-outlet>
 

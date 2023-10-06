@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-master-container',
@@ -10,9 +10,10 @@ import { Router } from '@angular/router';
 })
 export class MasterContainerComponent {
   showFiller = false;
-  constructor(private router: Router) { }
+  constructor(private router: Router, private auth : AuthService ) { }
 
-  navigateToDashboard() {
+  exitApp() {
+    this.auth.logout();
     this.router.navigate(['/login']); 
     //add losing session here
   }

@@ -53,6 +53,8 @@ import { NotifierComponent } from './components/notifier/notifier.component';
   providers: [
     AuthService,
     HttpService,
+    
+    NotifierComponent,
 
   ]
 })

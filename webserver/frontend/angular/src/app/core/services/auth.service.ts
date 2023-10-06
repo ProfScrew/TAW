@@ -12,6 +12,7 @@ import { token } from '../models/token';
 type tRawToken = string;
 
 interface iTokenData {
+  exp: number;
   name: string,
   surname: string,
   email: string,
@@ -23,6 +24,7 @@ interface iTokenData {
 })
 
 export class AuthService implements token {
+
   private auth: tRawToken = '';
 
   constructor(private http: HttpClient, router: Router) {
@@ -54,7 +56,7 @@ export class AuthService implements token {
         'Content-Type': 'application/x-www-form-urlencoded',
       })
     }
-    return this.http.post(HttpService.API_ENDPOINT + '/users/login/',{}, options).pipe(
+    return this.http.post(HttpService.API_ENDPOINT + '/users/login/', {}, options).pipe(
       tap((data) => {
         //console.debug(JSON.stringify(data));
         const payload = (data as { payload: { token: tRawToken } }).payload;
@@ -65,8 +67,15 @@ export class AuthService implements token {
   }
 
   logout(): void {
+
     this.set_token('', false);
     localStorage.removeItem('auth_token');
+  }
+
+
+  isLogged(): boolean {
+    if (this.has_token && this.exp && this.exp * 1000 > Date.now()) return true;
+    return false;
   }
 
   get has_token(): boolean { return this.auth.length > 0; }
@@ -75,6 +84,6 @@ export class AuthService implements token {
   get surname(): string { return jwt_decode<iTokenData>(this.auth).surname; }
   get email(): string { return jwt_decode<iTokenData>(this.auth).email; }
   get role(): iRole { return jwt_decode<iTokenData>(this.auth).role; }
-
+  get exp(): number { return jwt_decode<iTokenData>(this.auth).exp; }
 
 }

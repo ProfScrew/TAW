@@ -13,7 +13,7 @@ import { AuthService } from './auth.service';
 })
 export class HttpService {
 
-  public static readonly API_ENDPOINT = 'http://localhost:8080/v1';
+  public static readonly API_ENDPOINT = 'http://localhost:8080/v1'; //note need to change this to the correct url or proxy stuff...
   public readonly ROUTE_BASE;
 
   constructor(private http: HttpClient, private auth: AuthService, @Inject('ROUTE_BASE') route_base: string) {

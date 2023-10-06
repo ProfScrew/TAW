@@ -53,7 +53,7 @@ export function authorize(req: Request, res: Response, next: NextFunction) {
     });
 }
 
-export function create_token(payload: iTokenData, time: string = '6h') {
+export function create_token(payload: iTokenData, time: string = '168h') {
     if (!JWT_SECRET) throw new Error('JWT_SECRET is not defined');
     return jwt.sign(payload, JWT_SECRET, { expiresIn: time });
 }
