@@ -1,0 +1,21 @@
+### FUNCTIONS THAT ARE IN THIS MODULE:
+
+IDEAS
+GENERAL INFO ?
+
+### TODO
+
+- [ ] MANAGE ACCOUNTS
+    - [ ] WAITER 
+        - ASSIGNED ROOMS
+    - [ ] PRODUCTION
+        - ASSIGNED MENU CATEGORY
+    - [ ] CASHIER
+        
+- [ ] MANAGE MENU
+    - [ ] CATEGORY
+    - [ ] ITEM ITSELF
+
+- [ ] MANAGE TABLES
+    - [ ] ROOMS AND TABLES
+    
