@@ -8,7 +8,7 @@ model check
 
     - [x] waiter
     - [x] production
-        - need to change submenu to category
+        - [] need to change submenu to category
     - [] cashier
     - [] admin
 
