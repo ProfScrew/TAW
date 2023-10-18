@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { iPhysicalTable, iTable, Table } from "../../../models/table";
-import { authorize, iTokenData } from "../../../utilities/authentication";
-import { PhysicalTable } from "../../../models/table";
+import { iPhysicalTable, iTable, Table } from "../../../models/virtual_table";
+import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
+import { PhysicalTable } from "../../../models/virtual_table";
 import mongoose from "mongoose";
-import { next_middleware } from "../../../utilities/util";
+import { next_middleware } from "../../../middlewares/http.middleware";
 
 const physical_tables = Router();
 

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { iRole, Role } from "../../../models/role";
-import { authorize, iTokenData } from "../../../utilities/authentication";
-import { next_middleware } from "../../../utilities/util";
+import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
+import { next_middleware } from "../../../middlewares/http.middleware";
 
 const roles = Router();
 

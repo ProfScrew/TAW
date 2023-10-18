@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { iIngredient, Ingredient, isIngredient} from "../../../models/ingredient";
-import { iUserAction, UserAction } from "../../../utilities/typedef";
-import { timestamp } from "../../../utilities/util";
-import { authorize, iTokenData } from "../../../utilities/authentication";
+import { iUserAction, UserAction } from "../../../models/typedef";
+import { timestamp } from "../../../middlewares/http.middleware";
+import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import mongoose from "mongoose";
 import { get } from "http";
-import {http_response} from "../../../utilities/util"; //<--- *************implement this later ************ 
-import { next_middleware } from "../../../utilities/util";
+import {http_response} from "../../../middlewares/http.middleware"; //<--- *************implement this later ************ 
+import { next_middleware } from "../../../middlewares/http.middleware";
 
 const ingredients = Router();
 

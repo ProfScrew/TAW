@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { iIngredient } from "./ingredient";
-import { iUserAction, UserAction } from "../utilities/typedef";
+import { iUserAction, UserAction } from "./typedef";
 
 
 export interface iSubMenu {//rename to category

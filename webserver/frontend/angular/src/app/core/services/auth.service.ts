@@ -4,10 +4,9 @@ import { tap, catchError } from 'rxjs/operators';
 import { iRole } from '../models/role';
 import { Observable, throwError } from 'rxjs';
 import jwt_decode from "jwt-decode";
-import { HttpService } from './http.service';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
-import { token } from '../models/token';
 
 type tRawToken = string;
 
@@ -23,7 +22,7 @@ interface iTokenData {
   providedIn: 'root'
 })
 
-export class AuthService implements token {
+export class AuthService {
 
   private auth: tRawToken = '';
 
@@ -56,7 +55,7 @@ export class AuthService implements token {
         'Content-Type': 'application/x-www-form-urlencoded',
       })
     }
-    return this.http.post(HttpService.API_ENDPOINT + '/users/login/', {}, options).pipe(
+    return this.http.post(environment.URL_BACKEND +":"+ environment.PORT +"/"+ environment.VERSION + '/users/login/', {}, options).pipe(
       tap((data) => {
         //console.debug(JSON.stringify(data));
         const payload = (data as { payload: { token: tRawToken } }).payload;

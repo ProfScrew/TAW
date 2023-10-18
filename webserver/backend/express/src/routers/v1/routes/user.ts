@@ -2,11 +2,11 @@ import { Router } from 'express';
 import { User, iUser } from '../../../models/user';
 import passport from 'passport';
 
-import { authenticate, create_token, iTokenData, authorize } from '../../../utilities/authentication';
+import { authenticate, create_token, iTokenData, authorize } from '../../../middlewares/auth.middleware';
 
 import { expressjwt } from 'express-jwt';
 import { Role } from '../../../models/role';
-import { next_middleware } from '../../../utilities/util';
+import { next_middleware } from '../../../middlewares/http.middleware';
 import { isNumeric } from 'validator';
 import { debug } from 'console';
 

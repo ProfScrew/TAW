@@ -16,18 +16,6 @@ export type HttpResponse = iHttpError | iHttpSuccess;
 
 
 
-
-export function timestamp(): number {
-    return new Date().getTime();
-}
-
-export function to_timestamp(str: string): number {
-    const millis = Date.parse(str);
-    if (isNaN(millis)) throw new Error(`Invalid date string: ${str}`);
-    return millis;
-}
-
-
 export function http_response(response: HttpResponse, adapter: Response): void {
     adapter.status(response.status).json(response);
 }
