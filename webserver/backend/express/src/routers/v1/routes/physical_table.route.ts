@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { iPhysicalTable, iTable, Table } from "../../../models/virtual_table";
+import { iPhysicalTable, iTable, Table } from "../../../models/virtual_table.model";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
-import { PhysicalTable } from "../../../models/virtual_table";
+import { PhysicalTable } from "../../../models/virtual_table.model";
 import mongoose from "mongoose";
 import { next_middleware } from "../../../middlewares/http.middleware";
 

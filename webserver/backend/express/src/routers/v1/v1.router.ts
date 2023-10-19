@@ -1,13 +1,13 @@
 import { Router , Request , Response, NextFunction } from "express";
 import swaggerUi from 'swagger-ui-express';
 
-import user  from "./routes/user";
-import role  from "./routes/role";
-import table from "./routes/table";
-import order from "./routes/order";
-import physical_table from "./routes/physical_table";
-import ingredient from "./routes/ingredient";
-import swaggerSpec from "./swagger_config";
+import user  from "./routes/user.route";
+import role  from "./routes/role.route";
+import table from "./routes/virtual_table.route";
+import order from "./routes/order.route";
+import physical_table from "./routes/physical_table.route";
+import ingredient from "./routes/ingredient.route";
+import swaggerSpec from "../swagger/swagger.config";
 import * as colors from 'colors'
 import { HttpResponse } from "../../middlewares/http.middleware";
 

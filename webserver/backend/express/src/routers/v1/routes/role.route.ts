@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { iRole, Role } from "../../../models/role";
+import { iRole, Role } from "../../../models/role.model";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import { next_middleware } from "../../../middlewares/http.middleware";
 

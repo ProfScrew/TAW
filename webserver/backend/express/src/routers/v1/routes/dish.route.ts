@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { iDish, Dish } from "../../../models/dish"; 
-import { Order, iCourse } from "../../../models/order";
+import { iDish, Dish } from "../../../models/dish.model"; 
+import { Order, iCourse } from "../../../models/order.model";
 
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
-import { iUser } from "../../../models/user";
+import { iUser } from "../../../models/user.model";
 import { http_response, http_next, next_middleware } from "../../../middlewares/http.middleware";
 
 import mongoose from "mongoose";

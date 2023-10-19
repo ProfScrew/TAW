@@ -6,6 +6,6 @@
         "src/**/*.test.ts"
     ],
     "ext": "ts,mjs,js,json,graphql",
-    "exec": "etsc && node ./dist/server.js",
+    "exec": "etsc && node ./dist/app.js",
     "legacyWatch": true
 }

@@ -1,5 +1,5 @@
 import { NextFunction, Router } from "express";
-import { iTable, iPhysicalTable, PhysicalTable, Table, TableStatus } from "../../../models/virtual_table";
+import { iTable, iPhysicalTable, PhysicalTable, Table, TableStatus } from "../../../models/virtual_table.model";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import { next_middleware } from "../../../middlewares/http.middleware";
 import mongoose from "mongoose";

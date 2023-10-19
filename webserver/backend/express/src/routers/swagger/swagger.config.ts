@@ -1,10 +1,10 @@
 import swaggerJsDoc from 'swagger-jsdoc';
-import { User } from './swagger_schema/user';
-import { UserUpdate } from './swagger_schema/user_update';
-import { Role } from './swagger_schema/role';
-import { Ingredient } from './swagger_schema/ingredient';
-import { PhysicalTable } from './swagger_schema/physical_table';
-import { Table } from './swagger_schema/table';
+import { User } from './schema/user.schema';
+import { UserUpdate } from './schema/user_update.schema';
+import { Role } from './schema/role.schema';
+import { Ingredient } from './schema/ingredient.schema';
+import { PhysicalTable } from './schema/physical_table.schema';
+import { Table } from './schema/table.schema';
 
 
 const swaggerDefinition = {

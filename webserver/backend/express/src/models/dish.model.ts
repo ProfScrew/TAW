@@ -1,8 +1,8 @@
 import { Schema, model } from 'mongoose';
-import { iRecipe } from './recipe';
-import { iUser } from './user';
-import { iIngredient } from './ingredient';
-import { UserAction, iUserAction } from './typedef';
+import { iRecipe } from './recipe.model';
+import { iUser } from './user.model';
+import { iIngredient } from './ingredient.model';
+import { UserAction, iUserAction } from './user_action.object';
 
 export type tDishStatus           = 'inserted' | 'dispatched' | 'ready' | 'served' | 'cancelled';
 export type tDishModificationType = 'add' | 'remove' | 'more' | 'less';

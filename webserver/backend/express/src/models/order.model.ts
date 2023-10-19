@@ -1,7 +1,7 @@
 import {Schema, model} from 'mongoose';
-import { Dish, iDish } from "./dish";
-import { iUser } from "./user";
-import { UserAction, iUserAction } from './typedef';
+import { Dish, iDish } from "./dish.model";
+import { iUser } from "./user.model";
+import { UserAction, iUserAction } from './user_action.object';
 
 
 export interface iCourse {///NEED TO ADD TIME OF CREATION OF EITHER ORDER IF FIRST COURSE OR ADD IT LATER WHEN THE COURSE ABOVE IS SERVED

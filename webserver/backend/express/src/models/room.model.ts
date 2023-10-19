@@ -1,6 +1,6 @@
 import {Schema, model, Types} from 'mongoose';
 import mongoose from 'mongoose';
-import { iUserAction, UserAction } from './typedef';
+import { iUserAction, UserAction } from './user_action.object';
 
 export interface iRoom{
     _id: Schema.Types.ObjectId;

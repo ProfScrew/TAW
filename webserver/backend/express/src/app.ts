@@ -2,11 +2,9 @@ import bodyParser from 'body-parser'
 import express    from 'express'
 import mongoose   from 'mongoose'
 import cors       from 'cors'
-
-import { config } from 'dotenv'
 import { PORT_BACKEND, URL_DATABASE, PORT_DATABASE, NAME_DATABASE } from './configs/app.config'
 
-import v1 from './routers/v1/v1'
+import v1 from './routers/v1/v1.router'
 
 
 const server = express()

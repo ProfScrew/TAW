@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { iIngredient, Ingredient, isIngredient} from "../../../models/ingredient";
-import { iUserAction, UserAction } from "../../../models/typedef";
-import { timestamp } from "../../../middlewares/http.middleware";
+import { iIngredient, Ingredient, isIngredient} from "../../../models/ingredient.model";
+import { iUserAction, UserAction } from "../../../models/user_action.object";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import mongoose from "mongoose";
 import { get } from "http";

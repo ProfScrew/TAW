@@ -1,5 +1,5 @@
 import {Schema, model} from 'mongoose';
-import { UserAction, iUserAction } from './typedef';
+import { UserAction, iUserAction } from './user_action.object';
 
 //https://mongoosejs.com/docs/typescript.html
 

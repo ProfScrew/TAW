@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { iCourse , iOrder , Order } from "../../../models/order";
+import { iCourse , iOrder , Order } from "../../../models/order.model";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
-import { iUser} from "../../../models/user";
+import { iUser} from "../../../models/user.model";
 import mongoose from "mongoose";
 
 const orders = Router();
