@@ -183,7 +183,8 @@ ingredients.put('/:id',authorize, async (req, res, next)=> {//Todo: modify in or
     const userAction : iUserAction = {
         actor: {
             username: (req.user as iTokenData).username!,
-            name: (req.user as iTokenData).name!
+            name: (req.user as iTokenData).name!,
+            surname: (req.user as iTokenData).surname!
         },
         timestamp: new Date()
     };
@@ -233,7 +234,8 @@ ingredients.delete("/:id",authorize, async (req, res, next)=>{
     const userAction : iUserAction = {
         actor: {
             username: (req.user as iTokenData).username!,
-            name: (req.user as iTokenData).name!
+            name: (req.user as iTokenData).name!,
+            surname: (req.user as iTokenData).surname!
         },
         timestamp: new Date()
     };

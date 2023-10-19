@@ -3,27 +3,9 @@ import { User, iUser } from '../../../models/user.model';
 import passport from 'passport';
 
 import { authenticate, create_token, iTokenData, authorize } from '../../../middlewares/auth.middleware';
-
-import { expressjwt } from 'express-jwt';
-import { Role } from '../../../models/role.model';
 import { next_middleware } from '../../../middlewares/http.middleware';
+// @ts-ignore
 import { isNumeric } from 'validator';
-import { debug } from 'console';
-
-const auth = expressjwt({
-    secret: 'secret',
-    algorithms: ['HS256']
-});
-
-declare global {
-    namespace Express {
-        interface Request {
-            auth: {
-                mail: string
-            }
-        }
-    }
-}
 
 const user = Router();
 
@@ -33,15 +15,16 @@ interface iNewUser {
     surname: string;
     phone: string;
     password: string;
+    category?: string;
+    room?: string;
+    role: {
+        admin: boolean;
+        waiter: boolean;
+        production: boolean;
+        cashier: boolean;
+        analytics: boolean;
+    }
 }
-
-
-function isNumeric(val: unknown): val is string | number {
-    return (
-      !isNaN(Number(Number.parseFloat(String(val)))) &&
-      isFinite(Number(val))
-    );
-  }
 
 function is_new_user(data: unknown): boolean {
     if (typeof data !== 'object' || data === null) return false;
@@ -88,13 +71,14 @@ function is_new_user(data: unknown): boolean {
 user.post('/login', passport.authenticate(authenticate, {session: false}), async (req, res, next) => {
     try{
         const user = req.user as iUser;
-        const role = await Role.findOne({name: user.role}).maxTimeMS(1000).orFail().exec();
 
         const signed = create_token({
             name:    user.name,
             surname: user.surname,
             username:   user.username,
-            role:    role
+            role:    user.role,
+            category: user.category,
+            room:     user.room,
         });
 
         return next_middleware({ status: 200, error: false, payload: {token: signed} }, next);
@@ -135,9 +119,9 @@ user.post('/login', passport.authenticate(authenticate, {session: false}), async
  */
 user.post('/', authorize, (req, res, next) => {
     const user_data = req.body as iNewUser;
-    const role = (req.user as iTokenData).role!;
+    const author = (req.user as iTokenData);
 
-    if (!role.canCreateUsers) return next({ statusCode: 403, error: true, errormessage: 'Forbidden' });
+    if (!author.role.admin) return next({ statusCode: 403, error: true, errormessage: 'Forbidden' });
 
     // Check if user data is valid
     if (!is_new_user(user_data)) {
@@ -146,8 +130,7 @@ user.post('/', authorize, (req, res, next) => {
 
     // Create the user
     const user = new User(user_data);
-    user.set_password(user_data.password);
-    user.role = '';
+    user.setPassword(user_data.password);
 
     // Try to save the user
     user.save().then((data) => {
@@ -186,10 +169,10 @@ user.post('/', authorize, (req, res, next) => {
  *         description: Internal Server Error - Something went wrong on the server.
  */
 user.get('/', authorize,  (req, res, next) => {
-    const role = (req.user as iTokenData).role!;
+    const author = (req.user as iTokenData);
     const username = req.query.username as string;
     
-    if (!role.canReadUsers) return next({ statusCode: 403, error: true, errormessage: 'Forbidden' });
+    if (!author.role.admin) return next({ statusCode: 403, error: true, errormessage: 'Forbidden' });
 
     const query = username ? { username: username } : {};
 
@@ -235,10 +218,10 @@ user.get('/', authorize,  (req, res, next) => {
  */
 user.delete("/:username", authorize, async (req, res, next) => {
     
-    const role = (req.user as iTokenData).role!;
+    const author = (req.user as iTokenData);
     const username = req.params.username;
 
-    if (!role.canDeleteUsers) {
+    if (!author.role.admin) {
         return next_middleware({ status: 403, error: true, message: 'Forbidden' }, next);
     }
 
@@ -297,10 +280,10 @@ user.delete("/:username", authorize, async (req, res, next) => {
  *         description: An error occurred while updating the user.
  */
 user.put("/:username", authorize, async (req, res, next) => {
-    const role = (req.user as iTokenData).role!;
+    const author = (req.user as iTokenData);
     const username = req.params.username;
 
-    if (!role.canEditUsers) return next_middleware({ status: 403, error: true, message: 'Forbidden' },next);
+    if (!author.role.admin) return next_middleware({ status: 403, error: true, message: 'Forbidden' },next);
     if (username === undefined || typeof username !== 'string') {
         return next_middleware({ status: 400, error: true, message: 'Bad request' }, next);
     }
@@ -320,7 +303,7 @@ user.put("/:username", authorize, async (req, res, next) => {
         _id: exist._id
     });
     if(user_data.password !== undefined){
-        new_user.set_password(user_data.password);
+        new_user.setPassword(user_data.password);
     }
     try{
         await User.findOneAndUpdate({ username: username }, new_user, { new: true }).maxTimeMS(1000).orFail();

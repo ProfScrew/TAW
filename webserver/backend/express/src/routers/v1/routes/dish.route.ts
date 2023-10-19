@@ -22,7 +22,7 @@ dishes.get("/:id", authorize, (req, res, next) => {
     const role = (req.user as iTokenData).role!;
     const id   = req.params.id;
 
-    if (!role.canReadDishes) return next_middleware({ status: 403, error: true, message: 'Forbidden' }, next);
+    if (!role.canReadDishes) return next({ status: 403, error: true, message: 'Forbidden' });
     if (id === null)         return next_middleware({ status: 400, error: true, message: 'Bad request' }, next);
 
     Dish.findOne({id: id}).orFail().exec((err, dish) => {

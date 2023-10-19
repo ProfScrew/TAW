@@ -1,19 +1,24 @@
 import { NextFunction, Request, Response } from "express";
 import { BasicStrategy } from "passport-http";
-import { User, iUser } from "../models/user.model";
 import jwt from "jsonwebtoken";
-import { iRole } from "../models/role.model";
 import { iHttpError } from "./http.middleware";
-
 import { JWT_SECRET, JWT_EXPIRATION } from "../configs/app.config";
+
 import { next_middleware } from "./http.middleware"; 
+
+import { User, iUser, iRole } from "../models/user.model";
+import { iCategory } from "../models/category.model";
+import { iRoom } from "../models/room.model";
+import { expressjwt } from "express-jwt";
 
 
 export interface iTokenData {
     name: string,
     surname: string,
     username: string,
-    role: iRole
+    role: iRole,
+    category?: iCategory["_id"],
+    room?: iRoom["_id"],
 }
 
 
@@ -22,7 +27,7 @@ export const authenticate = new BasicStrategy(function(username: string, passwor
     User.findOne({ username: username }, (err: unknown, user: iUser) => {
         if (err) return done({status: 500, error: true, message: err} as iHttpError)
         if (!user) return done({status: 404, error: true, message: 'User not found'} as iHttpError);
-        if (!user.check_password(password)) return done({status: 401, error: true, message: 'Wrong password'} as iHttpError);
+        if (!user.checkPassword(password)) return done({status: 401, error: true, message: 'Wrong password'} as iHttpError);
         return done(null, user);
     });
 });
