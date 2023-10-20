@@ -38,7 +38,7 @@ dishes.get("/", authorize, (req, res, next) => {
     if (!role.canReadDishes) return http_next({ status: 403, error: true, message: 'Forbidden' }, next);
 
     Dish.find().orFail().exec((err,dishes) => {
-        if (err) return http_response({ status: 404, error: true, message: err.message }, res);
+        if (err) return next({ status: 404, error: true, message: err.message });
         res.json(dishes);
     });
 });

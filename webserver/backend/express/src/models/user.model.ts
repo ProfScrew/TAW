@@ -2,8 +2,7 @@ import { Schema, model } from 'mongoose';
 import { randomBytes, createHmac } from 'crypto'
 import { iRoom } from './room.model';
 import { iCategory } from './category.model';
-
-const HASH_METHOD = 'sha512';
+import { HASH_METHOD } from '../configs/app.config';
 
 export interface iRole {
     admin: boolean;
@@ -22,8 +21,8 @@ export interface iUser {
     password_salt: string;
 
     role: iRole;
-    category?: iCategory['_id'];
-    room?: iRoom['_id'];
+    category?: iCategory['_id'][];
+    room?: iRoom['_id'][];
     
     setPassword:   (password: string) => void;
     checkPassword: (password: string) => boolean;
@@ -42,8 +41,8 @@ export const UserSchema = new Schema<iUser>({
         cashier: {type: Boolean, required: true, default: false},
         analytics: {type: Boolean, required: true, default: false},
     },
-    category:      { type: Schema.Types.ObjectId, required: false, ref: 'Category' },
-    room:          { type: Schema.Types.ObjectId, required: false, ref: 'Room' },
+    category:      [{ type: Schema.Types.ObjectId, required: false, ref: 'Category' }],
+    room:          [{ type: Schema.Types.ObjectId, required: false, ref: 'Room' }],
 },{
     versionKey: false,
     collection: 'Users'

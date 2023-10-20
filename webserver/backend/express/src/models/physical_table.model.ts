@@ -10,7 +10,7 @@ export interface iPhysicalTable {
     room:       iRoom['_id'];
 }
 export const PhysicalTableSchema = new Schema<iPhysicalTable>({
-    name:       {type: String, required: true},
+    name:       {type: String, required: true, unique: true},
     capacity:   {type: Number, required: true},
     room:       {type: Schema.Types.ObjectId, required: true, ref: 'Room'},
 },{

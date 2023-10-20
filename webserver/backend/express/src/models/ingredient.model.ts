@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { iUserAction, UserAction } from './user_action.object';
 
 export interface iIngredient {
-    _id:                    Types.ObjectId;
+    _id:                    Schema.Types.ObjectId;
     name:                   string;
     alergens:               string[];
     modification_price:     number;
@@ -17,11 +17,11 @@ export interface iIngredient {
 
 
 export const IngredientSchema = new Schema<iIngredient>({
-    name:           {type: String, required: true},
-    alergens:       {type: [String]},
-    modification_price: {type: Number, required: true},
-    modification_percentage:           {type: Number, required: true},
-    deleted:        {type: UserAction, required: false}
+    name:                       {type: String, required: true},
+    alergens:                   {type: [String]},
+    modification_price:         {type: Number, required: true},
+    modification_percentage:    {type: Number, required: true},
+    deleted:                    {type: UserAction, required: false}
 
 },{
     versionKey: false,

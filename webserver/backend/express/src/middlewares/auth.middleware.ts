@@ -1,15 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { BasicStrategy } from "passport-http";
 import jwt from "jsonwebtoken";
-import { iHttpError } from "./http.middleware";
 import { JWT_SECRET, JWT_EXPIRATION } from "../configs/app.config";
-
-import { next_middleware } from "./http.middleware"; 
-
 import { User, iUser, iRole } from "../models/user.model";
 import { iCategory } from "../models/category.model";
 import { iRoom } from "../models/room.model";
 import { expressjwt } from "express-jwt";
+
+import { cHttpMessages } from "../utilities/http_messages.util";
 
 
 export interface iTokenData {
@@ -25,25 +23,24 @@ export interface iTokenData {
 export const authenticate = new BasicStrategy(function(username: string, password: string, done: Function) {
 
     User.findOne({ username: username }, (err: unknown, user: iUser) => {
-        if (err) return done({status: 500, error: true, message: err} as iHttpError)
-        if (!user) return done({status: 404, error: true, message: 'User not found'} as iHttpError);
-        if (!user.checkPassword(password)) return done({status: 401, error: true, message: 'Wrong password'} as iHttpError);
+        if (err) return done(cHttpMessages.generateMessage(500,true,err));
+        if (!user) return done(cHttpMessages.generateNotFoundMessage('User'));
+        if (!user.checkPassword(password)) return done(cHttpMessages.generateUnauthorizeMessage('Wrong password'));
         return done(null, user);
     });
 });
 
 export function authorize(req: Request, res: Response, next: NextFunction) {
     const header = req.headers.authorization!;
-    if (!header) { return next_middleware({ status: 401, error: true, message: 'No authorization header provided' }, next); }
-    if (!header.startsWith('Bearer ')) return next({ statusCode: 401, error: true, errormessage: 'Invalid authorization header' });
+    if (!header) { return next(cHttpMessages.generateUnauthorizeMessage('No header provided')); }
+    if (!header.startsWith('Bearer ')) return next(cHttpMessages.generateUnauthorizeMessage('Wrong header format'));
 
     const token  = header.split(' ')[1];
-    if (!token)      { return next_middleware({ status: 401, error: true, message: 'No token provided' }, next); }
-    if (!JWT_SECRET) { return next_middleware({ status: 500, error: true, message: 'Internal server error'},next) }
+    if (!token)      { return next(cHttpMessages.generateUnauthorizeMessage('No token provided')); }
+    if (!JWT_SECRET) { return next(cHttpMessages.internalServerError) }
     
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err) { return next_middleware({ status: 401, error: true, message: err.message },next); }
-
+        if (err) { return next(cHttpMessages.generateUnauthorizeMessage('Invalid token.')); }
         req.user = decoded;
         next();
     });

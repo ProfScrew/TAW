@@ -3,9 +3,11 @@ import { User, iUser } from '../../../models/user.model';
 import passport from 'passport';
 
 import { authenticate, create_token, iTokenData, authorize } from '../../../middlewares/auth.middleware';
-import { next_middleware } from '../../../middlewares/http.middleware';
 // @ts-ignore
 import { isNumeric } from 'validator';
+import { iCategory } from '../../../models/category.model';
+import { iRoom } from '../../../models/room.model';
+import { cHttpMessages } from '../../../utilities/http_messages.util';
 
 const user = Router();
 
@@ -15,8 +17,8 @@ interface iNewUser {
     surname: string;
     phone: string;
     password: string;
-    category?: string;
-    room?: string;
+    category?: iCategory['_id'][];
+    room?: iRoom['_id'][];
     role: {
         admin: boolean;
         waiter: boolean;
@@ -69,23 +71,22 @@ function is_new_user(data: unknown): boolean {
  *      description: Internal Server Error. DB error. User does not have a role. Etc...
  */
 user.post('/login', passport.authenticate(authenticate, {session: false}), async (req, res, next) => {
-    try{
+    try {
         const user = req.user as iUser;
 
-        const signed = create_token({
-            name:    user.name,
-            surname: user.surname,
+        var signed = create_token({
+            name:       user.name,
+            surname:    user.surname,
             username:   user.username,
-            role:    user.role,
-            category: user.category,
-            room:     user.room,
+            role:       user.role,
+            category:   user.category ? user.category[0] : undefined,
+            room:       user.room ? user.room[0] : undefined,
         });
 
-        return next_middleware({ status: 200, error: false, payload: {token: signed} }, next);
-
+        return next({ status: 200, error: false, payload: { token: signed } });
     } catch (err: any) {
         
-        return next_middleware({ status: 403, error: true, message: 'Forbidden, User has no role' }, next);
+        return next({ status: 403, error: true, message: 'Forbidden, User has no role' });
     }
 });
 
@@ -121,11 +122,11 @@ user.post('/', authorize, (req, res, next) => {
     const user_data = req.body as iNewUser;
     const author = (req.user as iTokenData);
 
-    if (!author.role.admin) return next({ statusCode: 403, error: true, errormessage: 'Forbidden' });
+    if (!author.role.admin) return next(eHttpMessages.forbidden);
 
     // Check if user data is valid
     if (!is_new_user(user_data)) {
-        return next_middleware({ status: 400, error: true, message: 'Invalid user data' }, next);
+        return next({ status: 400, error: true, message: 'Invalid user data' });
     }
 
     // Create the user
@@ -134,11 +135,11 @@ user.post('/', authorize, (req, res, next) => {
 
     // Try to save the user
     user.save().then((data) => {
-        return next_middleware({ status: 200, error: false, payload: { id: data._id } }, next);
+        return next({ status: 200, error: false, payload: { id: data._id } });
     }).catch((reason: {code: number, errmsg: string}) => {
         if (reason.code === 11000)
-            return next_middleware({ status: 409, error: true, message: 'User already exists' }, next);
-        return next_middleware({ status: 500, error: true, message: 'DB error: ' + reason.errmsg }, next);
+            return next({ status: 409, error: true, message: 'User already exists' });
+        return next({ status: 500, error: true, message: 'DB error: ' + reason.errmsg });
     });
 });
 
@@ -178,9 +179,9 @@ user.get('/', authorize,  (req, res, next) => {
 
     User.find(query, (error, users) => {
         if (error) {
-            next_middleware({ status: 500, error: true, message: 'An error occurred while fetching users' }, next);
+            next({ status: 500, error: true, message: 'An error occurred while fetching users' });
         } else {
-            next_middleware({ status: 200, error: false, payload: users }, next);
+            next({ status: 200, error: false, payload: users });
         }
     });
 });
@@ -222,22 +223,22 @@ user.delete("/:username", authorize, async (req, res, next) => {
     const username = req.params.username;
 
     if (!author.role.admin) {
-        return next_middleware({ status: 403, error: true, message: 'Forbidden' }, next);
+        return next({ status: 403, error: true, message: 'Forbidden' });
     }
 
     if (username === undefined || typeof username !== 'string') {
-        return next_middleware({ status: 400, error: true, message: 'Bad request' }, next);
+        return next({ status: 400, error: true, message: 'Bad request' });
     }
     
     try {
         await User.deleteOne({ username: username }).orFail();
-        next_middleware({ status: 200, error: false,payload:{} }, next);
+        next({ status: 200, error: false,payload:{} });
         
     } catch (err: any) {
         if(err.name === 'DocumentNotFoundError'){
-            return next_middleware({ status: 404, error: true, message: 'User not found' }, next);
+            return next({ status: 404, error: true, message: 'User not found' });
         }else{
-            return next_middleware({ status: 500, error: true, message: 'DB error' }, next);
+            return next({ status: 500, error: true, message: 'DB error' });
         }
     }
 });
@@ -283,19 +284,19 @@ user.put("/:username", authorize, async (req, res, next) => {
     const author = (req.user as iTokenData);
     const username = req.params.username;
 
-    if (!author.role.admin) return next_middleware({ status: 403, error: true, message: 'Forbidden' },next);
+    if (!author.role.admin) return next({ status: 403, error: true, message: 'Forbidden' });
     if (username === undefined || typeof username !== 'string') {
-        return next_middleware({ status: 400, error: true, message: 'Bad request' }, next);
+        return next({ status: 400, error: true, message: 'Bad request' });
     }
     const user_data = req.body as Partial<iNewUser>;
 
     if(is_new_user(user_data) === false){
-        return next_middleware({ status: 400, error: true, message: 'Bad request' }, next);
+        return next({ status: 400, error: true, message: 'Bad request' });
     }
     console.log(user_data);
     const exist = await User.findOne({ username: username });
     if (!exist) {
-        return next_middleware({ status: 404, error: true, message: 'User not found' }, next);
+        return next({ status: 404, error: true, message: 'User not found' });
     }
     const new_user = new User({
         ...user_data,
@@ -307,9 +308,9 @@ user.put("/:username", authorize, async (req, res, next) => {
     }
     try{
         await User.findOneAndUpdate({ username: username }, new_user, { new: true }).maxTimeMS(1000).orFail();
-        return next_middleware({ status: 200, error: false, payload: {} }, next);
+        return next({ status: 200, error: false, payload: {} });
     }catch(err){
-        return next_middleware({ status: 500, error: true, message: 'DB error' }, next);
+        return next({ status: 500, error: true, message: 'DB error' });
     }
 
     

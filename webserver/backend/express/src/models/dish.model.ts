@@ -4,91 +4,58 @@ import { iUser } from './user.model';
 import { iIngredient } from './ingredient.model';
 import { UserAction, iUserAction } from './user_action.object';
 
-export type tDishStatus           = 'inserted' | 'dispatched' | 'ready' | 'served' | 'cancelled';
-export type tDishModificationType = 'add' | 'remove' | 'more' | 'less';
+export enum eDishStatus {
+    waiting,
+    working,
+    ready,
+};
+
+export enum eDishModificationType {
+    add,
+    remove,
+    more,
+    less,
+};
 
 export interface iDishModification {
     ingredient: iIngredient['_id'];
-    type:       tDishModificationType;
-    quantity:   number;
-    mod_price:  number;
-    added_by:   iUser['username'];
-    
-
+    type:       eDishModificationType;
 }
 
 
 export interface iDish {
     _id:                Schema.Types.ObjectId;
     recipe:             iRecipe['_id'];
-    status:             tDishStatus;
-    price:              number;
-    notes:              string[];
-    production_node_id: iUser['username'];
-    modifications:      iDishModification[];
-    //regrounp variables, so to distinguish what does waiter and what does kitchen
+    actual_price:       number;
+    notes?:             string;
+    status:             eDishStatus;
     
-    archive: (action: iUserAction) => Promise<iHistoricalDish>;
-    //remove this...
-    
-    //add fields DELETED and COMPLETED
-}
+    logs_status?:        {start_cooking: iUserAction, finish_cooking: iUserAction};
 
-export interface iHistoricalDish extends iDish {
-    deleted?:          iUserAction;
-    completed?:        iUserAction;
+    modifications?:      iDishModification[];
 }
 
 const DishSchema = new Schema<iDish>({
-    recipe:             {type: Number, ref: "Recipe", required: true},
-    added_by:           {type: String, ref: "User", required: true},
-    added_at:           {type: Date,   required: true},
-    status:             {type: String, required: true},
-    price:              {type: Number, required: true},
-    notes:              {type: [String]},
-    production_node_id: {type: String, ref: "Production", required: true},
+    recipe:             {type: Schema.Types.ObjectId, ref: 'Recipe', required: true},
+    actual_price:              {type: Number, required: true},
+    notes:              {type: String, required: false},
+    status:             {type: String, required: true, enum: eDishStatus, default: 'waiting'},
+    logs_status:        {
+        start_cooking: {type: UserAction, required: false},
+        finish_cooking: {type: UserAction, required: false},
+        required: false,
+    },
     
     modifications:  {type: [{
         ingredient: {type: Number, ref: "Ingredient", required: true},
-        type:       {type: String, required: true},
-        quantity:   {type: Number, required: true},
-        mod_price:  {type: Number, required: true},
-        added_by:   {type: String, ref: "User", required: true},
-    }]},
+        type:       {type: String, enum: eDishModificationType, required: true},
+    }], required: false},
 },{
-    versionKey: false,collection: "Dish"});
-
-const HistoricalDishSchema = new Schema<iHistoricalDish>({//delete this
-    ...DishSchema.obj,
-    deleted:   {type: UserAction, required: false},
-    completed: {type: UserAction, required: false},
-},{
-    versionKey: false,collection: "HistoricalDish"});
-
+    versionKey: false,
+    collection: "Dish"
+});
 
 
 export const Dish = model<iDish>('Dish', DishSchema);
-export const HistoricalDish = model<iHistoricalDish>('HistoricalDish', HistoricalDishSchema);
 
-
-DishSchema.methods.archive = async function(action: iUserAction): Promise<iHistoricalDish> {
-    const dish = this.toObject() as Partial<iDish>;
-    const status = dish.status;
-    delete dish._id;
-
-    const historicalDish = new HistoricalDish({ ...dish });
-
-    // Check if the dish was served
-    if (status === 'served') {
-        historicalDish.completed = action;
-    } else {
-        historicalDish.deleted = action;
-    }
-    
-    // Adds the historical dish
-    await Dish.deleteOne({ _id: this._id }).maxTimeMS(1000).orFail();
-    await historicalDish.save();
-
-    return historicalDish;
-}
 

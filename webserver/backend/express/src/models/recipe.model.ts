@@ -1,21 +1,18 @@
 import { Schema, model } from "mongoose";
 import { iIngredient } from "./ingredient.model";
 import { iUserAction, UserAction } from "./user_action.object";
+import { iCategory } from "./category.model";
 
 
-export interface iSubMenu {//rename to category
-    name: string;
-    color?: string;
-}
 
 export interface iRecipe {
-    _id:       Schema.Types.ObjectId;
-    name:       string;
-    ingredients:iIngredient['_id'][];
-    base_price: number;
-    submenu:    iSubMenu;
-    deleted?:   iUserAction;
-    //add description field
+    _id:            Schema.Types.ObjectId;
+    name:           string;
+    description?:   string;
+    ingredients:    iIngredient['_id'][];
+    base_price:     number;
+    category:       iCategory['_id'];
+    deleted?:       iUserAction;
 
     deleteArchive:     (action: iUserAction) => Promise<void>;
     updateArchive:     (data: Partial<iRecipe>, action: iUserAction) => Promise<void>;
@@ -23,19 +20,20 @@ export interface iRecipe {
 
 const RecipeSchema = new Schema<iRecipe>({
     name:        { type:  String, required: true },
+    description: { type:  String, required: false },
     ingredients: [{ type: Schema.Types.ObjectId, ref: 'Ingredient' }],
     base_price:  { type:  Number, required: true },
-    deleted:     { type:  UserAction, required: false },
-    submenu: {
-        name:  { type: String, required: true  },
-        color: { type: String, required: false }
-    }
+    category:    { type:  Schema.Types.ObjectId, required: true, ref: 'Category' },
+    deleted:     { type:  UserAction, required: false }
 },{
-    versionKey: false,collection: 'Recipe' });
+    versionKey: false,
+    collection: 'Recipes'
+});
 
 export const Recipe = model<iRecipe>('Recipe', RecipeSchema);
 
 
+//📝review this function
 RecipeSchema.methods.updateArchive = async function(data: Partial<iRecipe>, action: iUserAction): Promise<void> {
     if (this.deleted) {
         throw new Error('Recipe already deleted');
@@ -53,7 +51,7 @@ RecipeSchema.methods.updateArchive = async function(data: Partial<iRecipe>, acti
     // Creates the new object, without the _id field
     await Recipe.create(updated);
 }
-
+//📝review this function
 RecipeSchema.methods.deleteArchive = async function(action: iUserAction): Promise<void> {
     const recipe = this;
 
