@@ -42,19 +42,18 @@ services:
         networks:
             - Internal
             - External
-    
-    # redis:
-    #     container_name: redis
-    #     image: redis:7.2.0-alpine
-    #     restart: always
-    #     ports:
-    #     - '6379:6379'
-    #     command: redis-server --save 20 1 --loglevel warning
-    #     volumes: 
-    #     - ./db/redis:/data/
-    #     networks:
-    #         - Internal
-    #         - External
+    redis:
+        container_name: redis
+        image: redis:7.2.0-alpine
+        restart: always
+        ports:
+        - '6379:6379'
+        command: redis-server --save 20 1 --loglevel warning
+        volumes: 
+        - ./db/redis:/data/
+        networks:
+            - Internal
+            - External
     # reverseproxy:
     #     build: reverseproxy/
     #     image: reverseproxy

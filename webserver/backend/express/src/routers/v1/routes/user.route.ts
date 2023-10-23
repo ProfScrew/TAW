@@ -2,12 +2,13 @@ import { Router } from 'express';
 import { User, iUser } from '../../../models/user.model';
 import passport from 'passport';
 
-import { authenticate, create_token, iTokenData, authorize } from '../../../middlewares/auth.middleware';
+import { authenticate, create_token, iTokenData, authorize, blacklistUser } from '../../../middlewares/auth.middleware';
 // @ts-ignore
 import { isNumeric } from 'validator';
 import { iCategory } from '../../../models/category.model';
 import { iRoom } from '../../../models/room.model';
-import { cHttpMessages } from '../../../utilities/http_messages.util';
+import { cResponse, eHttpCode } from '../../../middlewares/response.middleware';
+
 
 const user = Router();
 
@@ -31,14 +32,14 @@ interface iNewUser {
 function is_new_user(data: unknown): boolean {
     if (typeof data !== 'object' || data === null) return false;
     const user = data as iNewUser;
-    
-    if (typeof user.username   !== 'string') return false;
-    if (typeof user.phone   !== 'string') return false;
+
+    if (typeof user.username !== 'string') return false;
+    if (typeof user.phone !== 'string') return false;
     if (isNumeric(user.phone) === false) return false;
-    if (typeof user.name    !== 'string') return false;
+    if (typeof user.name !== 'string') return false;
     if (typeof user.surname !== 'string') return false;
     if (typeof user.password !== 'string') return false;
-    console.log(user); 
+    console.log(user);
     return true;
 }
 
@@ -63,31 +64,25 @@ function is_new_user(data: unknown): boolean {
  *       description: Successfully logged in.
  *     401:
  *       description: Unauthorized. Wrong Password.
- *     403:
- *       description: Forbidden. User does not have a role.
  *     404:
  *       description: User not found. Wrong username.
  *     500:
  *      description: Internal Server Error. DB error. User does not have a role. Etc...
  */
-user.post('/login', passport.authenticate(authenticate, {session: false}), async (req, res, next) => {
-    try {
-        const user = req.user as iUser;
+user.post('/login', passport.authenticate(authenticate, { session: false }), async (req, res, next) => {
 
-        var signed = create_token({
-            name:       user.name,
-            surname:    user.surname,
-            username:   user.username,
-            role:       user.role,
-            category:   user.category ? user.category[0] : undefined,
-            room:       user.room ? user.room[0] : undefined,
-        });
+    const user = req.user as iUser;
 
-        return next({ status: 200, error: false, payload: { token: signed } });
-    } catch (err: any) {
-        
-        return next({ status: 403, error: true, message: 'Forbidden, User has no role' });
-    }
+    var signed = create_token({
+        name: user.name,
+        surname: user.surname,
+        username: user.username,
+        role: user.role,
+        category: user.category ? user.category[0] : undefined,
+        room: user.room ? user.room[0] : undefined,
+    });
+
+    return next(cResponse.success(eHttpCode.OK, signed));
 });
 
 /**
@@ -120,13 +115,15 @@ user.post('/login', passport.authenticate(authenticate, {session: false}), async
  */
 user.post('/', authorize, (req, res, next) => {
     const user_data = req.body as iNewUser;
-    const author = (req.user as iTokenData);
+    const author = req.user as iTokenData;
 
-    if (!author.role.admin) return next(eHttpMessages.forbidden);
+    if (!author || !author.role || !author.role.admin) {
+        return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
+    }
 
     // Check if user data is valid
     if (!is_new_user(user_data)) {
-        return next({ status: 400, error: true, message: 'Invalid user data' });
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid user data'));
     }
 
     // Create the user
@@ -135,11 +132,11 @@ user.post('/', authorize, (req, res, next) => {
 
     // Try to save the user
     user.save().then((data) => {
-        return next({ status: 200, error: false, payload: { id: data._id } });
-    }).catch((reason: {code: number, errmsg: string}) => {
+        return next(cResponse.success(eHttpCode.OK, { id: data._id }));
+    }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000)
-            return next({ status: 409, error: true, message: 'User already exists' });
-        return next({ status: 500, error: true, message: 'DB error: ' + reason.errmsg });
+            return next(cResponse.error(409, 'User already exists'));
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
     });
 });
 
@@ -169,19 +166,22 @@ user.post('/', authorize, (req, res, next) => {
  *       500:
  *         description: Internal Server Error - Something went wrong on the server.
  */
-user.get('/', authorize,  (req, res, next) => {
+user.get('/', authorize, (req, res, next) => {
     const author = (req.user as iTokenData);
     const username = req.query.username as string;
-    
-    if (!author.role.admin) return next({ statusCode: 403, error: true, errormessage: 'Forbidden' });
+
+
+
+    if (!author.role.admin) return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
 
     const query = username ? { username: username } : {};
 
     User.find(query, (error, users) => {
         if (error) {
-            next({ status: 500, error: true, message: 'An error occurred while fetching users' });
+            next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'An error occurred while fetching users'));
+
         } else {
-            next({ status: 200, error: false, payload: users });
+            next(cResponse.genericMessage(eHttpCode.OK, users));
         }
     });
 });
@@ -202,9 +202,6 @@ user.get('/', authorize,  (req, res, next) => {
  *           type: string
  *         required: true
  *         description: The username of the user to delete.
- *     requestBody:
- *       description: User data.
- *       required: true
  *     responses:
  *       200:
  *         description: User deleted successfully.
@@ -218,27 +215,27 @@ user.get('/', authorize,  (req, res, next) => {
  *         description: An error occurred while deleting the user in DB.
  */
 user.delete("/:username", authorize, async (req, res, next) => {
-    
+
     const author = (req.user as iTokenData);
     const username = req.params.username;
 
     if (!author.role.admin) {
-        return next({ status: 403, error: true, message: 'Forbidden' });
+        return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
     }
 
     if (username === undefined || typeof username !== 'string') {
-        return next({ status: 400, error: true, message: 'Bad request' });
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));
     }
-    
+
     try {
         await User.deleteOne({ username: username }).orFail();
-        next({ status: 200, error: false,payload:{} });
-        
+        next(cResponse.genericMessage(eHttpCode.OK));
+
     } catch (err: any) {
-        if(err.name === 'DocumentNotFoundError'){
-            return next({ status: 404, error: true, message: 'User not found' });
-        }else{
-            return next({ status: 500, error: true, message: 'DB error' });
+        if (err.name === 'DocumentNotFoundError') {
+            return next(cResponse.error(eHttpCode.NOT_FOUND, 'User not found'));
+        } else {
+            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
         }
     }
 });
@@ -284,36 +281,41 @@ user.put("/:username", authorize, async (req, res, next) => {
     const author = (req.user as iTokenData);
     const username = req.params.username;
 
-    if (!author.role.admin) return next({ status: 403, error: true, message: 'Forbidden' });
+    if (!author.role.admin) return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
+    
     if (username === undefined || typeof username !== 'string') {
-        return next({ status: 400, error: true, message: 'Bad request' });
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));
     }
     const user_data = req.body as Partial<iNewUser>;
-
-    if(is_new_user(user_data) === false){
-        return next({ status: 400, error: true, message: 'Bad request' });
+    /*
+    if (is_new_user(user_data) === false) {
+        console.log("BBBBBBBBBBBBBBBBBBBBB "+ username);
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));
     }
+    */
     console.log(user_data);
     const exist = await User.findOne({ username: username });
     if (!exist) {
-        return next({ status: 404, error: true, message: 'User not found' });
+        return next(cResponse.error(eHttpCode.NOT_FOUND, 'User not found'));
     }
     const new_user = new User({
         ...user_data,
         username: username,
         _id: exist._id
     });
-    if(user_data.password !== undefined){
+    if (user_data.password !== undefined) {
         new_user.setPassword(user_data.password);
     }
-    try{
+    try {
         await User.findOneAndUpdate({ username: username }, new_user, { new: true }).maxTimeMS(1000).orFail();
-        return next({ status: 200, error: false, payload: {} });
-    }catch(err){
-        return next({ status: 500, error: true, message: 'DB error' });
+        blacklistUser(username, new Date(Date.now()));
+        return next(cResponse.genericMessage(eHttpCode.OK));
+    } catch (err: any) {
+        if (err.name === 'DocumentNotFoundError') {
+            return next(cResponse.error(eHttpCode.NOT_FOUND, 'User not found'));
+        }
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     }
-
-    
 });
 
 

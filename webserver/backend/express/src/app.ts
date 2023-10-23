@@ -6,6 +6,7 @@ import { PORT_BACKEND, URL_DATABASE, PORT_DATABASE, NAME_DATABASE } from './conf
 
 import v1 from './routers/v1/v1.router'
 
+import { Redis } from './services/redis.service';
 
 const server = express()
 server.use(cors());
@@ -29,4 +30,11 @@ server.listen(PORT_BACKEND, () => {
 
     console.log(`✅\tConnection established`);
     console.log(`✨\tServer listening on port ${PORT_BACKEND}`)
+
+    Redis.getInstance().init();
+
+
 });
+
+
+
