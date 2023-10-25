@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { User, iUser } from '../../../models/user.model';
+import { User, iUser, iUserForm, verifyFormData } from '../../../models/user.model';
 import passport from 'passport';
 
 import { authenticate, create_token, iTokenData, authorize, blacklistUser } from '../../../middlewares/auth.middleware';
@@ -11,37 +11,6 @@ import { cResponse, eHttpCode } from '../../../middlewares/response.middleware';
 
 
 const user = Router();
-
-interface iNewUser {
-    username: string;
-    name: string;
-    surname: string;
-    phone: string;
-    password: string;
-    category?: iCategory['_id'][];
-    room?: iRoom['_id'][];
-    role: {
-        admin: boolean;
-        waiter: boolean;
-        production: boolean;
-        cashier: boolean;
-        analytics: boolean;
-    }
-}
-
-function is_new_user(data: unknown): boolean {
-    if (typeof data !== 'object' || data === null) return false;
-    const user = data as iNewUser;
-
-    if (typeof user.username !== 'string') return false;
-    if (typeof user.phone !== 'string') return false;
-    if (isNumeric(user.phone) === false) return false;
-    if (typeof user.name !== 'string') return false;
-    if (typeof user.surname !== 'string') return false;
-    if (typeof user.password !== 'string') return false;
-    console.log(user);
-    return true;
-}
 
 /**
  * @swagger
@@ -111,10 +80,10 @@ user.post('/login', passport.authenticate(authenticate, { session: false }), asy
  *       400:
  *         description: Bad request.
  *       404:
- *         description: Invalid user data.
+ *         description: Data not valid.
  */
 user.post('/', authorize, (req, res, next) => {
-    const user_data = req.body as iNewUser;
+    const user_data = req.body as iUserForm;
     const author = req.user as iTokenData;
 
     if (!author || !author.role || !author.role.admin) {
@@ -122,8 +91,8 @@ user.post('/', authorize, (req, res, next) => {
     }
 
     // Check if user data is valid
-    if (!is_new_user(user_data)) {
-        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid user data'));
+    if (!verifyFormData(user_data, false)) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
     }
 
     // Create the user
@@ -135,7 +104,7 @@ user.post('/', authorize, (req, res, next) => {
         return next(cResponse.success(eHttpCode.OK, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000)
-            return next(cResponse.error(409, 'User already exists'));
+            return next(cResponse.error(409, 'Username or Phone already exists'));
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
     });
 });
@@ -274,6 +243,8 @@ user.delete("/:username", authorize, async (req, res, next) => {
  *         description: Forbidden.
  *       404:
  *         description: User not found.
+ *       409:
+ *         description: Phone already in use by another user.
  *       500:
  *         description: An error occurred while updating the user.
  */
@@ -286,14 +257,12 @@ user.put("/:username", authorize, async (req, res, next) => {
     if (username === undefined || typeof username !== 'string') {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));
     }
-    const user_data = req.body as Partial<iNewUser>;
-    /*
-    if (is_new_user(user_data) === false) {
-        console.log("BBBBBBBBBBBBBBBBBBBBB "+ username);
-        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));
+    const user_data = req.body as Partial<iUserForm>;
+    
+
+    if (verifyFormData(user_data, true) === false) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
     }
-    */
-    console.log(user_data);
     const exist = await User.findOne({ username: username });
     if (!exist) {
         return next(cResponse.error(eHttpCode.NOT_FOUND, 'User not found'));
@@ -310,11 +279,10 @@ user.put("/:username", authorize, async (req, res, next) => {
         await User.findOneAndUpdate({ username: username }, new_user, { new: true }).maxTimeMS(1000).orFail();
         blacklistUser(username, new Date(Date.now()));
         return next(cResponse.genericMessage(eHttpCode.OK));
-    } catch (err: any) {
-        if (err.name === 'DocumentNotFoundError') {
-            return next(cResponse.error(eHttpCode.NOT_FOUND, 'User not found'));
-        }
-        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+    } catch (reason: any) {
+        if (reason.code === 11000)
+            return next(cResponse.error(409, 'Phone already in use by another user '));
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
     }
 });
 
