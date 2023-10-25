@@ -14,25 +14,25 @@ export const authGuard: CanActivateFn = (route, state) => {
       return auth.isLogged() ? true : false;  
     } 
     case 'waiter': { 
-      if (auth.isLogged() && auth.role['waiterGUI'] == true) {
+      if (auth.isLogged() && auth.role['waiter'] == true) {
         return true;
       }
       break;
     }
     case 'cashier': {
-      if (auth.isLogged() && auth.role['cashierGUI'] == true) {
+      if (auth.isLogged() && auth.role['cashier'] == true) {
         return true;
       }
       break;
     }
     case 'production': {
-      if (auth.isLogged() && auth.role['productionGUI'] == true) {
+      if (auth.isLogged() && auth.role['production'] == true) {
         return true;
       }
       break;
     }
     case 'admin': {
-      if (auth.isLogged() && auth.role['adminGUI'] == true) {
+      if (auth.isLogged() && auth.role['admin'] == true) {
         return true;
       }
       break;

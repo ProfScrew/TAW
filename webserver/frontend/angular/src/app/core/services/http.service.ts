@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
 })
 export class HttpService {
 
-  public static readonly API_BACKEND = environment.URL_BACKEND + ':' + environment.PORT + '/' + environment.VERSION;
+  public static readonly API_BACKEND =environment.URL_BACKEND + environment.VERSION;
   public readonly ROUTE_BASE;
 
   constructor(private http: HttpClient, private auth: AuthService, @Inject('ROUTE_BASE') route_base: string) {

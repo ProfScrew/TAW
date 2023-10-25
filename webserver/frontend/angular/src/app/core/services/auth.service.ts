@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http'
 import { tap, catchError } from 'rxjs/operators';
-import { iRole } from '../models/role';
 import { Observable, throwError } from 'rxjs';
 import jwt_decode from "jwt-decode";
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { iRole } from '../models/role';
 
 
 type tRawToken = string;
@@ -15,7 +15,9 @@ interface iTokenData {
   name: string,
   surname: string,
   email: string,
-  role: iRole
+  role: iRole,
+  room: [string],
+  category: [string],
 }
 
 @Injectable({
@@ -55,11 +57,10 @@ export class AuthService {
         'Content-Type': 'application/x-www-form-urlencoded',
       })
     }
-    return this.http.post(environment.URL_BACKEND +":"+ environment.PORT +"/"+ environment.VERSION + '/users/login/', {}, options).pipe(
-      tap((data) => {
-        //console.debug(JSON.stringify(data));
-        const payload = (data as { payload: { token: tRawToken } }).payload;
-        const token = payload.token;
+    console.log(options)
+    return this.http.post(environment.URL_BACKEND + environment.VERSION + '/users/login/', {}, options).pipe(
+      tap((data: any) => {
+        const token = data.payload as tRawToken;
         this.set_token(token, remember);
       })
     );

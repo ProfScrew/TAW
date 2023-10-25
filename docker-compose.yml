@@ -54,21 +54,21 @@ services:
         networks:
             - Internal
             - External
-    # reverseproxy:
-    #     build: reverseproxy/
-    #     image: reverseproxy
-    #     container_name: reverseproxy
-    #     networks:
-    #         - Internal
-    #         - External
-    #     ports:
-    #         - "80:80"
-    #         - "443:443"
-    #     volumes:
-    #     - ./reverseproxy/contents/certificates:/etc/nginx/ssl
-    #     depends_on:
-    #         - frontend
-    #     restart: unless-stopped          
+    reverseproxy:
+        build: reverseproxy/
+        image: reverseproxy
+        container_name: reverseproxy
+        networks:
+            - Internal
+            - External
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+        - ./reverseproxy/contents/certificates:/etc/nginx/ssl
+        depends_on:
+            - frontend
+        restart: unless-stopped          
 
 
 networks:
