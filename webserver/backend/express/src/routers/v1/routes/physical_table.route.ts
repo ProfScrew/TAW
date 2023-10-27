@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { iPhysicalTable, iTable, Table } from "../../../models/virtual_table.model";
+import { iPhysicalTable, PhysicalTable,verifyPhisicalTableData } from "../../../models/physical_table.model";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
-import { PhysicalTable } from "../../../models/virtual_table.model";
+import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import mongoose from "mongoose";
-import { next_middleware } from "../../../middlewares/http.middleware";
 
 const physical_tables = Router();
 
@@ -13,21 +12,6 @@ const physical_tables = Router();
  *   name: Physical Tables
  *   description: Physical Table management
  */
-
-async function asPhysicalTable(data: unknown, next: Function): Promise<iPhysicalTable> {
-    if (typeof data !== 'object') throw new Error("Invalid data type");
-    if (data === null) throw new Error("Data is null");
-
-    const { name , capacity, room} = data as iTable;
-
-    if(!!name && typeof name !== 'string') return next({statusCode: 400, error: true, errormessage: 'Name must be a string'});
-
-    if (typeof capacity !== 'number' || typeof room !== 'string') {
-        return next({ statusCode: 400, error: true, errormessage: 'Capacity is a number and room is a string' });
-    }
-
-    return data as iPhysicalTable;
-}
 
 /**
  * @swagger
@@ -39,6 +23,12 @@ async function asPhysicalTable(data: unknown, next: Function): Promise<iPhysical
  *     description: Retrieve a list of physical tables that are registered in the system.
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: string
+ *         description: The id of the physical table to retrieve.
  *     responses:
  *       200:
  *         description: A list of physical tables.
@@ -50,29 +40,14 @@ async function asPhysicalTable(data: unknown, next: Function): Promise<iPhysical
  *         description: An error occurred while fetching physical tables.
  */
 physical_tables.get("/", authorize, (req, res, next) => {
-    const role = (req.user as iTokenData).role!;
-    
-    if (!role.canReadPhysicalTables) return next({statusCode: 403, error: true, errormessage: 'Forbidden'});
+    const id = req.query.id as string;
 
-    PhysicalTable.find().then(physical_table => {
-        res.json(physical_table);
-    }).catch(err => {
-        res.status(500).json(err);
-    });
-});
+    const query : any = id ? { _id: id } : {};
 
-physical_tables.get("/:id", authorize, (req, res, next) => {
-    const role = (req.user as iTokenData).role!;
-    const id   = req.params.id
-
-    if (!role.canReadPhysicalTables)     return next({statusCode: 403, error: true, errormessage: 'Forbidden'});
-    if (id === null) return next({statusCode: 400, error: true, errormessage: 'Bad request'});
-
-    // @ts-ignore - This is a valid ObjectId
-    PhysicalTable.findOne({ _id: id }).orFail().then(physical_table => {
-        res.json(physical_table);
-    }).catch(err => {
-        res.status(404).json(err);
+    PhysicalTable.find(query).then((data) => {
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
+    }).catch((err) => {
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
 });
 
@@ -103,49 +78,136 @@ physical_tables.get("/:id", authorize, (req, res, next) => {
  *         description: An error occurred while creating the physical table.
  */
 physical_tables.post("/", authorize, async (req, res, next) => {
-    try {
-        const role = (req.user as iTokenData).role!;
-
-        if (!role.canCreatePhysicalTables) return next({statusCode: 403, error: true, errormessage: 'Forbidden'});
-
-        const orderData = await asPhysicalTable(req.body,next);
-
-        (await PhysicalTable.create(orderData)).save().then(physical_table => {
-            console.log(physical_table);
-            next_middleware({status: 200, error: false, payload: physical_table}, next);
-        }).catch(err => {
-            next_middleware({status: 500, error: true, message: err.message}, next);
-        });
-    } catch (error: any) {
-        console.error(error + ''.red)
-        next_middleware({status: 400, error: true, message: error}, next);
+    const requester = (req.user as iTokenData);
+    if (!requester.role.admin) {
+        return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
     }
+
+    const physicalTablesData = req.body as iPhysicalTable;
+
+    if(!verifyPhisicalTableData(physicalTablesData)) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, "Invalid form data"));
+    }
+
+    const physicalTable=new PhysicalTable(physicalTablesData);
+
+    physicalTable.save().then((data) => {
+        // function that creates virtual tables
+        return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
+    }).catch((reason: { code: number, errmsg: string }) => {
+        if (reason.code === 11000) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'PhysicalTable already exists'));
+        }
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
+    }); 
 });
 
-physical_tables.delete("/:id", authorize, async (req, res, next) => {
-    try {
-        const role = (req.user as iTokenData).role!;
-        const id = req.params.id;
+/**
+ * @swagger
+ * /physical_tables/{id}:
+ *   put:
+ *     tags: [Physical Tables]
+ *     summary: Update a physical table by id.
+ *     description: Update a physical table by id.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the physical table to update.
+ *     requestBody:
+ *       description: The physical table data to update.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PhysicalTable'
+ *     responses:
+ *       200:
+ *         description: Physical table updated successfully.
+ *       400:
+ *         description: Bad request.
+ *       401:
+ *         description: Unauthorized.
+ *       403:
+ *         description: Forbidden.
+ *       404:
+ *         description: Category not found.
+ *       500:
+ *         description: An error occurred while updating the physical table.
+ */
+physical_tables.put("/:id", authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    const id = req.params.id as string;
 
-        if (!role.canDeleteOrders) {
-            return res.status(403).json({ error: true, errormessage: 'Forbidden' });
-        }
-
-        if (!mongoose.isValidObjectId(id)) {
-            return res.status(400).json({ error: true, errormessage: 'Bad request' });
-        }
-
-        const deletedPhysicalTable = await PhysicalTable.deleteOne({ _id: id }).orFail();
-
-        if (deletedPhysicalTable.deletedCount === 0) {
-            return res.status(404).json({ error: true, errormessage: 'Order not found' });
-        }
-
-        res.json({ success: true, message: 'Order deleted successfully' });
-        
-    } catch (error) {
-        next(error); 
+    if(!requester.role.admin){
+        return next(cResponse.genericMessage(eHttpCode.UNAUTHORIZED));
     }
+    const physical_table = req.body as iPhysicalTable;
+    if(!verifyPhisicalTableData(physical_table)){
+        return next(cResponse.genericMessage(eHttpCode.BAD_REQUEST, "Category data is not valid"));
+    }
+
+    PhysicalTable.updateOne({_id: mongoose.Types.ObjectId(id)}, physical_table).then((data) => {
+        return next(cResponse.success(eHttpCode.OK, data));
+    }).catch((err) => {
+        return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+    });
+});
+
+/**
+ * @swagger
+ * /physical_tables/{id}:
+ *   delete:
+ *     tags: [Physical Tables]
+ *     summary: Delete a PhysicalTable by id.
+ *     description: Delete a PhysicalTable by id.
+ *     security:
+ *      - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the PhysicalTable to delete.
+ *     responses:
+ *       200:
+ *         description: PhysicalTable deleted successfully.
+ *       401:
+ *         description: Unauthorized.
+ *       403:
+ *         description: Forbidden.
+ *       404:
+ *         description: PhysicalTables not found.
+ *       500:
+ *         description: An error occurred while deleting the PhysicalTable in DB.
+ */
+physical_tables.delete("/:id", authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    const id = req.params.id;
+
+    if (!requester.role.admin) {
+        return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
+    }
+
+    if (id === undefined || typeof id !== 'string') {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));
+    }
+
+
+    PhysicalTable.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
+        return next(cResponse.success(eHttpCode.OK, data));
+    }
+    ).catch((err) => {
+        if(err.name === 'DocumentNotFoundError'){
+            return next(cResponse.error(eHttpCode.NOT_FOUND, 'PhysicalTable not found'));
+        }
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+    });
 });
 
 

@@ -1,12 +1,8 @@
 import { Router } from "express";
-import { iDish, Dish } from "../../../models/dish.model"; 
-import { Order, iCourse } from "../../../models/order.model";
-
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
-import { iUser } from "../../../models/user.model";
-import { http_response, http_next, next_middleware } from "../../../middlewares/http.middleware";
+import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
+import { Dish, iDish, verifyDishData } from "../../../models/dish.model";
 
-import mongoose from "mongoose";
 
 
 const dishes = Router();
@@ -14,60 +10,66 @@ const dishes = Router();
 /**
  * @swagger
  * tags:
- *   name: Dishes
- *   description: Dishes management
+ *  name: Dishes
+ * description: Dishes management
  */
 
-dishes.get("/:id", authorize, (req, res, next) => {
-    const role = (req.user as iTokenData).role!;
-    const id   = req.params.id;
-
-    if (!role.canReadDishes) return next({ status: 403, error: true, message: 'Forbidden' });
-    if (id === null)         return next_middleware({ status: 400, error: true, message: 'Bad request' }, next);
-
-    Dish.findOne({id: id}).orFail().exec((err, dish) => {
-        if (err) return next_middleware({ status: 404, error: true, message: err.message }, next);
-        res.json(dish);
-    });
-
-});
-//get all dishes
-dishes.get("/", authorize, (req, res, next) => {
-    const role = (req.user as iTokenData).role!;
-    
-    if (!role.canReadDishes) return http_next({ status: 403, error: true, message: 'Forbidden' }, next);
-
-    Dish.find().orFail().exec((err,dishes) => {
-        if (err) return next({ status: 404, error: true, message: err.message });
-        res.json(dishes);
-    });
-});
-//create a dish
-dishes.put("/", authorize, (req,res,next) => {
-    // TODO: Assign the right production node
-});
-//delete a dish
-dishes.delete("/:id", authorize, (req,res,next) => {
-    try{
-        const role = (req.user as iTokenData).role!;
-        const id = req.params.id;
-
-        if (!role.canDeleteDishes) {
-            return http_next({ status: 403, error: true, message: 'Forbidden' }, next);
-        }
-
-
-
-    } catch (error) {
-        next(error); 
+dishes.get("/", authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if(!(requester.role.waiter || requester.role.production || requester.role.cashier)){
+        return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
+    const id = req.query.id as string;
+
+    let query : any = id ? {_id: id} : {};
+
+    Dish.find(query).then((data) => {
+        return next(cResponse.success(eHttpCode.OK, data));
+    }
+    ).catch((err) => {
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+    });
 });
 
-dishes.patch("/:id/status", authorize, (req,res,next) => {});
+dishes.post("/", authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if(!(requester.role.waiter || requester.role.production || requester.role.cashier)){
+        return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
+    }
 
-dishes.put("/:id/modification", authorize, (req,res,next) => {});
-dishes.delete("/:id/modification", authorize, (req,res,next) => {});
+    const dishData = req.body as iDish;
+    if(!verifyDishData(dishData)){
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, "Invalid dish data."));
+    }
+    const dish = new Dish(dishData);
+    dish.save().then((data) => {
+        return next(cResponse.success(eHttpCode.OK, data));
+    }).catch((err) => {
+        if(err.code === 11000){
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, "Dish already exists."));
+        }
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+    });
+});
+
+dishes.put("/", authorize,  async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if(!(requester.role.waiter || requester.role.production || requester.role.cashier)){
+        return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
+    }
+
+    return next(cResponse.error(eHttpCode.OK, "Not implemented"));
+
+});
+
+dishes.delete("/", authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if(!(requester.role.waiter || requester.role.production || requester.role.cashier)){
+        return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
+    }
 
 
+    return next(cResponse.error(eHttpCode.OK, "Not implemented"));
+});
 
 export default dishes;

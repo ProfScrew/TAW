@@ -51,5 +51,5 @@ const VirtualTableSchema = new Schema<iVirtualTable>({
     collection: 'VirtualTables'
 });
 
-export const Table = model<iVirtualTable>('VirtualTable', VirtualTableSchema);
+export const VirtualTable = model<iVirtualTable>('VirtualTable', VirtualTableSchema);
 

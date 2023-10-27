@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { iIngredient, Ingredient, IngredientSchema, verifyFormData } from "../../../models/ingredient.model";
+import { iIngredient, Ingredient, IngredientSchema, verifyIngredientData } from "../../../models/ingredient.model";
 import { iUserAction, UserAction } from "../../../models/user_action.object";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import mongoose from "mongoose";
@@ -117,7 +117,7 @@ ingredients.post("/", authorize, async (req, res, next) => {
     }
 
     const ingredientData = req.body as iIngredient;
-    if (!verifyFormData(ingredientData)) {
+    if (!verifyIngredientData(ingredientData)) {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
     }
     const ingredient = new Ingredient(ingredientData);
@@ -187,7 +187,7 @@ ingredients.put('/:id', authorize, async (req, res, next) => {
     return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Ingredient is in use'));
     */
     const ingredient_data = req.body as iIngredient;
-    if (!verifyFormData(ingredient_data)) {
+    if (!verifyIngredientData(ingredient_data)) {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
     }
     const id = req.params.id;

@@ -26,7 +26,7 @@ export const IngredientSchema = new Schema<iIngredient>({
 
 
 //📝review this function, different name or review concept
-export function verifyFormData(ing: iIngredient): boolean {
+export function verifyIngredientData(ing: iIngredient): boolean {
     if (!ing.name || ing.name === '')                                   return false;
     if (!ing.modification_price || ing.modification_price < 0)          return false;
     if (!ing.modification_percentage || ing.modification_percentage < 0 || ing.modification_percentage > 100)   return false;

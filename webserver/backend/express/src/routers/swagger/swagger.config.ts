@@ -6,6 +6,8 @@ import { Ingredient } from './schema/ingredient.schema';
 import { PhysicalTable } from './schema/physical_table.schema';
 import { Table } from './schema/table.schema';
 import { Category } from './schema/category.schema';
+import { Recipe } from './schema/recipe.schema';
+import { RestaurantInformation } from './schema/restaurant_information.schema';
 
 
 const swaggerDefinition = {
@@ -36,6 +38,8 @@ const swaggerDefinition = {
       Table: Table,
       Room: Room,
       Category: Category,
+      Recipe: Recipe,
+      RestaurantInformation: RestaurantInformation,
     },
   },
   security: [
@@ -50,13 +54,11 @@ const swaggerDefinition = {
       description: 'Development server',
     },
   ],
-  docExpansion: 'none',
 };
 
 const swaggerOptions = {
   swaggerDefinition,
   apis: ["**/*.ts"],
-  docExpansion: 'none',
 };
 
 const swaggerSpec = swaggerJsDoc(swaggerOptions);

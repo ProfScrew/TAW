@@ -3,8 +3,6 @@ import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import { Room, iRoom, verifyRoomData } from "../../../models/room.model";
 import mongoose from 'mongoose';
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
-import { verify } from "crypto";
-
 
 const rooms = Router();
 
@@ -40,7 +38,6 @@ const rooms = Router();
  *       500:
  *         description: Internal Server Error - Something went wrong on the server.
  */
-
 rooms.get("/", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
     const id = req.query.id as string;
@@ -49,7 +46,7 @@ rooms.get("/", authorize, async (req, res, next) => {
     Room.find(query).then((data) => {
         return next(cResponse.success(eHttpCode.OK, data));
     }).catch((err) => {
-        return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
 });
 
@@ -87,7 +84,7 @@ rooms.post("/", authorize, async (req, res, next) => {
     }
     const room = req.body as iRoom;
     if(!verifyRoomData(room)){
-        return next(cResponse.genericMessage(eHttpCode.BAD_REQUEST, "Room data is not valid"));
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, "Room data is not valid"));
     }
 
     const newRoom = new Room(room);
@@ -96,10 +93,11 @@ rooms.post("/", authorize, async (req, res, next) => {
     newRoom.save().then((data) => {
         return next(cResponse.success(eHttpCode.CREATED, data));
     }).catch((err) => {
+        console.log(err.message);
         if(err.code === 11000){
-            return next(cResponse.genericMessage(eHttpCode.BAD_REQUEST, "Room already exists"));
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, "Room already exists"));
         }
-        return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
     
 });
@@ -149,12 +147,12 @@ rooms.put("/:id", authorize, async (req, res, next) => {
     }
     const room = req.body as iRoom;
     if(!verifyRoomData(room)){
-        return next(cResponse.genericMessage(eHttpCode.BAD_REQUEST, "Room data is not valid"));
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, "Room data is not valid"));
     }
     Room.findOneAndUpdate({_id: mongoose.Types.ObjectId(id)}, {name:room.name}).then((data) => {
         return next(cResponse.success(eHttpCode.OK, data));
     }).catch((err) => {
-        return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
 
 });
@@ -195,7 +193,7 @@ rooms.delete("/:id", authorize, async (req, res, next) => {
     Room.deleteOne({_id: mongoose.Types.ObjectId(id)}).then((data) => {
         return next(cResponse.success(eHttpCode.OK, data));
     }).catch((err) => {
-        return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
 });
 

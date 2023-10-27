@@ -12,11 +12,7 @@ export const PhysicalTable = {
       room: {
         type: 'string',
         description: 'The room of the physical table',
-      },
-      deleted: {
-        type: 'object',
-        description: 'The deleted of the physical table',
-      },
+      }
     },
     required: ['capacity', 'room'],
 };

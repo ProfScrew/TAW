@@ -1,109 +1,102 @@
 import { Router } from "express";
-import { iCourse , iOrder , Order } from "../../../models/order.model";
-import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
-import { iUser} from "../../../models/user.model";
+import { Order,iOrder, verifyOrderData } from "../../../models/order.model";
+import { authorize, iTokenData,  } from "../../../middlewares/auth.middleware";
+import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import mongoose from "mongoose";
 
 const orders = Router();
+
 
 /**
  * @swagger
  * tags:
  *   name: Orders
- *   description: Order management
+ *   description: Orders management
  */
 
-async function asOrder(data: unknown, next: Function): Promise<iOrder> {
-    if (typeof data !== 'object') throw new Error("Invalid data type");
-    if (data === null) throw new Error("Data is null");
 
-    const { _id, courses, waiter, created_by, created_at } = data as iOrder;
-
-    const order = await Order.find({ _id: _id }).orFail();
-
-    if (!order) return next({statusCode: 400, error: true, errormessage: 'Bad request'});
-
-    if(!!waiter && typeof waiter !== 'string'){
-        return next({ statusCode: 400, error: true, errormessage: 'Bad request' });
+/**
+ * @swagger
+ * /orders:
+ *   get:
+ *     summary: Get orders list, if id is provided, get the specific order
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: string
+ *         description: The id of the order to get.
+ *     responses:
+ *       200:
+ *         description: Orders list
+ *       500:
+ *         description: Internal server error
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Not found
+ */
+orders.get("/", authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if(!(requester.role.waiter || requester.role.production || requester.role.cashier)){
+        return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
 
-    if (!Array.isArray(courses) || typeof created_by !== 'string' || !(created_at instanceof Date)) {
-        return next({ statusCode: 400, error: true, errormessage: 'Bad request' });
-    }
+    const id = req.query.id as string;
 
-    return data as iOrder;
+    const query : any = id ? { _id: id } : {};
 
-}
-
-orders.get("/", authorize, (req, res, next) => {
-    const role = (req.user as iTokenData).role!;
-    
-    if (!role.canReadOrders) return next({statusCode: 403, error: true, errormessage: 'Forbidden'});
-
-    Order.find().then(orders => {
-        res.json(orders);
-    }).catch(err => {
-        res.status(500).json(err);
+    Order.find(query).then((data) => {
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
+    }).catch((err) => {
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
 });
 
-orders.get("/:id", authorize, (req, res, next) => {
-    const role = (req.user as iTokenData).role!;
-    const id   = req.params.id;
+orders.post("/", (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if(!(requester.role.waiter)){
+        return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
+    }
 
-    if (!role.canReadOrders)     return next({statusCode: 403, error: true, errormessage: 'Forbidden'});
-    if (id === null) return next({statusCode: 400, error: true, errormessage: 'Bad request'});
+    const orderData = req.body as iOrder;
+    if (!verifyOrderData(orderData)) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
+    }
+    const order = new Order(orderData);
 
-    Order.findOne({ id: id }).orFail().then(order => {
-        res.json(order);
-    }).catch(err => {
-        res.status(404).json(err);
+    order.save().then((data) => {
+        return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
+    }).catch((reason: { code: number, errmsg: string }) => {
+        if (reason.code === 11000) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Order already exists'));
+        }
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
     });
 });
 
-orders.put("/", authorize, async (req, res, next) => {
-    try {
-        const role = (req.user as iTokenData).role!;
-
-        if (!role.canCreateOrders) return next({statusCode: 403, error: true, errormessage: 'Forbidden'});
-
-        const orderData = await asOrder(req.body,next);
-        
-        Order.create(orderData).then(role => {
-            res.json(role);
-        }).catch(err => {
-            res.status(500).json(err);
-        });
-    } catch (error) {
-        next({statusCode: 500, error: true, errormessage: error});
+orders.put("/", (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if(!(requester.role.waiter || requester.role.production || requester.role.cashier)){
+        return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
+
+    return next(cResponse.error(eHttpCode.OK, "Not implemented yet."));
+
 });
 
-orders.delete("/:id", authorize, async (req, res, next) => {
-    try {
-        const role = (req.user as iTokenData).role!;
-        const id = req.params.id;
-
-        if (!role.canDeleteOrders) {
-            return res.status(403).json({ error: true, errormessage: 'Forbidden' });
-        }
-
-        if (!mongoose.isValidObjectId(id)) {
-            return res.status(400).json({ error: true, errormessage: 'Bad request' });
-        }
-
-        const deletedOrder = await Order.deleteOne({ _id: id }).orFail();
-
-        if (deletedOrder.deletedCount === 0) {
-            return res.status(404).json({ error: true, errormessage: 'Order not found' });
-        }
-
-        res.json({ success: true, message: 'Order deleted successfully' });
-        
-    } catch (error) {
-        next(error); 
+orders.delete("/", (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if(!(requester.role.waiter || requester.role.production || requester.role.cashier)){
+        return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
+    return next(cResponse.error(eHttpCode.OK, "Not implemented yet."));
+
 });
 
-export default orders;  
-
+export default orders;

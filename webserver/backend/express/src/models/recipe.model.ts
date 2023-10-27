@@ -19,16 +19,27 @@ export interface iRecipe {
 }
 
 const RecipeSchema = new Schema<iRecipe>({
-    name:        { type:  String, required: true },
+    name:        { type:  String, required: true, unique: true },
     description: { type:  String, required: false },
     ingredients: [{ type: Schema.Types.ObjectId, ref: 'Ingredient' }],
     base_price:  { type:  Number, required: true },
-    category:    { type:  Schema.Types.ObjectId, required: false, ref: 'Category' },
+    category:    { type:  Schema.Types.ObjectId, required: true, ref: 'Category' },
     deleted:     { type:  UserAction, required: false }
 },{
     versionKey: false,
     collection: 'Recipes'
 });
+
+export function verifyRecipeData(recipe: iRecipe): boolean {
+    console.log(recipe);
+    if (!recipe.name || recipe.name === '') return false;
+    if (!recipe.ingredients || recipe.ingredients.length === 0) return false;
+    if (!recipe.base_price || recipe.base_price < 0) return false;
+    if (!recipe.category) return false;
+
+    return true;
+}
+
 
 export const Recipe = model<iRecipe>('Recipe', RecipeSchema);
 

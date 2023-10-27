@@ -13,6 +13,7 @@ services:
             - mongodb
         networks:
             - Internal
+            - External
         restart: unless-stopped
 
     frontend:
@@ -27,6 +28,7 @@ services:
             - backend
         networks:
             - Internal
+            - External
         restart: unless-stopped
 
     mongodb:

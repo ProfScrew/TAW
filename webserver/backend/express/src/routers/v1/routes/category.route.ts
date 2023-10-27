@@ -51,14 +51,11 @@ categories.get("/", authorize, async (req, res, next) => {
 
     const query : any = id ? { _id: id } : name? { name: name } : {};
 
-    Category.find(query, (error, categories) => {
-        if (error) {
-            next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'An error occurred while fetching categories'));
-        } else {
-            next(cResponse.genericMessage(eHttpCode.OK, "Categories found"));
-        }
+    Category.find(query).then((data) => {
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
+    }).catch((err) => {
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
-    
 });
 
 /**
@@ -208,18 +205,16 @@ categories.delete("/:id", authorize, async (req, res, next) => {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));
     }
 
-    try {
-        await Category.deleteOne({ id: id }).orFail();
-        next(cResponse.genericMessage(eHttpCode.OK));
 
-    } catch (err: any) {
-        if (err.name === 'DocumentNotFoundError') {
-            return next(cResponse.error(eHttpCode.NOT_FOUND, 'Category not found'));
-        } else {
-            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
-        }
+    Category.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
+        return next(cResponse.success(eHttpCode.OK, data));
     }
-
+    ).catch((err) => {
+        if(err.name === 'DocumentNotFoundError'){
+            return next(cResponse.error(eHttpCode.NOT_FOUND, 'Category not found'));
+        }
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+    });
 });
 
 

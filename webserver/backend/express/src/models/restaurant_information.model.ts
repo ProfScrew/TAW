@@ -23,4 +23,15 @@ export const RestaurantInformationSchema = new Schema<iRestaurantInformation>({
     collection: 'RestaurantInformations'
 });
 
+export function verifyResturantInformationData(restaurant_information: iRestaurantInformation): boolean {
+    if(!restaurant_information.name) return false;
+    if(!restaurant_information.address) return false;
+    if(restaurant_information.phone===undefined) return false;
+    if(!restaurant_information.email) return false;
+    if(!restaurant_information.logo) return false;
+    if(!restaurant_information.iva) return false;
+    
+    return true;
+}
+
 export const RestaurantInformation = model<iRestaurantInformation>('RestaurantInformation', RestaurantInformationSchema);
