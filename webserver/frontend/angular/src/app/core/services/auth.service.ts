@@ -8,8 +8,6 @@ import { environment } from 'src/environments/environment';
 import { iRole } from '../models/role';
 
 
-type tRawToken = string;
-
 interface iTokenData {
   exp: number;
   name: string,
@@ -26,7 +24,7 @@ interface iTokenData {
 
 export class AuthService {
 
-  private auth: tRawToken = '';
+  private auth: string = '';
 
   constructor(private http: HttpClient, router: Router) {
     console.debug('UserAccessService instantiated');
@@ -34,7 +32,7 @@ export class AuthService {
     const auth = localStorage.getItem('auth_token');
 
     if (auth && auth.length > 0) {
-      this.auth = auth as tRawToken;
+      this.auth = auth as string;
       console.debug('JWT loaded from local storage.');
     } else {
       console.debug('No JWT found in local storage, redirecting to login page.');
@@ -42,7 +40,7 @@ export class AuthService {
     }
   }
 
-  private set_token(token: tRawToken, remember: boolean): void {
+  private set_token(token: string, remember: boolean): void {
     this.auth = token;
     if (remember) {
       localStorage.setItem('auth_token', token);
@@ -60,7 +58,7 @@ export class AuthService {
     console.log(options)
     return this.http.post(environment.URL_BACKEND + environment.VERSION + '/users/login/', {}, options).pipe(
       tap((data: any) => {
-        const token = data.payload as tRawToken;
+        const token = data.payload as string;
         this.set_token(token, remember);
       })
     );
@@ -79,7 +77,7 @@ export class AuthService {
   }
 
   get has_token(): boolean { return this.auth.length > 0; }
-  get token(): tRawToken { return this.auth; }
+  get token(): string { return this.auth; }
   get name(): string { return jwt_decode<iTokenData>(this.auth).name; }
   get surname(): string { return jwt_decode<iTokenData>(this.auth).surname; }
   get email(): string { return jwt_decode<iTokenData>(this.auth).email; }

@@ -1,11 +1,9 @@
 import { Router } from "express";
-import { iIngredient, Ingredient, isIngredient} from "../../../models/ingredient.model";
+import { iIngredient, Ingredient, IngredientSchema, verifyFormData } from "../../../models/ingredient.model";
 import { iUserAction, UserAction } from "../../../models/user_action.object";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import mongoose from "mongoose";
-import { get } from "http";
-import {http_response} from "../../../middlewares/http.middleware"; //<--- *************implement this later ************ 
-import { next_middleware } from "../../../middlewares/http.middleware";
+import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 
 const ingredients = Router();
 
@@ -15,12 +13,6 @@ const ingredients = Router();
  *   name: Ingredients
  *   description: Ingredient management
  */
-
-function asIngredient(data: unknown): iIngredient{
-    if (typeof data !== 'object') throw new Error("Invalid data type");
-    if (data === null) throw new Error("Data is null");
-    return data as iIngredient;
-}
 
 /**
  * @swagger
@@ -44,42 +36,44 @@ function asIngredient(data: unknown): iIngredient{
  *         schema:
  *           type: string
  *         description: The name of the ingredient to get.
+ *       - in: query
+ *         name: archive
+ *         schema:
+ *           type: string
+ *         description: Search Inside archive or not.
  *     responses:
  *       200:
  *         description: Successful response with the list of ingredients or a single ingredient.
  *       401:
  *         description: Unauthorized - User is not authenticated.
- *       403:
- *         description: Forbidden - User does not have permission.
  *       500:
  *         description: Internal Server Error - Something went wrong on the server.
  */
-ingredients.get("/", authorize, (req, res, next)=>{
-    const role = (req.user as iTokenData).role!;
+
+ingredients.get("/", authorize, (req, res, next) => {
+    const requester = (req.user as iTokenData);
     const id = req.query.id as string;
     const name = req.query.name as string;
+    const archive = req.query.archive as string;
 
-    if (!role.canReadIngredients) return next({ statusCode: 403, error: true, errormessage: 'Forbidden' });
-    
-    let query: any = {};
-    if (id){
-        query = { _id: id };
-    }
-    else if (name){
-        query = { name: name };
-    }
-    else{
-        query = {};
+
+    //if (all can read) return next({ statusCode: 403, error: true, errormessage: 'Forbidden' });
+
+    let query: any = id ? { _id: id } : name ? { name: name } : {};
+
+    if (archive === 'true') {
+        query = { ...query, deleted: { $exists: true } };
+    } else if (archive === 'false') {
+        query = { ...query, deleted: { $exists: false } };
     }
 
     Ingredient.find(query, (error, ingredient) => {
         if (error) {
-            next_middleware({ status: 500, error: true, message: 'An error occurred while fetching ingredients' }, next);
+            next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'An error occurred while fetching ingredients'));
         } else {
-            next_middleware({ status: 200, error: false, payload: ingredient }, next);
+            next(cResponse.genericMessage(eHttpCode.OK, ingredient));
         }
     });
-    
 });
 
 /**
@@ -108,7 +102,7 @@ ingredients.get("/", authorize, (req, res, next)=>{
  *       200:
  *         description: Successful response with the id of the created ingredient.
  *       400:
- *         description: Bad request - The request body was not valid.
+ *         description: Bad request - Data not valid or Ingredient already exists.
  *       401:
  *         description: Unauthorized - User is not authenticated.
  *       403:
@@ -116,16 +110,25 @@ ingredients.get("/", authorize, (req, res, next)=>{
  *       500:
  *         description: Internal Server Error - Something went wrong on the server.
  */
-ingredients.post("/",authorize, async (req, res, next) =>{
-    const role = (req.user as iTokenData).role!;
-    if (!role.canCreateIngredients) {return next_middleware({ status: 403, error: true, message: 'Forbidden' }, next);}
+ingredients.post("/", authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if (!requester.role.admin) {
+        return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
+    }
 
     const ingredientData = req.body as iIngredient;
+    if (!verifyFormData(ingredientData)) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
+    }
     const ingredient = new Ingredient(ingredientData);
+
     ingredient.save().then((data) => {
-        return next_middleware({ status: 200, error: false, payload: { id: data._id } }, next);
-    }).catch((reason: {code: number, errmsg: string}) => {
-        return next_middleware({ status: 500, error: true, message: 'DB error: ' + reason.errmsg }, next);
+        return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
+    }).catch((reason: { code: number, errmsg: string }) => {
+        if (reason.code === 11000) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Ingredient already exists'));
+        }
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
     });
 });
 
@@ -163,38 +166,70 @@ ingredients.post("/",authorize, async (req, res, next) =>{
  *       200:
  *         description: Successful response if the ingredient was updated correctly.
  *       400:
- *         description: Bad request - The request body was not valid.
+ *         description: Bad request - Data not valid or Ingredient is archived or Ingredient is in use.
  *       401:
  *         description: Unauthorized - User is not authenticated.
  *       403:
  *         description: Forbidden - User does not have permission.
+ *       404:
+ *         description: Forbidden - Ingredient not found.
  *       500:
  *         description: Internal Server Error - Something went wrong on the server.
  */
-ingredients.put('/:id',authorize, async (req, res, next)=> {//Todo: modify in order to include changes to the current recipes
-    const role = (req.user as iTokenData).role!;
-    if (!role.canEditIngredients) {return next_middleware({ status: 403, error: true, message: 'Forbidden' }, next);}
-    
-    let ingredientIdObjectId: mongoose.Types.ObjectId;
-    try{ ingredientIdObjectId = mongoose.Types.ObjectId(req.params.id);}
-    catch{return next_middleware({ status: 400, error: true, message: 'Bad request' }, next);}
-
-    const ingredient = req.body as Partial<iIngredient>;
-    const userAction : iUserAction = {
+ingredients.put('/:id', authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if (!requester.role.admin) {
+        return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
+    }
+    /*
+    add check recipe
+    if exist ingredient in recipe(valid, not deleted)
+    return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Ingredient is in use'));
+    */
+    const ingredient_data = req.body as iIngredient;
+    if (!verifyFormData(ingredient_data)) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
+    }
+    const id = req.params.id;
+    const userAction: iUserAction = {
         actor: {
-            username: (req.user as iTokenData).username!,
-            name: (req.user as iTokenData).name!,
-            surname: (req.user as iTokenData).surname!
+            username: requester.username!,
+            name: requester.name!,
+            surname: requester.surname!
         },
-        timestamp: new Date()
+        timestamp: new Date(Date.now())
     };
-    
-    const existingIngredient = await Ingredient.findById(ingredientIdObjectId);
-    await existingIngredient?.updateArchive(ingredient, userAction).catch((error) => {
-        return next_middleware({ status: 500, error: true, message: 'DB error: ' + error }, next);
-        
-    });
-    return next_middleware({ status: 200, error: false, payload: { message: 'Ingredient updated' } }, next);
+    Ingredient.findById(id).then((ingredient: iIngredient | null) => { //finding the ingredient
+        if (!ingredient) {
+            return next(cResponse.error(eHttpCode.NOT_FOUND, 'Ingredient not found'));
+        }
+        if (ingredient.deleted) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Ingredient is archived'));
+        }
+        Ingredient.updateOne({ _id: mongoose.Types.ObjectId(id) }, { deleted: userAction }) //deleting the ingredient (shadow)
+            .then((data) => {
+
+                const newIngredient = new Ingredient({
+                    ...ingredient_data,
+                    _id: new mongoose.Types.ObjectId(),
+                });
+
+                Ingredient.create(newIngredient).then((data) => { //creating the new ingredient with updated data
+                    return next(cResponse.success(eHttpCode.OK, { id: data._id }));
+                }).catch((errCreate: mongoose.Error) => {
+                    return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + errCreate.message));
+                });
+            }).catch((errCreate: mongoose.Error) => {
+                return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + errCreate.message));
+            });
+    })
+        .catch((error) => {
+            if (error.name === 'DocumentNotFoundError') {
+                return next(cResponse.error(eHttpCode.NOT_FOUND, 'Ingredient not found'));
+            }
+            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + error));
+        });
+
 });
 
 /**
@@ -219,7 +254,7 @@ ingredients.put('/:id',authorize, async (req, res, next)=> {//Todo: modify in or
  *       200:
  *         description: Ingredient deleted successfully.
  *       401:
- *         description: Unauthorized.
+ *         description: Ingredient in use or Unauthorized.
  *       403:
  *         description: Forbidden.
  *       404:
@@ -227,29 +262,37 @@ ingredients.put('/:id',authorize, async (req, res, next)=> {//Todo: modify in or
  *       500:
  *         description: An error occurred while deleting the Ingredient in DB.
  */
-ingredients.delete("/:id",authorize, async (req, res, next)=>{
-    const role = (req.user as iTokenData).role!;
-    if (!role.canDeleteIngredients) {return next_middleware({ status: 403, error: true, message: 'Forbidden' }, next);}
+ingredients.delete("/:id", authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if (!requester.role.admin) {
+        return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
+    }
+    const id = req.params.id;
+    /*
+    add check recipe
+    if exist ingredient in recipe(valid, not deleted)
+    return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Ingredient is in use'));
+    */
 
-    const userAction : iUserAction = {
+    const userAction: iUserAction = {
         actor: {
-            username: (req.user as iTokenData).username!,
-            name: (req.user as iTokenData).name!,
-            surname: (req.user as iTokenData).surname!
+            username: requester.username!,
+            name: requester.name!,
+            surname: requester.surname!
         },
-        timestamp: new Date()
+        timestamp: new Date(Date.now())
     };
-    let deletedIngredient: iIngredient | null;
-    try{ deletedIngredient = await Ingredient.findById(req.params.id);}
-    catch{return next_middleware({ status: 400, error: true, message: 'Bad request' }, next);}
 
-    if(!deletedIngredient){return next_middleware({ status: 404, error: true, message: 'Ingredient Not Found.' }, next);}
-
-    deletedIngredient.deleteArchive(userAction).catch((error) => {
-        return next_middleware({ status: 500, error: true, message: 'DB error: ' + error }, next);
-    });
-    return next_middleware({ status: 200, error: false, payload: { message: 'Ingredient deleted' } }, next);
+    Ingredient.updateOne({ _id: mongoose.Types.ObjectId(id) }, { deleted: userAction })
+        .then((data) => {
+            return next(cResponse.success(eHttpCode.OK, { message: 'Ingredient deleted' }));
+        })
+        .catch((error) => {
+            if (error.name === 'DocumentNotFoundError') {
+                return next(cResponse.error(eHttpCode.NOT_FOUND, 'Ingredient not found'));
+            }
+            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + error));
+        });
 });
-
 
 export default ingredients;

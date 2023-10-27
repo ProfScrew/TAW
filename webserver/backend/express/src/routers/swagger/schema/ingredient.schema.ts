@@ -12,14 +12,14 @@ export const Ingredient = {
       },  
       description: 'The alergens of the ingredient',
     },
-    price_per_unit: {
+    modification_price: {
       type: 'number',
       description: 'The price_per_unit of the ingredient',
     },
-    unit: {
-      type: 'string',
-      description: 'The unit of the ingredient',
+    modification_percentage: {
+      type: 'number',
+      description: 'The percentage of cost of the ingredient, in case of modification(more, less',
     }
   },
-  required: []
+  required: ['name', 'modification_price', 'modification_percentage']
 };

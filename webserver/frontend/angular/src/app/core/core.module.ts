@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { CoreRoutingModule } from './core-routing.module';
 
 import { AuthService } from './services/auth.service';
-import { HttpService } from './services/http.service';
 
 import { HttpClientModule } from '@angular/common/http';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -13,6 +12,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {NgIf} from '@angular/common';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
+import { MatBadgeModule} from '@angular/material/badge';
 import { ToastrModule } from 'ngx-toastr';
 
 
@@ -21,6 +21,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { MasterContainerComponent } from './components/master-container/master-container.component';
 import { MessageAlertComponent } from './components/message.alert/message.alert.component';
 import { NotifierComponent } from './components/notifier/notifier.component';
+import { ApiService } from './services/api.service';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import { NotifierComponent } from './components/notifier/notifier.component';
     MatSidenavModule,
     MatListModule,
     NgIf,
+    MatBadgeModule,
 
     // Toastr
     ToastrModule.forRoot(),
@@ -52,7 +54,7 @@ import { NotifierComponent } from './components/notifier/notifier.component';
   ],
   providers: [
     AuthService,
-    HttpService,
+    ApiService,
     
     NotifierComponent,
 

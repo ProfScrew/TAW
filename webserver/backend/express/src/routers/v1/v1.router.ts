@@ -9,13 +9,17 @@ import ingredient from "./routes/ingredient.route";
 import swaggerSpec from "../swagger/swagger.config";
 import * as colors from 'colors'
 import { responseHandler } from "../../middlewares/response.middleware";
+import categories from "./routes/category.route";
+import rooms from "./routes/room.route";
 
 const v1 = Router();
 colors.enable();
 
 v1.use('/users',  user);
 //v1.use('/tables', table);
-//v1.use('/ingredients', ingredient);
+v1.use('/ingredients', ingredient);
+v1.use('/categories', categories);
+v1.use('/rooms', rooms);
 //v1.use('/orders', order);
 //v1.use('/physical_tables', physical_table);
  

@@ -84,9 +84,9 @@ user.post('/login', passport.authenticate(authenticate, { session: false }), asy
  */
 user.post('/', authorize, (req, res, next) => {
     const user_data = req.body as iUserForm;
-    const author = req.user as iTokenData;
+    const requester = req.user as iTokenData;
 
-    if (!author || !author.role || !author.role.admin) {
+    if (!requester || !requester.role || !requester.role.admin) {
         return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
     }
 
@@ -136,12 +136,12 @@ user.post('/', authorize, (req, res, next) => {
  *         description: Internal Server Error - Something went wrong on the server.
  */
 user.get('/', authorize, (req, res, next) => {
-    const author = (req.user as iTokenData);
+    const requester = (req.user as iTokenData);
     const username = req.query.username as string;
 
 
 
-    if (!author.role.admin) return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
+    if (!requester.role.admin) return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
 
     const query = username ? { username: username } : {};
 
@@ -185,10 +185,10 @@ user.get('/', authorize, (req, res, next) => {
  */
 user.delete("/:username", authorize, async (req, res, next) => {
 
-    const author = (req.user as iTokenData);
+    const requester = (req.user as iTokenData);
     const username = req.params.username;
 
-    if (!author.role.admin) {
+    if (!requester.role.admin) {
         return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
     }
 
@@ -249,10 +249,10 @@ user.delete("/:username", authorize, async (req, res, next) => {
  *         description: An error occurred while updating the user.
  */
 user.put("/:username", authorize, async (req, res, next) => {
-    const author = (req.user as iTokenData);
+    const requester = (req.user as iTokenData);
     const username = req.params.username;
 
-    if (!author.role.admin) return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
+    if (!requester.role.admin) return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
     
     if (username === undefined || typeof username !== 'string') {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));

@@ -13,7 +13,6 @@ services:
             - mongodb
         networks:
             - Internal
-            - External
         restart: unless-stopped
 
     frontend:
@@ -28,7 +27,6 @@ services:
             - backend
         networks:
             - Internal
-            - External
         restart: unless-stopped
 
     mongodb:
@@ -53,7 +51,7 @@ services:
         - ./db/redis:/data/
         networks:
             - Internal
-            - External
+            
     reverseproxy:
         build: reverseproxy/
         image: reverseproxy

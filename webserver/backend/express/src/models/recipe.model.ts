@@ -11,7 +11,7 @@ export interface iRecipe {
     description?:   string;
     ingredients:    iIngredient['_id'][];
     base_price:     number;
-    category:       iCategory['_id'];
+    category?:       iCategory['_id'];
     deleted?:       iUserAction;
 
     deleteArchive:     (action: iUserAction) => Promise<void>;
@@ -23,7 +23,7 @@ const RecipeSchema = new Schema<iRecipe>({
     description: { type:  String, required: false },
     ingredients: [{ type: Schema.Types.ObjectId, ref: 'Ingredient' }],
     base_price:  { type:  Number, required: true },
-    category:    { type:  Schema.Types.ObjectId, required: true, ref: 'Category' },
+    category:    { type:  Schema.Types.ObjectId, required: false, ref: 'Category' },
     deleted:     { type:  UserAction, required: false }
 },{
     versionKey: false,
