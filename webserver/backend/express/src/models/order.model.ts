@@ -3,6 +3,12 @@ import { Dish, iDish } from "./dish.model";
 import { iUser } from "./user.model";
 import { UserAction, iUserAction } from './user_action.object';
 
+export interface iLogCourse {   //maybe put this as a object in iCourse (not implemented)
+    created_waiter: iUserAction;
+    served_waiter?: iUserAction;
+    //🔮future feature (not implemented)
+    deleted_waiter?: iUserAction;
+}
 
 export interface iCourse {
     dishes: iDish['_id'][];

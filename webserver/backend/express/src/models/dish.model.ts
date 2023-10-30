@@ -47,12 +47,12 @@ const DishSchema = new Schema<iDish>({
     },
     
     modifications:  {type: [{
-        ingredient: {type: Number, ref: "Ingredient", required: true},
+        ingredient: {type: Schema.Types.ObjectId, ref: "Ingredient", required: true},
         type:       {type: eDishModificationType, enum: eDishModificationType, required: true},
     }], required: false},
 },{
     versionKey: false,
-    collection: "Dish"
+    collection: "Dishes"
 });
 
 export function verifyDishData(dish: iDish): boolean {
@@ -61,9 +61,11 @@ export function verifyDishData(dish: iDish): boolean {
 
     // Optionally, you can add more specific validation for other properties (not included):
     // if (dish.notes && dish.notes.length > MAX_NOTES_LENGTH) return false;
-
-    if (!Object.values(eDishStatus).includes(dish.status)) return false;
-
+    if((dish.status !== undefined)){
+        if (!Object.values(eDishStatus).includes(dish.status)){
+            return false;
+        }
+    }
     if (dish.modifications) {
         for (const modification of dish.modifications) {
             if (!modification.ingredient || !modification.type) {

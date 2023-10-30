@@ -8,6 +8,7 @@ import { Table } from './schema/table.schema';
 import { Category } from './schema/category.schema';
 import { Recipe } from './schema/recipe.schema';
 import { RestaurantInformation } from './schema/restaurant_information.schema';
+import { Dish } from './schema/dish.schema';
 
 
 const swaggerDefinition = {
@@ -40,6 +41,7 @@ const swaggerDefinition = {
       Category: Category,
       Recipe: Recipe,
       RestaurantInformation: RestaurantInformation,
+      Dish: Dish,
     },
   },
   security: [
