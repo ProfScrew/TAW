@@ -16,6 +16,7 @@ export interface iCourse {
     served_waiter?: iUserAction;
     //🔮future feature (not implemented)
     deleted_waiter?: iUserAction;
+    //course_log?: iLogCourse;
 }
 
 export interface iOrder {

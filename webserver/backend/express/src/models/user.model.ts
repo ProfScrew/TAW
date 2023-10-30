@@ -92,7 +92,7 @@ export interface iUserForm {
     }
 }
 
-export function verifyFormData(user: iUserForm | Partial<iUserForm>, update: boolean): boolean {
+export function verifyUserData(user: iUserForm | Partial<iUserForm>, update: boolean): boolean {
     if (typeof user !== 'object' || user === null) return false;
 
     if (!update) {//new user

@@ -18,7 +18,7 @@ export const CategorySchema = new Schema<iCategory>({
     collection: 'Categories'
 });
 
-export function verifyFormData(cat: iCategory): boolean {
+export function verifyCategoryData(cat: iCategory): boolean {
     if(!cat.name || cat.name === '') return false;
     if(!cat.color || cat.color === '') return false;
     //if(cat.order === undefined) return false;

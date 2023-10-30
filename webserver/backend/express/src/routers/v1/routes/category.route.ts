@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Category, iCategory, verifyFormData } from "../../../models/category.model";
+import { Category, iCategory, verifyCategoryData } from "../../../models/category.model";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import mongoose from "mongoose";
@@ -94,7 +94,7 @@ categories.post("/", authorize, async (req, res, next) => {
 
     const categoryData = req.body as iCategory;
 
-    if(!verifyFormData(categoryData)) {
+    if(!verifyCategoryData(categoryData)) {
         return next(cResponse.genericMessage(eHttpCode.BAD_REQUEST, "Invalid form data"));
     }
 
@@ -154,7 +154,7 @@ categories.put("/:id", authorize, async (req, res, next) => {
         return next(cResponse.genericMessage(eHttpCode.UNAUTHORIZED));
     }
     const category = req.body as iCategory;
-    if(!verifyFormData(category)){
+    if(!verifyCategoryData(category)){
         return next(cResponse.genericMessage(eHttpCode.BAD_REQUEST, "Category data is not valid"));
     }
 

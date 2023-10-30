@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { User, iUser, iUserForm, verifyFormData } from '../../../models/user.model';
+import { User, iUser, iUserForm, verifyUserData } from '../../../models/user.model';
 import passport from 'passport';
 
 import { authenticate, create_token, iTokenData, authorize, blacklistUser } from '../../../middlewares/auth.middleware';
@@ -91,7 +91,7 @@ user.post('/', authorize, (req, res, next) => {
     }
 
     // Check if user data is valid
-    if (!verifyFormData(user_data, false)) {
+    if (!verifyUserData(user_data, false)) {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
     }
 
@@ -134,13 +134,13 @@ user.post('/', authorize, (req, res, next) => {
  *         description: Forbidden - User does not have permission.
  *       500:
  *         description: Internal Server Error - Something went wrong on the server.
- */
+*/
 user.get('/', authorize, (req, res, next) => {
     const requester = (req.user as iTokenData);
     const username = req.query.username as string;
-
-
-
+    
+    
+    
     if (!requester.role.admin) return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
 
     const query = username ? { username: username } : {};
@@ -153,6 +153,82 @@ user.get('/', authorize, (req, res, next) => {
             next(cResponse.genericMessage(eHttpCode.OK, users));
         }
     });
+});
+/**
+ * @swagger
+ * /users/{username}:
+ *   put:
+ *     tags: [Users]
+ *     summary: Update a user by username.
+ *     description: Update a user by username.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The username of the user to update.
+ *     requestBody:
+ *       description: User data.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserUpdate'
+ *     responses:
+ *       200:
+ *         description: User updated successfully.
+ *       400:
+ *         description: Bad request.
+ *       401:
+ *         description: Unauthorized.
+ *       403:
+ *         description: Forbidden.
+ *       404:
+ *         description: User not found.
+ *       409:
+ *         description: Phone already in use by another user.
+ *       500:
+ *         description: An error occurred while updating the user.
+ */
+user.put("/:username", authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    const username = req.params.username;
+
+    if (!requester.role.admin) return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
+    
+    if (username === undefined || typeof username !== 'string') {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));
+    }
+    const user_data = req.body as Partial<iUserForm>;
+    
+
+    if (verifyUserData(user_data, true) === false) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
+    }
+    const exist = await User.findOne({ username: username });
+    if (!exist) {
+        return next(cResponse.error(eHttpCode.NOT_FOUND, 'User not found'));
+    }
+    const new_user = new User({
+        ...user_data,
+        username: username,
+        _id: exist._id
+    });
+    if (user_data.password !== undefined) {
+        new_user.setPassword(user_data.password);
+    }
+    try {
+        await User.findOneAndUpdate({ username: username }, new_user, { new: true }).maxTimeMS(1000).orFail();
+        blacklistUser(username, new Date(Date.now()));
+        return next(cResponse.genericMessage(eHttpCode.OK));
+    } catch (reason: any) {
+        if (reason.code === 11000)
+            return next(cResponse.error(409, 'Phone already in use by another user '));
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
+    }
 });
 
 /**
@@ -209,82 +285,6 @@ user.delete("/:username", authorize, async (req, res, next) => {
     }
 });
 
-/**
- * @swagger
- * /users/{username}:
- *   put:
- *     tags: [Users]
- *     summary: Update a user by username.
- *     description: Update a user by username.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: username
- *         schema:
- *           type: string
- *         required: true
- *         description: The username of the user to update.
- *     requestBody:
- *       description: User data.
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UserUpdate'
- *     responses:
- *       200:
- *         description: User updated successfully.
- *       400:
- *         description: Bad request.
- *       401:
- *         description: Unauthorized.
- *       403:
- *         description: Forbidden.
- *       404:
- *         description: User not found.
- *       409:
- *         description: Phone already in use by another user.
- *       500:
- *         description: An error occurred while updating the user.
- */
-user.put("/:username", authorize, async (req, res, next) => {
-    const requester = (req.user as iTokenData);
-    const username = req.params.username;
-
-    if (!requester.role.admin) return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
-    
-    if (username === undefined || typeof username !== 'string') {
-        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));
-    }
-    const user_data = req.body as Partial<iUserForm>;
-    
-
-    if (verifyFormData(user_data, true) === false) {
-        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
-    }
-    const exist = await User.findOne({ username: username });
-    if (!exist) {
-        return next(cResponse.error(eHttpCode.NOT_FOUND, 'User not found'));
-    }
-    const new_user = new User({
-        ...user_data,
-        username: username,
-        _id: exist._id
-    });
-    if (user_data.password !== undefined) {
-        new_user.setPassword(user_data.password);
-    }
-    try {
-        await User.findOneAndUpdate({ username: username }, new_user, { new: true }).maxTimeMS(1000).orFail();
-        blacklistUser(username, new Date(Date.now()));
-        return next(cResponse.genericMessage(eHttpCode.OK));
-    } catch (reason: any) {
-        if (reason.code === 11000)
-            return next(cResponse.error(409, 'Phone already in use by another user '));
-        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
-    }
-});
 
 
 export default user;
