@@ -3,12 +3,13 @@ import { User } from './schema/user.schema';
 import { UserUpdate } from './schema/user_update.schema';
 import { Room } from './schema/room.schema';
 import { Ingredient } from './schema/ingredient.schema';
-import { PhysicalTable } from './schema/physical_table.schema';
 import { Table } from './schema/table.schema';
 import { Category } from './schema/category.schema';
 import { Recipe } from './schema/recipe.schema';
 import { RestaurantInformation } from './schema/restaurant_information.schema';
 import { Dish } from './schema/dish.schema';
+import { DishArray } from './schema/dish.array.schema';
+import { Order } from './schema/order.schema';
 
 
 const swaggerDefinition = {
@@ -35,13 +36,14 @@ const swaggerDefinition = {
       User: User,
       UserUpdate: UserUpdate,
       Ingredient: Ingredient,
-      PhysicalTable: PhysicalTable,
       Table: Table,
       Room: Room,
       Category: Category,
       Recipe: Recipe,
       RestaurantInformation: RestaurantInformation,
       Dish: Dish,
+      DishArray: DishArray,
+      Order: Order,
     },
   },
   security: [

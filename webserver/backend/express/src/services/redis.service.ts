@@ -20,7 +20,7 @@ export class Redis {
         });
     
         Redis.client.on('error', (err) => {
-            console.error("Error initializing Redis:", err);
+            console.error("Error initializing Redis: ", err);
         });
 
         Redis.client.connect();

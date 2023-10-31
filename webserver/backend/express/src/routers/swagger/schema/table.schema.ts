@@ -3,36 +3,22 @@ export const Table = {
     properties: {
       name: {
         type: 'string',
-        description: 'The name of the table',
-      },
-      status: {
-        type: 'string',
-        description: 'The status of the table',
-      },
-      physical_tables: {
-        type: 'number',
-        description: 'The physical tables of the table',
-      },
-      guests: {
-        type: 'number',
-        description: 'The number of guests of the table',
+        description: 'The name of the physical table',
       },
       capacity: {
         type: 'number',
-        description: 'The capacity of the table',
+        description: 'The capacity of the physical table',
       },
       room: {
         type: 'string',
-        description: 'The room of the table',
+        description: 'The room of the physical table',
       },
-      order: {
+      status: {
         type: 'string',
-        description: 'The order of the table',
-      },
-      booking: {
-        type: 'object',
-        description: 'The booking of the table',
-      },
+        description: 'The status of the physical table',
+        enum: ['free', 'busy'],
+      }
     },
-    required: ['name', 'status', 'physical_tables', 'guests', 'capacity', 'room'],
-  };
+
+    required: ['capacity', 'room'],
+};

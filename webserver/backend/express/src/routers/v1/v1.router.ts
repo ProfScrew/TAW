@@ -3,7 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import user from "./routes/user.route";
 
-import physical_table from "./routes/physical_table.route";
+import tables from "./routes/table.route";
 import ingredients from "./routes/ingredient.route";
 import swaggerSpec from "../swagger/swagger.config";
 import * as colors from 'colors'
@@ -13,7 +13,6 @@ import rooms from "./routes/room.route";
 import recipes from "./routes/recipe.route";
 import restaurant_information from "./routes/restaurant_information.route";
 import orders from "./routes/order.route";
-import virtual_tables from "./routes/virtual_table.route";
 import dishes from "./routes/dish.route";
 
 const v1 = Router();
@@ -26,8 +25,7 @@ v1.use('/categories', categories);
 v1.use('/rooms', rooms);
 v1.use('/recipes', recipes);
 v1.use('/orders', orders);
-v1.use('/physical_tables', physical_table);
-v1.use('/virtual_tables', virtual_tables);
+v1.use('/tables', tables);
 v1.use('/restaurant_informations', restaurant_information);
 v1.use('/dishes', dishes);
 
