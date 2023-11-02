@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { Order, eOrderStatus, iOrder, verifyOrderData } from "../../../models/order.model";
-import { authorize, iTokenData,  } from "../../../middlewares/auth.middleware";
+import { Order, eOrderStatus, iCourse, iOrder, verifyOrderData, verifyPartialOrderData } from "../../../models/order.model";
+import { authorize, iTokenData, } from "../../../middlewares/auth.middleware";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, isValidObjectId } from "mongoose";
 import { iUserAction } from "../../../models/user_action.object";
 import { eTableStatus } from "../../../models/table.model";
 
@@ -31,7 +31,7 @@ const orders = Router();
  *         name: id
  *         schema:
  *           type: string
- *         description: The ID of the specific order to retrieve (optional).
+ *         description: The ID of the specific order to retrieve (choiceal).
  *     responses:
  *       200:
  *         description: Successfully retrieved the list of orders or a specific order.
@@ -50,13 +50,13 @@ const orders = Router();
  */
 orders.get("/", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
-    if(!(requester.role.waiter || requester.role.production || requester.role.cashier)){
+    if (!(requester.role.waiter || requester.role.production || requester.role.cashier)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
 
     const id = req.query.id as string;
 
-    const query : any = id ? { _id: id } : {};
+    const query: any = id ? { _id: id } : {};
 
     Order.find(query).then((data) => {
         return next(cResponse.genericMessage(eHttpCode.OK, data));
@@ -94,12 +94,12 @@ orders.get("/", authorize, async (req, res, next) => {
  */
 orders.post("/", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
-    if(!(requester.role.waiter)){
+    if (!(requester.role.waiter)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
 
     var orderData = req.body as iOrder;
-    const requesterAction : iUserAction = {
+    const requesterAction: iUserAction = {
         actor: {
             username: requester.username,
             name: requester.name,
@@ -127,7 +127,7 @@ orders.post("/", authorize, async (req, res, next) => {
 
 /**
  * @swagger
- * /orders/{id}/status/{type}:
+ * /orders/{id}/action/{choice}:
  *   put:
  *     tags: [Orders]
  *     summary: Update the status of an existing order.
@@ -142,55 +142,11 @@ orders.post("/", authorize, async (req, res, next) => {
  *           type: string
  *         description: The ID of the order to update.
  *       - in: path
- *         name: type
+ *         name: choice
  *         required: true
  *         schema:
  *           type: string
- *         enum: [waiting, ordering, serving, delivered]
- *         description: The new status of the order.
- *     responses:
- *       200:
- *         description: Order status updated successfully.
- *       400:
- *         description: Bad request. Invalid order ID or status.
- *       403:
- *         description: Forbidden. You don't have permission to update order status.
- *       500:
- *         description: Internal Server Error. There was a database error.
- */
-orders.put("/:id/status/:type",authorize, (req, res, next) => {
-    const requester = (req.user as iTokenData);
-    if(!(requester.role.waiter)){
-        return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
-    }
-    const id = req.params.id as string;
-    const type = req.params.type as eOrderStatus;
-
-    Order.updateOne({_id: mongoose.Types.ObjectId(id)}, {status: type}).then((data) => {
-        return next(cResponse.genericMessage(eHttpCode.OK));
-    }
-    ).catch((reason: { code: number, errmsg: string }) => {
-        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
-    });
-});
-
-
-/**
- * @swagger
- * /orders/{id}:
- *   put:
- *     tags: [Orders]
- *     summary: Update an existing order by ID.
- *     description: Update an existing order in the system by its ID.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the order to update.
+ *         description: Provide one values in this list. none, waiting, served, delivered,ID course to delete.
  *     requestBody:
  *       description: Order data for the update.
  *       required: true
@@ -208,15 +164,21 @@ orders.put("/:id/status/:type",authorize, (req, res, next) => {
  *       500:
  *         description: Internal Server Error. There was a database error.
  */
-orders.put("/:id",authorize, (req, res, next) => {
+
+orders.put("/:id/action/:choice", authorize, (req, res, next) => {
+
     const requester = (req.user as iTokenData);
-    if(!(requester.role.waiter)){
+    if (!(requester.role.waiter)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
     const id = req.params.id as string;
 
-    var orderData = req.body as iOrder;
-    const requesterAction : iUserAction = {
+    if (isValidObjectId(id) === false) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid order ID'));
+    }
+
+    var orderData = req.body as Partial<iOrder>;
+    const requesterAction: iUserAction = {
         actor: {
             username: requester.username,
             name: requester.name,
@@ -224,27 +186,53 @@ orders.put("/:id",authorize, (req, res, next) => {
         },
         timestamp: new Date(Date.now()),
     }
-    orderData.logs_order = { created_order: orderData.logs_order!.created_order ,taken_order: requesterAction };
-    
-    for( const course in orderData.courses){
-        if(orderData.courses[course].created_waiter === undefined){
-            orderData.courses[course].created_waiter = requesterAction;
-        }
-    }
 
-    if (!verifyOrderData(orderData)) {
-        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
-    }
-
-    const order = new Order(orderData);
-    Order.updateOne({_id: mongoose.Types.ObjectId(id)}, order).then((data) => {
-        return next(cResponse.genericMessage(eHttpCode.OK));
-    }).catch((reason: { code: number, errmsg: string }) => {
-        if (reason.code === 11000) {
-            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Order already exists'));
+    const choice = req.params.choice as string;
+    if (Object.values(eOrderStatus).includes(choice as eOrderStatus)) {
+        Order.updateOne({ _id: mongoose.Types.ObjectId(id) }, { status: choice as eOrderStatus }).then((data) => {
+            return next(cResponse.genericMessage(eHttpCode.OK));
         }
-        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
-    });
+        ).catch((reason: { code: number, errmsg: string }) => {
+            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
+        });
+    } else {
+        if (choice !== "none") {
+            if (isValidObjectId(choice) === false) {
+                return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid order ID'));
+            }
+        }
+
+
+        if (orderData.courses !== undefined) {
+            for (const course in orderData.courses) {//🤔 JS is stupid
+                if (choice !== "none") {
+                    if (choice === orderData.courses[course]._id.toString()) {
+                        orderData.courses[course].logs_course!.deleted_course = requesterAction;
+                    }
+                } else {
+                    if (orderData.courses[course].logs_course?.created_course === undefined) {
+                        orderData.courses[course].logs_course = { created_course: requesterAction };
+                    } else if (orderData.courses[course].logs_course?.served_course === undefined) {
+                        orderData.courses[course].logs_course!.served_course = requesterAction;
+                    }
+                }
+            }
+        }
+
+        if (!verifyPartialOrderData(orderData)) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
+        }
+
+        //const order = new Order(orderData as iOrder);
+        Order.updateOne({ _id: mongoose.Types.ObjectId(id) }, orderData).then((data) => {
+            return next(cResponse.genericMessage(eHttpCode.OK));
+        }).catch((reason: { code: number, errmsg: string }) => {
+            if (reason.code === 11000) {
+                return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Order already exists'));
+            }
+            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
+        });
+    }
 
 });
 
@@ -277,19 +265,23 @@ orders.put("/:id",authorize, (req, res, next) => {
  */
 orders.delete("/:id", authorize, (req, res, next) => {
     const requester = (req.user as iTokenData);
-    if(!(requester.role.waiter)){
+    if (!(requester.role.waiter)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
-    const id = req.query.id as string;
+    const id = req.params.id as string;
 
-    Order.findOne({_id: mongoose.Types.ObjectId(id)}).then((data) => {
-        if(data!.status === eOrderStatus.waiting){
-            Order.deleteOne({_id: mongoose.Types.ObjectId(id)}).then((data) => {
+    if (isValidObjectId(id) === false) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid order ID'));
+    }
+
+    Order.findOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
+        if (data!.status === eOrderStatus.waiting) {
+            Order.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
                 return next(cResponse.genericMessage(eHttpCode.OK));
             }).catch((reason: { code: number, errmsg: string }) => {
                 return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
             });
-        }else{
+        } else {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Order cannot be deleted(already has courses)'));
         }
     });

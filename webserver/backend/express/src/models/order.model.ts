@@ -11,17 +11,22 @@ export enum eOrderStatus {
     serving = 'serving',
     delivered = 'delivered',
 }
+export interface iLogCourse {
+    created_course: iUserAction;
+    served_course?: iUserAction;
+    //🔮future feature (not implemented)
+    deleted_course?: iUserAction;
+}
 export interface iLogOrder {
     created_order: iUserAction;
-    taken_order?: iUserAction;
+    //not used
+    //taken_order?: iUserAction;
 }
 
 export interface iCourse {
+    _id: Schema.Types.ObjectId;
     dishes: iDish['_id'][];
-    created_waiter: iUserAction;
-    served_waiter?: iUserAction;
-    //🔮future feature (not implemented)
-    deleted_waiter?: iUserAction;
+    logs_course?: iLogCourse;
 }
 export interface iOrder {
     _id: Schema.Types.ObjectId;
@@ -45,15 +50,17 @@ const OrderSchema = new Schema<iOrder>({
     tables: { type: [Schema.Types.ObjectId], required: true, ref: 'Table' },
     logs_order: {
         created_order: { type: UserAction, required: true },
-        taken_order: { type: UserAction, required: false },
+        //taken_order: { type: UserAction, required: false },
     },
     courses: {
         type: [{
             dishes: { type: [Schema.Types.ObjectId], ref: 'Dish', unique: true, required: true },
-            created_waiter: { type: UserAction, required: false },
-            served_waiter: { type: UserAction, required: false },
-            //🔮future feature (not implemented)
-            deleted_waiter: { type: UserAction, required: false }
+            logs_course: {
+                created_course: { type: UserAction, required: true },
+                served_course: { type: UserAction, required: false },
+                deleted_course: { type: UserAction, required: false },
+                required: false
+            }
         }], required: false
     }
 }, {
@@ -66,6 +73,22 @@ export function verifyOrderData(order: iOrder): boolean {
     if (!order.capacity || order.capacity < 0) return false;
     if (!order.room) return false;
     if (!order.tables || order.tables.length === 0) return false;
+    if (order.status && !Object.values(eOrderStatus).includes(order.status)) return false;
+
+    if (order.courses && order.courses.length != 0) {
+        for (const course of order.courses) {
+            if (!course.dishes || course.dishes.length === 0) return false;
+        }
+    }
+    return true;
+}
+
+export function verifyPartialOrderData(order: Partial<iOrder>): boolean {
+    if (order.guests && order.guests < 0) return false;
+    if (order.capacity && order.capacity < 0) return false;
+
+    if (order.tables && order.tables.length === 0) return false;
+
     if (order.status && !Object.values(eOrderStatus).includes(order.status)) return false;
 
     if (order.courses && order.courses.length != 0) {
