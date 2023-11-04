@@ -9,6 +9,9 @@ export interface iRestaurantInformation {
     email: string;
     logo?: string; //TODO: reverse proxy static folder 
     iva: string;
+
+    //chages per person(improvised solution simple ... i know 😢 )
+    charge_per_person: number;
 }
 
 export const RestaurantInformationSchema = new Schema<iRestaurantInformation>({
@@ -18,6 +21,7 @@ export const RestaurantInformationSchema = new Schema<iRestaurantInformation>({
     email: {type: String, required: true},
     logo: {type: String, required: false},
     iva: {type: String, required: true},
+    charge_per_person: {type: Number, required: true},
 },{
     versionKey: false,
     collection: 'RestaurantInformations'

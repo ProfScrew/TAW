@@ -39,6 +39,9 @@ export interface iOrder {
 
     logs_order?: iLogOrder;
     courses: iCourse[];
+
+
+    final_price?: number;
 }
 
 
@@ -62,7 +65,8 @@ const OrderSchema = new Schema<iOrder>({
                 required: false
             }
         }], required: false
-    }
+    },
+    final_price: { type: Number, required: false }
 }, {
     versionKey: false,
     collection: 'Orders'
