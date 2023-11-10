@@ -64,10 +64,10 @@ const OrderArchiveSchema = new Schema<iOrderArchive>({
             notes:              {type: String, required: false},
             logs_status:        {
                 start_cooking: {type: UserAction, required: true},
-                finish_cooking: {type: UserAction, required: true},
+                finish_cooking: {type: UserAction, required: true}, 
             },
             modifications:  {type: [{
-                ingredient: {type: Number, ref: "Ingredient", required: true},
+                ingredient: {type: Schema.Types.ObjectId, ref: "Ingredient", required: true},
                 type:       {type: String, enum: eDishModificationType, required: true},
                 price:      {type: Number, required: true},
             }], required: false},

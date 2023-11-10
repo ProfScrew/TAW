@@ -10,6 +10,7 @@ import { RestaurantInformation } from './schema/restaurant_information.schema';
 import { Dish } from './schema/dish.schema';
 import { DishArray } from './schema/dish.array.schema';
 import { Order } from './schema/order.schema';
+import { OrderArchive } from './schema/order_archive.schema';
 
 
 const swaggerDefinition = {
@@ -44,6 +45,7 @@ const swaggerDefinition = {
       Dish: Dish,
       DishArray: DishArray,
       Order: Order,
+      OrderArchive: OrderArchive,
     },
   },
   security: [

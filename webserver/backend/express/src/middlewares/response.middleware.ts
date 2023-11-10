@@ -18,9 +18,11 @@ export enum eHttpCode {
     TOO_MANY_REQUESTS = 429,
     //5xx
     INTERNAL_SERVER_ERROR = 500,
+    NOT_IMPLEMENTED = 501,
     BAD_GATEWAY = 502,
     SERVICE_UNAVAILABLE = 503,
     GATEWAY_TIMEOUT = 504,
+
 }
 
 export class cResponse {

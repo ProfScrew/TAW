@@ -4,7 +4,7 @@ import { authorize, iTokenData, } from "../../../middlewares/auth.middleware";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import mongoose, { Schema, isValidObjectId } from "mongoose";
 import { iUserAction } from "../../../models/user_action.object";
-import { eTableStatus } from "../../../models/table.model";
+import { Table, eTableStatus } from "../../../models/table.model";
 
 const orders = Router();
 
@@ -114,13 +114,22 @@ orders.post("/", authorize, async (req, res, next) => {
     }
     const order = new Order(orderData);
 
+    //change tables status to busy
+
+    const tables = order.tables;
+    for (const table of tables) {
+        Table.findByIdAndUpdate(table, { status: eTableStatus.busy }).catch((err: any) => {
+            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+        });
+    }
+
     order.save().then((data) => {
         return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Order already exists'));
         }
-        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason));
     });
 });
 
