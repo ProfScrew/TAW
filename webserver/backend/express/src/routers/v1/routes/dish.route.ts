@@ -13,7 +13,7 @@ const dishes = Router();
  * @swagger
  * tags:
  *  name: Dishes
- * description: Dishes management
+ *  description: Dishes management
  */
 
 /**

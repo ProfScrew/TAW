@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { RestaurantInformation, iRestaurantInformation,verifyResturantInformationData} from "../../../models/restaurant_information.model";
+import { RestaurantInformation, iRestaurantInformation, verifyResturantInformationData } from "../../../models/restaurant_information.model";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
-import mongoose from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
+import { Redis } from "../../../services/redis.service";
 
 const resturant_informations = Router();
 
@@ -40,13 +41,23 @@ const resturant_informations = Router();
  *       500:
  *         description: An error occurred while fetching physical tables.
  */
-resturant_informations.get("/", authorize, (req, res, next) => {
+resturant_informations.get("/", authorize, async (req, res, next) => {
     const id = req.query.id as string;
 
-    const query : any = id ? { _id: id } : {};
+    const query: any = id ? { _id: id } : {};
+
+    if (id && !isValidObjectId(id)) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid id'));
+    }
+    const cachedData = await Redis.get<iRestaurantInformation[]>("RestaurantInformation:" + JSON.stringify(query), true);
+    if (cachedData !== null) {
+        return next(cResponse.genericMessage(eHttpCode.OK, cachedData));
+    }
 
     RestaurantInformation.find(query).then((data) => {
+        Redis.set<iRestaurantInformation[]>("RestaurantInformation:" + JSON.stringify(query), data);
         return next(cResponse.genericMessage(eHttpCode.OK, data));
+        
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
@@ -89,20 +100,21 @@ resturant_informations.post("/", authorize, async (req, res, next) => {
 
     const restaurant_information = req.body as iRestaurantInformation;
 
-    if(!verifyResturantInformationData(restaurant_information)) {
+    if (!verifyResturantInformationData(restaurant_information)) {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, "Invalid form data"));
     }
 
-    const resturantInformation=new RestaurantInformation(restaurant_information);
+    const resturantInformation = new RestaurantInformation(restaurant_information);
 
     resturantInformation.save().then((data) => {
+        Redis.delete("RestaurantInformation:" + JSON.stringify({}));
         return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'ResturantInformation already exists'));
         }
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
-    }); 
+    });
 });
 
 /**
@@ -145,15 +157,17 @@ resturant_informations.put("/:id", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
     const id = req.params.id as string;
 
-    if(!requester.role.admin){
+    if (!requester.role.admin) {
         return next(cResponse.genericMessage(eHttpCode.UNAUTHORIZED));
     }
     const restaurant_information = req.body as iRestaurantInformation;
-    if(!verifyResturantInformationData(restaurant_information)){
+    if (!verifyResturantInformationData(restaurant_information)) {
         return next(cResponse.genericMessage(eHttpCode.BAD_REQUEST, "RestaurantInformation data is not valid"));
     }
 
-    RestaurantInformation.updateOne({_id: mongoose.Types.ObjectId(id)}, restaurant_information).then((data) => {
+    RestaurantInformation.updateOne({ _id: mongoose.Types.ObjectId(id) }, restaurant_information).then((data) => {
+        Redis.delete("RestaurantInformation:" + JSON.stringify({}));
+        Redis.delete("RestaurantInformation:" + JSON.stringify({ _id: id }));
         return next(cResponse.success(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));

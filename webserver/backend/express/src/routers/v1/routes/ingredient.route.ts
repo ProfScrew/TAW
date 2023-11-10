@@ -2,8 +2,9 @@ import { Router } from "express";
 import { iIngredient, Ingredient, IngredientSchema, verifyIngredientData } from "../../../models/ingredient.model";
 import { iUserAction, UserAction } from "../../../models/user_action.object";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
-import mongoose from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
+import { Redis } from "../../../services/redis.service";
 
 const ingredients = Router();
 
@@ -50,7 +51,7 @@ const ingredients = Router();
  *         description: Internal Server Error - Something went wrong on the server.
  */
 
-ingredients.get("/", authorize, (req, res, next) => {
+ingredients.get("/", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
     const id = req.query.id as string;
     const name = req.query.name as string;
@@ -61,18 +62,27 @@ ingredients.get("/", authorize, (req, res, next) => {
 
     let query: any = id ? { _id: id } : name ? { name: name } : {};
 
+    if (id && !isValidObjectId(id)) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid id'));
+    }
+    if (!name) {
+        const cachedData = await Redis.get<iIngredient[]>("Ingredient:" + JSON.stringify(query), true);
+        if (cachedData !== null) {
+            return next(cResponse.genericMessage(eHttpCode.OK, cachedData));
+        }
+    }
+
     if (archive === 'true') {
         query = { ...query, deleted: { $exists: true } };
     } else if (archive === 'false') {
         query = { ...query, deleted: { $exists: false } };
     }
 
-    Ingredient.find(query, (error, ingredient) => {
-        if (error) {
-            next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'An error occurred while fetching ingredients'));
-        } else {
-            next(cResponse.genericMessage(eHttpCode.OK, ingredient));
-        }
+    Ingredient.find(query).then((data) => {
+        Redis.set<iIngredient[]>("Ingredient:" + JSON.stringify(query), data);
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
+    }).catch((error) => {
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + error));
     });
 });
 
@@ -123,6 +133,7 @@ ingredients.post("/", authorize, async (req, res, next) => {
     const ingredient = new Ingredient(ingredientData);
 
     ingredient.save().then((data) => {
+        Redis.delete("Ingredient: " + JSON.stringify({}));
         return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
@@ -208,13 +219,14 @@ ingredients.put('/:id', authorize, async (req, res, next) => {
         }
         Ingredient.updateOne({ _id: mongoose.Types.ObjectId(id) }, { deleted: userAction }) //deleting the ingredient (shadow)
             .then((data) => {
-
+                Redis.delete("Ingredient: " + JSON.stringify({ _id: id}));
                 const newIngredient = new Ingredient({
                     ...ingredient_data,
                     _id: new mongoose.Types.ObjectId(),
                 });
 
                 Ingredient.create(newIngredient).then((data) => { //creating the new ingredient with updated data
+                    Redis.delete("Ingredient: " + JSON.stringify({}));
                     return next(cResponse.success(eHttpCode.OK, { id: data._id }));
                 }).catch((errCreate: mongoose.Error) => {
                     return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + errCreate.message));
@@ -285,6 +297,8 @@ ingredients.delete("/:id", authorize, async (req, res, next) => {
 
     Ingredient.updateOne({ _id: mongoose.Types.ObjectId(id) }, { deleted: userAction })
         .then((data) => {
+            Redis.delete("Ingredient: " + JSON.stringify({}));
+            Redis.delete("Ingredient: " + JSON.stringify({ _id: id }));
             return next(cResponse.success(eHttpCode.OK, { message: 'Ingredient deleted' }));
         })
         .catch((error) => {

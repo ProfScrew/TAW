@@ -2,7 +2,8 @@ import { Router } from "express";
 import { Category, iCategory, verifyCategoryData } from "../../../models/category.model";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
-import mongoose from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
+import { Redis } from "../../../services/redis.service";
 
 const categories = Router();
 
@@ -49,13 +50,27 @@ categories.get("/", authorize, async (req, res, next) => {
     const id = req.query.id as string;
     const name = req.query.name as string;
 
-    const query : any = id ? { _id: id } : name? { name: name } : {};
+    const query: any = id ? { _id: id } : name ? { name: name } : {};
+
+    if (id && !isValidObjectId(id)) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid id'));
+    }
+    if (!name) {
+        const cachedData = await Redis.get<iCategory[]>("Category:" + JSON.stringify(query), true);
+        if (cachedData !== null) {
+            return next(cResponse.genericMessage(eHttpCode.OK, cachedData));
+        }
+    }
 
     Category.find(query).then((data) => {
+        Redis.set<iCategory[]>("Category:" + JSON.stringify(query), data);
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
+
+
+
 });
 
 /**
@@ -94,20 +109,21 @@ categories.post("/", authorize, async (req, res, next) => {
 
     const categoryData = req.body as iCategory;
 
-    if(!verifyCategoryData(categoryData)) {
+    if (!verifyCategoryData(categoryData)) {
         return next(cResponse.genericMessage(eHttpCode.BAD_REQUEST, "Invalid form data"));
     }
 
-    const category=new Category(categoryData);
+    const category = new Category(categoryData);
 
     category.save().then((data) => {
+        Redis.delete("Category: " + JSON.stringify({}));
         return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Category already exists'));
         }
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
-    }); 
+    });
 });
 
 /**
@@ -151,15 +167,17 @@ categories.put("/:id", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
     const id = req.params.id as string;
     console.log(id)
-    if(!requester.role.admin){
+    if (!requester.role.admin) {
         return next(cResponse.genericMessage(eHttpCode.UNAUTHORIZED));
     }
     const category = req.body as iCategory;
-    if(!verifyCategoryData(category)){
+    if (!verifyCategoryData(category)) {
         return next(cResponse.genericMessage(eHttpCode.BAD_REQUEST, "Category data is not valid"));
     }
 
-    Category.updateOne({_id: mongoose.Types.ObjectId(id)}, category).then((data) => {
+    Category.updateOne({ _id: mongoose.Types.ObjectId(id) }, category).then((data) => {
+        Redis.delete("Category:" + JSON.stringify({}));
+        Redis.delete("Category:" + JSON.stringify({ _id: id }));
         return next(cResponse.success(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
@@ -208,10 +226,12 @@ categories.delete("/:id", authorize, async (req, res, next) => {
 
 
     Category.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
+        Redis.delete("Category:" + JSON.stringify({}));
+        Redis.delete("Category:" + JSON.stringify({ _id: id }));
         return next(cResponse.success(eHttpCode.OK, data));
     }
     ).catch((err) => {
-        if(err.name === 'DocumentNotFoundError'){
+        if (err.name === 'DocumentNotFoundError') {
             return next(cResponse.error(eHttpCode.NOT_FOUND, 'Category not found'));
         }
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));

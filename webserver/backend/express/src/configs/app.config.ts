@@ -9,6 +9,8 @@ export const NAME_DATABASE          = options.parsed?.NAME_DATABASE;
 //redis
 export const URL_REDIS              = options.parsed?.URL_REDIS;
 export const PORT_REDIS             = options.parsed?.PORT_REDIS || 6379;
+const cacheExpirationInSeconds = options.parsed?.CACHE_EXPIRATION;
+export const CACHE_EXPIRATION       = cacheExpirationInSeconds ? parseInt(cacheExpirationInSeconds, 10) : 3600;
 
 export const PORT_BACKEND           = options.parsed?.PORT || 8080;
 export const JWT_SECRET             = options.parsed?.JWT_SECRET;

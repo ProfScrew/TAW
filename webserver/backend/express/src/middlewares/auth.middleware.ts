@@ -25,19 +25,19 @@ export interface iTokenData {
 
 export async function checkBlacklist(username : string, issue_date: Date) {
     return new Promise((resolve, reject) => {
-        Redis.get(username)
+        Redis.get<Date>(username)
             .then((value) => {
                 if (value !== null) {
                     const expiration_date = new Date(value);
                     if (expiration_date > issue_date) {
-                        console.log("🔴\tToken of " + username + " is blacklisted");
+                        console.log("🔴 🧑\tToken of " + username + " is blacklisted");
                         resolve(true);
                     } else {
-                        console.log("🟢\tToken of " + username + " is not blacklisted");
+                        console.log("🟢 🧑\tToken of " + username + " is not blacklisted");
                         resolve(false);
                     }
                 } else {
-                    console.log("🟢\tToken of" + username + " is not blacklisted");
+                    console.log("🟢 🧑\tToken of " + username + " is not blacklisted");
                     resolve(false);
                 }
             })
@@ -93,7 +93,6 @@ export function create_token(payload: iTokenData, time: string = JWT_EXPIRATION)
 }
 
 export function blacklistUser(username: string, issue_date: Date) {
-    Redis.set(username, issue_date.toString());
-    Redis.expire(username, JWT_EXPIRATION_SECONDS);
+    Redis.set<Date>(username, issue_date, JWT_EXPIRATION_SECONDS);
     console.log("🔴\tBlacklisted tokens of user:" + username);
 }

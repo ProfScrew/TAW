@@ -32,7 +32,12 @@ v1.use('/dishes', dishes);
 v1.use('/order_archives', order_archives);
 
 //Swagger Docs 📚
-v1.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+v1.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    swaggerOptions: {
+      displayRequestDuration: true,
+      docExpansion: 'none',
+    },
+}));
 
 // Swagger Docs in JSON format 📜
 v1.get("/docs.json", (req: Request, res: Response) => {

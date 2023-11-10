@@ -2,14 +2,15 @@ import {Router} from 'express';
 import { authorize, iTokenData } from '../../../middlewares/auth.middleware';
 import { Recipe, iRecipe, verifyRecipeData } from '../../../models/recipe.model';
 import { cResponse, eHttpCode } from '../../../middlewares/response.middleware';
-import mongoose from 'mongoose';
+import mongoose, { isValidObjectId } from 'mongoose';
+import { Redis } from '../../../services/redis.service';
 
 const recipes = Router();
 /**
  * @swagger
  * tags:
  *  name: Recipes
- * description: Recipe management
+ *  description: Recipe management
  */
 
 /**
@@ -33,6 +34,11 @@ const recipes = Router();
  *         schema:
  *           type: string
  *         description: The name of the recipe to get. If not provided, it returns a list of all recipes.
+ *       - in: query
+ *         name: deleted
+ *         schema:
+ *           type: boolean
+ *         description: If true, it returns all deleted recipes. If false, it returns all non-deleted recipes. If not provided, it returns all recipes.
  *     responses:
  *       200:
  *         description: Successful response with the list of recipes or a single recipe.
@@ -41,13 +47,28 @@ const recipes = Router();
  *       500:
  *         description: Internal Server Error - Something went wrong on the server.
  */
-recipes.get('/', authorize, async (req, res, next) => {
+recipes.get('/', authorize, async (req, res, next) => {     //todo shadow delete recipe
     const requester = (req.user as iTokenData);
     const id = req.query.id as string;
     const name = req.query.name as string;
+    const deleted = (req.query.deleted as string) == "true" ? true : false;
 
-    const query : any = id ? {_id: id} : name? {name: name} : {};
-
+    const query: any = id ? { _id: id } : name ? { name: name } : {};
+    if(!deleted){
+        query.deleted = undefined;
+    }
+    /*
+    if (id && !isValidObjectId(id)) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid id'));
+    }
+    if (!name) {
+        const cachedData = await Redis.get<iRecipe[]>("Category:" + JSON.stringify(query), true);
+        if (cachedData !== null) {
+            return next(cResponse.genericMessage(eHttpCode.OK, cachedData));
+        }
+    }
+    */
+   
     Recipe.find(query).then((data) => {
         return next(cResponse.success(eHttpCode.OK, data));
     }).catch((err) => {
@@ -93,7 +114,7 @@ recipes.post('/', authorize, async (req, res, next) => {
 
     const newRecipe = new Recipe(recipe);
     newRecipe._id = new mongoose.Types.ObjectId();
-
+    console.log("Hello");
     newRecipe.save().then((data) => {
         return next(cResponse.success(eHttpCode.OK, data));
     }).catch((err) => {
