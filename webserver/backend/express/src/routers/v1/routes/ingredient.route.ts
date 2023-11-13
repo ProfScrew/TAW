@@ -61,6 +61,12 @@ ingredients.get("/", authorize, async (req, res, next) => {
     //if (all can read) return next({ statusCode: 403, error: true, errormessage: 'Forbidden' });
 
     let query: any = id ? { _id: id } : name ? { name: name } : {};
+    
+        if (archive === 'true') {
+            query = { ...query, deleted: { $exists: true } };
+        } else if (archive === 'false') {
+            query = { ...query, deleted: { $exists: false } };
+        }
 
     if (id && !isValidObjectId(id)) {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid id'));
@@ -71,12 +77,7 @@ ingredients.get("/", authorize, async (req, res, next) => {
             return next(cResponse.genericMessage(eHttpCode.OK, cachedData));
         }
     }
-
-    if (archive === 'true') {
-        query = { ...query, deleted: { $exists: true } };
-    } else if (archive === 'false') {
-        query = { ...query, deleted: { $exists: false } };
-    }
+    // else = all elements
 
     Ingredient.find(query).then((data) => {
         Redis.set<iIngredient[]>("Ingredient:" + JSON.stringify(query), data);
@@ -133,7 +134,8 @@ ingredients.post("/", authorize, async (req, res, next) => {
     const ingredient = new Ingredient(ingredientData);
 
     ingredient.save().then((data) => {
-        Redis.delete("Ingredient: " + JSON.stringify({}));
+        Redis.delete("Ingredient:" + JSON.stringify({}));
+        Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false }  }));
         return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
@@ -202,7 +204,7 @@ ingredients.put('/:id', authorize, async (req, res, next) => {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
     }
     const id = req.params.id;
-    const userAction: iUserAction = {
+    const requesterAction: iUserAction = {
         actor: {
             username: requester.username!,
             name: requester.name!,
@@ -217,16 +219,20 @@ ingredients.put('/:id', authorize, async (req, res, next) => {
         if (ingredient.deleted) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Ingredient is archived'));
         }
-        Ingredient.updateOne({ _id: mongoose.Types.ObjectId(id) }, { deleted: userAction }) //deleting the ingredient (shadow)
+        Ingredient.updateOne({ _id: mongoose.Types.ObjectId(id) }, { deleted: requesterAction }) //deleting the ingredient (shadow)
             .then((data) => {
                 Redis.delete("Ingredient: " + JSON.stringify({ _id: id}));
+                Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: true }  }));
+                Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: false }  }));
                 const newIngredient = new Ingredient({
                     ...ingredient_data,
                     _id: new mongoose.Types.ObjectId(),
                 });
 
                 Ingredient.create(newIngredient).then((data) => { //creating the new ingredient with updated data
-                    Redis.delete("Ingredient: " + JSON.stringify({}));
+                    Redis.delete("Ingredient:" + JSON.stringify({}));
+                    Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: true }  }));
+                    Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false }  }));
                     return next(cResponse.success(eHttpCode.OK, { id: data._id }));
                 }).catch((errCreate: mongoose.Error) => {
                     return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + errCreate.message));
@@ -286,7 +292,7 @@ ingredients.delete("/:id", authorize, async (req, res, next) => {
     return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Ingredient is in use'));
     */
 
-    const userAction: iUserAction = {
+    const requesterAction: iUserAction = {
         actor: {
             username: requester.username!,
             name: requester.name!,
@@ -295,10 +301,14 @@ ingredients.delete("/:id", authorize, async (req, res, next) => {
         timestamp: new Date(Date.now())
     };
 
-    Ingredient.updateOne({ _id: mongoose.Types.ObjectId(id) }, { deleted: userAction })
+    Ingredient.updateOne({ _id: mongoose.Types.ObjectId(id) }, { deleted: requesterAction })
         .then((data) => {
-            Redis.delete("Ingredient: " + JSON.stringify({}));
-            Redis.delete("Ingredient: " + JSON.stringify({ _id: id }));
+            Redis.delete("Ingredient:" + JSON.stringify({}));
+            Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: true }  }));
+            Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false }  }));
+            Redis.delete("Ingredient:" + JSON.stringify({ _id: id }));
+            Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: true }  }));
+            Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: false }  }));
             return next(cResponse.success(eHttpCode.OK, { message: 'Ingredient deleted' }));
         })
         .catch((error) => {

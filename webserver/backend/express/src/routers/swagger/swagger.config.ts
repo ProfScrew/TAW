@@ -57,7 +57,7 @@ const swaggerDefinition = {
   servers: [
     {
       url: '/api/v1/',
-      description: 'Development server',
+      description: 'Server',
     },
   ],
 };

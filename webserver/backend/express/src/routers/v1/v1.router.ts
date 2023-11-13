@@ -36,6 +36,7 @@ v1.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     swaggerOptions: {
       displayRequestDuration: true,
       docExpansion: 'none',
+      persistAuthorization: true,
     },
 }));
 

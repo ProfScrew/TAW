@@ -4,6 +4,8 @@ import { Recipe, iRecipe, verifyRecipeData } from '../../../models/recipe.model'
 import { cResponse, eHttpCode } from '../../../middlewares/response.middleware';
 import mongoose, { isValidObjectId } from 'mongoose';
 import { Redis } from '../../../services/redis.service';
+import { iUserAction } from '../../../models/user_action.object';
+import { Ingredient } from '../../../models/ingredient.model';
 
 const recipes = Router();
 /**
@@ -35,7 +37,7 @@ const recipes = Router();
  *           type: string
  *         description: The name of the recipe to get. If not provided, it returns a list of all recipes.
  *       - in: query
- *         name: deleted
+ *         name: archive
  *         schema:
  *           type: boolean
  *         description: If true, it returns all deleted recipes. If false, it returns all non-deleted recipes. If not provided, it returns all recipes.
@@ -51,25 +53,30 @@ recipes.get('/', authorize, async (req, res, next) => {     //todo shadow delete
     const requester = (req.user as iTokenData);
     const id = req.query.id as string;
     const name = req.query.name as string;
-    const deleted = (req.query.deleted as string) == "true" ? true : false;
+    const archive = req.query.archive as string;
+    
 
-    const query: any = id ? { _id: id } : name ? { name: name } : {};
-    if(!deleted){
-        query.deleted = undefined;
+    let query: any = id ? { _id: id } : name ? { name: name } : {};
+    if (archive === 'true') {
+        query = { ...query, deleted: { $exists: true } };
+    } else if (archive === 'false') {
+        query = { ...query, deleted: { $exists: false } };
     }
-    /*
+    //else  = all elements 
+
+    
     if (id && !isValidObjectId(id)) {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid id'));
     }
     if (!name) {
-        const cachedData = await Redis.get<iRecipe[]>("Category:" + JSON.stringify(query), true);
+        const cachedData = await Redis.get<iRecipe[]>("Recipe:" + JSON.stringify(query), true);
         if (cachedData !== null) {
             return next(cResponse.genericMessage(eHttpCode.OK, cachedData));
         }
     }
-    */
    
     Recipe.find(query).then((data) => {
+        Redis.set<iRecipe[]>("Recipe:" + JSON.stringify(query), data);
         return next(cResponse.success(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
@@ -114,8 +121,10 @@ recipes.post('/', authorize, async (req, res, next) => {
 
     const newRecipe = new Recipe(recipe);
     newRecipe._id = new mongoose.Types.ObjectId();
-    console.log("Hello");
+    
     newRecipe.save().then((data) => {
+        Redis.delete("Recipe:" + JSON.stringify({}));
+        Redis.delete("Recipe:" + JSON.stringify({ deleted : { $exists: false } }));
         return next(cResponse.success(eHttpCode.OK, data));
     }).catch((err) => {
         if(err.code === 11000){
@@ -166,18 +175,51 @@ recipes.put('/:id', authorize, async (req, res, next) => {
     if(!requester.role.admin){
         return next(cResponse.genericMessage(eHttpCode.UNAUTHORIZED));
     }
-    const recipe = req.body as iRecipe;
-    if(!verifyRecipeData(recipe)){
+    const recipe_data = req.body as iRecipe;
+
+    if(!verifyRecipeData(recipe_data)){
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Recipe data is not valid'));
     }
-    Recipe.findOneAndUpdate({_id: mongoose.Types.ObjectId(id)}, recipe, {upsert: true}).then((data) => {
-        return next(cResponse.success(eHttpCode.OK, data));
-    }).catch((err) => {
-        if(err.code === 11000){
-            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Recipe already exists'));
+
+    const requesterAction: iUserAction = {
+        actor: {
+            username: requester.username!,
+            name: requester.name!,
+            surname: requester.surname!
+        },
+        timestamp: new Date(Date.now())
+    };
+
+    Recipe.findById(id).then((recipe: iRecipe | null) => {
+        if (!recipe) {
+            return next(cResponse.error(eHttpCode.NOT_FOUND, 'Recipe not found'));
         }
-        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+        if (recipe.deleted) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Recipe is deleted'));
+        }
+        Recipe.updateOne({ _id: mongoose.Types.ObjectId(id) }, {deleted : requesterAction}).then((data) => {
+            Redis.delete("Recipe:" + JSON.stringify({_id : id}));
+            Redis.delete("Recipe:" + JSON.stringify({_id : id, deleted : { $exists: false }}));
+            Redis.delete("Recipe:" + JSON.stringify({_id : id, deleted : { $exists: true }}));
+            const newRecipe = new Recipe({
+                ...recipe_data,
+                _id: new mongoose.Types.ObjectId(),
+            });
+            Recipe.create(newRecipe).then((data) => {
+                Redis.delete("Recipe:" + JSON.stringify({}));
+                Redis.delete("Recipe:" + JSON.stringify({ deleted:  { $exists: true } }));
+                Redis.delete("Recipe:" + JSON.stringify({ deleted:  { $exists: false } }));
+                return next(cResponse.success(eHttpCode.OK, data));
+            }).catch((err) => {
+                return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, '3 DB error: ' + err));
+            });
+        }).catch((err) => {
+            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, '2 DB error: ' + err.errmsg));
+        });
+    }).catch((err) => {
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, '1 DB error: ' + err.errmsg));
     });
+
 });
 
 /**
@@ -212,9 +254,27 @@ recipes.delete('/', authorize, async (req, res, next) => {
     }
     const id = req.query.id as string;
 
-    Recipe.deleteOne({_id: mongoose.Types.ObjectId(id)}).then((data) => {
+    const requesterAction: iUserAction = {
+        actor: {
+            username: requester.username!,
+            name: requester.name!,
+            surname: requester.surname!
+        },
+        timestamp: new Date(Date.now())
+    };
+
+    Recipe.updateOne({ _id: mongoose.Types.ObjectId(id) }, {deleted : requesterAction}).then((data) => {
+        Redis.delete("Recipe:" + JSON.stringify({}));
+        Redis.delete("Recipe:" + JSON.stringify({_id : id}));
+        Redis.delete("Recipe:" + JSON.stringify({_id : id, deleted : { $exists: false }}));
+        Redis.delete("Recipe:" + JSON.stringify({_id : id, deleted : { $exists: true }}));
+        Redis.delete("Recipe:" + JSON.stringify({ deleted:  { $exists: true } }));
+        Redis.delete("Recipe:" + JSON.stringify({ deleted:  { $exists: false } }));
         return next(cResponse.success(eHttpCode.OK, data));
     }).catch((err) => {
+        if(err.name === 'DocumentNotFoundError'){
+            return next(cResponse.error(eHttpCode.NOT_FOUND, 'Recipe not found'));
+        }
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
 });
