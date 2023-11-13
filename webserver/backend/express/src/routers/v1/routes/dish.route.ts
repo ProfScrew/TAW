@@ -248,7 +248,7 @@ dishes.put("/:id/action/:type", authorize, async (req, res, next) => {
 
 dishes.put("/:id", authorize, async (req, res, next) => { //not used by the frontend(implemented for future use maybe)
     const requester = (req.user as iTokenData);
-    if (!(requester.role.waiter || requester.role.production)) {
+    if (!(requester.role.waiter)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
     const id = req.params.id as string;
@@ -295,7 +295,7 @@ dishes.put("/:id", authorize, async (req, res, next) => { //not used by the fron
  *       500:
  *         description: Internal Server Error. There was a database error.
  */
-dishes.delete("/:id", authorize, async (req, res, next) => {
+dishes.delete("/:id", authorize, async (req, res, next) => {  //not used by frontend(implemented for future use maybe)
     const requester = (req.user as iTokenData);
     if (!(requester.role.cashier)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));

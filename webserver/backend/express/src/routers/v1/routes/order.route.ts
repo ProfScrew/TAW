@@ -274,7 +274,7 @@ orders.put("/:id/action/:choice", authorize, (req, res, next) => {
  */
 orders.delete("/:id", authorize, (req, res, next) => {
     const requester = (req.user as iTokenData);
-    if (!(requester.role.waiter)) {
+    if (!(requester.role.cashier)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
     const id = req.params.id as string;

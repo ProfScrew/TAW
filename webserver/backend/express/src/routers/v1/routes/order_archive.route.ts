@@ -107,7 +107,7 @@ order_archives.get("/", authorize, async (req, res, next) => {
 order_archives.post("/:id", authorize, async (req, res, next) => {
 
     const requester = req.user as iTokenData;
-    if (!(requester.role.analytics || requester.role.cashier)) {
+    if (!(requester.role.cashier)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You are not allowed to access this resource"));
     }
 
