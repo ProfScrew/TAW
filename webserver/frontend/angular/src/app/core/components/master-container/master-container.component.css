@@ -19,6 +19,7 @@
 
 .sidenav {
   padding: 20px;
+  background-color: #673ab7;
 }
 
 .centered-container {
@@ -35,7 +36,26 @@
 
 }
 
+.button{
+  background-color: #673ab7;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  /*cursor: pointer;*/
+  transition: all 0.3s;
+  
+  box-shadow: none;
 
+}
+
+.text{
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+}
 
 .inside {}
 

@@ -19,7 +19,6 @@ import { ToastrModule } from 'ngx-toastr';
 
 
 import { MasterContainerComponent } from './components/master-container/master-container.component';
-import { MessageAlertComponent } from './components/message.alert/message.alert.component';
 import { NotifierComponent } from './components/notifier/notifier.component';
 import { ApiService } from './services/api.service';
 
@@ -27,7 +26,6 @@ import { ApiService } from './services/api.service';
 @NgModule({
   declarations: [
     MasterContainerComponent,
-    MessageAlertComponent,
     NotifierComponent
   ],
   imports: [

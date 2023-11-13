@@ -4,7 +4,8 @@
     </button>
     <span>CookHub</span>
     <span class="spacer"></span>
-    <button mat-icon-button class="icon favorite-icon" aria-label="Delete?"><mat-icon matBadge="15" matBadgeColor="warn">comment</mat-icon>
+    <button mat-icon-button class="icon favorite-icon" aria-label="Delete?"><mat-icon matBadge="15"
+            matBadgeColor="warn">comment</mat-icon>
     </button>
     <button mat-icon-button class="icon" aria-label="Exit App" (click)="exitApp()">
         <mat-icon>exit_to_app</mat-icon>
@@ -14,18 +15,32 @@
 <mat-drawer-container class="container" autosize>
     <mat-drawer #drawer class="sidenav" mode="side">
 
-        <p>Auto-resizing sidenav</p>
-        <br>
-        <p *ngIf="showFiller">Lorem, ipsum dolor sit amet consectetur.</p>
-        <button (click)="showFiller = !showFiller" mat-raised-button>
-            Toggle extra text
-        </button>
+        <!-- Options that can be hidden
+            
+            <p *ngIf="showFiller">Lorem, ipsum dolor sit amet consectetur.</p>
+            <button (click)="showFiller = !showFiller" mat-raised-button>
+                Toggle extra text
+            </button>
+        -->
+        <mat-list>
+            <button mat-list-item class="button">
+                <div class="text">Admin</div>
+            </button>
+            <button mat-list-item class="button">
+                <div class="text">Production</div>
+            </button>
+            <button mat-list-item class="button">
+                <div class="text">Waiter</div>
+            </button>
+            <button mat-list-item class="button">
+                <div class="text">Cashier</div>
+            </button>
+            <button mat-list-item class="button">
+                <div class="text">Analytics</div>
+            </button>
+            <!--https://stackblitz.com/edit/selection-list-activelinks-example?file=app%2Fselection-list%2Fselection-list.component.ts-->
+        </mat-list>
 
-
-        <p>Tables</p>
-        <p>Production</p>
-        <p>Administration</p>
-        <p>Orders</p>
     </mat-drawer>
 
     <router-outlet>
