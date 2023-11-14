@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import jwt_decode from "jwt-decode";
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
-import { iRole } from '../models/role';
+import { iRole } from '../models/user.model';
 
 
 interface iTokenData {

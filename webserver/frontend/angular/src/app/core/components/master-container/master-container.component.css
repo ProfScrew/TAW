@@ -8,8 +8,10 @@
   width: 100%;
   height: 100%;
   border: 1px solid rgba(0, 0, 0, 0.5);
-}
+  overflow: hidden;
+  height:  100vh;
 
+}
 .sidenav-content {
   display: flex;
   height: 100%;
@@ -27,13 +29,28 @@
   /* Set the width of the container */
   text-align: center;
   /* Center the text horizontally */
-  background-color: #673ab7;
+  background-color: white;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 99vh;
   margin: 0;
 
+}
+
+.logo {
+  font-size: 3em;
+  color: #673ab7;
+  display: flex;
+}
+
+.letter {
+  font-family: impact;
+  margin: 10px;
+}
+
+.spacer {
+  flex: 1 1 auto;
 }
 
 .button{
@@ -47,25 +64,59 @@
   transition: all 0.3s;
   
   box-shadow: none;
+  overflow: hidden;
 
 }
 
-.text{
+
+.main-item-button{
+  background-color: #673ab7;
+  color: white;
+  border: none;
+  border-radius: 2px;
+  padding: 1px 1px;
+  font-size: 16px;
+  /*cursor: pointer;*/
+  transition: all 0.3s;
+  box-shadow: none;
+  overflow: hidden;
+
+}
+.sub-item-button{
+  background-color: #673ab7;
+  color: white;
+  border: none;
+  border-radius: 2px;
+  padding: 1px 1px;
+  font-size: 5px;
+  /*cursor: pointer;*/
+  transition: all 0.3s;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+
+.main-item {
   color: white;
   font-size: 16px;
   font-weight: 500;
   text-decoration: none;
+  text-align: left;
+  overflow: hidden;
 }
 
-.inside {}
-
-.logo {
-  font-size: 3em;
+.sub-item {
   color: white;
-  display: flex;
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 400;
+  text-align:left;
+  padding-left: 10px;
+  overflow: hidden;
 }
 
-.letter {
-  font-family: impact;
-  margin: 10px;
+.mat-drawer-inner-container {
+  overflow: hidden;
 }
+

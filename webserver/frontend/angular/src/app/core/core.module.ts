@@ -21,12 +21,14 @@ import { ToastrModule } from 'ngx-toastr';
 import { MasterContainerComponent } from './components/master-container/master-container.component';
 import { NotifierComponent } from './components/notifier/notifier.component';
 import { ApiService } from './services/api.service';
+import { LogoComponent } from './components/logo/logo.component';
 
 
 @NgModule({
   declarations: [
     MasterContainerComponent,
-    NotifierComponent
+    NotifierComponent,
+    LogoComponent
   ],
   imports: [
     CommonModule,
@@ -44,7 +46,12 @@ import { ApiService } from './services/api.service';
     MatBadgeModule,
 
     // Toastr
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot(
+      { 
+        timeOut: 5000,
+        progressBar: true,
+      }
+    ),
 
 
     

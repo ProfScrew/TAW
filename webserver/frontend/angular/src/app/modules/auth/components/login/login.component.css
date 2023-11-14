@@ -6,18 +6,15 @@
     /* Vertical centering */
     height: 100vh;
     /* 100% viewport height to center vertically */
+    color: black;
+    background-color: #673ab7;
 }
 
 .mat-card-cool {
     max-width: 400px;
-    background-color: lightslategrey;
+    background-color: white;
+    
 
-
-}
-
-.example-header-image {
-    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-    background-size: cover;
 }
 
 .section-center {

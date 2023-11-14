@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
@@ -12,48 +12,26 @@ import { ApiService } from '../../services/api.service';
 
 })
 export class MasterContainerComponent {
-  showFiller = false;
-  constructor(private router: Router, private auth : AuthService, private api : ApiService ) { }
+  items = [
+    { name: 'Admin', subItems: ['Users', 'Recipes', "Info Restaurant"] },
+    { name: 'Production', subItems: [] },
+    { name: 'Waiter', subItems: [] },
+    { name: 'Cashier', subItems: [] },
+    { name: 'Analytics', subItems: [] },
+  ];
 
-  openDialog() {
-    /*
-    export interface iUserForm {
-    username: string;
-    name: string;
-    surname: string;
-    phone: string;
-    password: string;
-    category?: iCategory['_id'][];
-    room?: iRoom['_id'][];
-    role: {
-        admin: boolean;
-        waiter: boolean;
-        production: boolean;
-        cashier: boolean;
-        analytics: boolean;
-    }
-}
-    */
-    const data = {
-      name: 'noob',
-      surname: 'noob',
-      phone: '12345678',
-      password: 'password',
-      role: {
-        admin: true,
-        waiter: false,
-        production: false,
-        cashier: false,
-        analytics: false,
-      }      
-    }
-
-    const a = this.api.put('/users/', data,"noob").subscribe((response) => {
-      // Handle the response here
-      console.log(response);
-    });
-
+  showFiller = true;
+  constructor(private router: Router, private auth: AuthService, private api: ApiService) {
   }
+
+
+
+
+  isSubItem(item: any): boolean {
+    return item.subItems && item.subItems.length > 0;
+  }
+
+
 
   exitApp() {
     this.auth.logout();
@@ -62,3 +40,4 @@ export class MasterContainerComponent {
   }
 
 }
+

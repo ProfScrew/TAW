@@ -2,9 +2,9 @@
     <button mat-icon-button class="icon" aria-label="menu" (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
     </button>
-    <span>CookHub</span>
+    <span routerLink="/core/">CookHub</span>
     <span class="spacer"></span>
-    <button mat-icon-button class="icon favorite-icon" aria-label="Delete?"><mat-icon matBadge="15"
+    <button mat-icon-button class="icon favorite-icon" aria-label="Delete?"><mat-icon matBadge="0"
             matBadgeColor="warn">comment</mat-icon>
     </button>
     <button mat-icon-button class="icon" aria-label="Exit App" (click)="exitApp()">
@@ -15,76 +15,26 @@
 <mat-drawer-container class="container" autosize>
     <mat-drawer #drawer class="sidenav" mode="side">
 
-        <!-- Options that can be hidden
-            
-            <p *ngIf="showFiller">Lorem, ipsum dolor sit amet consectetur.</p>
-            <button (click)="showFiller = !showFiller" mat-raised-button>
-                Toggle extra text
-            </button>
-        -->
-        <mat-list>
-            <button mat-list-item class="button">
-                <div class="text">Admin</div>
-            </button>
-            <button mat-list-item class="button">
-                <div class="text">Production</div>
-            </button>
-            <button mat-list-item class="button">
-                <div class="text">Waiter</div>
-            </button>
-            <button mat-list-item class="button">
-                <div class="text">Cashier</div>
-            </button>
-            <button mat-list-item class="button">
-                <div class="text">Analytics</div>
-            </button>
-            <!--https://stackblitz.com/edit/selection-list-activelinks-example?file=app%2Fselection-list%2Fselection-list.component.ts-->
-        </mat-list>
+        <a routerLink="/core/admin">About</a>
+        <mat-list class="noscrolbar">
+            <ng-container *ngFor="let item of items">
+              <button mat-list-item class="main-item-button" [ngClass]="{'main-item': !isSubItem(item)}">
+                <div class="main-item">{{ item.name }}</div>
+              </button>
+          
+              <mat-list *ngIf="isSubItem(item)">
+                <button mat-list-item *ngFor="let subItem of item.subItems" class="sub-item-button">
+                  <div class="sub-item">{{ subItem }}</div>
+                </button>
+              </mat-list>
+            </ng-container>
+          </mat-list>
+          
+          
 
     </mat-drawer>
 
     <router-outlet>
-        <div class="centered-container">
-            <div class="logo">
-                <span class="letter">C</span>
-                <span class="letter">o</span>
-                <span class="letter">o</span>
-                <span class="letter">k</span>
-                <span class="letter">H</span>
-                <span class="letter">u</span>
-                <span class="letter">b</span>
-            </div>
-
-            <!-- 
-            <button mat-raised-button color="primary" (click)="openDialog()">Open Dialog</button>
-
-            <p><b>Luigi:</b> <i>"Where am I?!"</i><br>
-                (Laughter sounds out. Luigi turns to see Lumalee spinning in his cage.)<br>
-                <b>Lumalee:</b> <i>"Home!"</i><br>
-                <b>Penguin King:</b> (to Luigi) <i>"Pay him no heed. He's cute,
-                    but
-                    he is (cuckoo whistle)."</i><br>
-                <b>Lumalee:</b> <i>"In an insane world, it is the sane who are crazy."</i><br>
-                <b>Luigi:</b> <i>"How long have you guys been in here?"</i><br>
-                <b>Lumalee:</b> <i>"Time, like hope, is an illusion."</i><br>
-                <b>Penguin King:</b> <i>"PLEASE! We are depressed enough!"</i><br>
-                <b>Luigi:</b> <i>"There's gotta be a way outta here!"</i><br>
-                <b>Lumalee:</b> <i>"There's no escape. The only hope is the sweet relief of death."</i><br>
-                (The prisoners moan in agony.)<br>
-                <b>Penguin King:</b> <i>"Oh,you've GOT to be kidding
-                    me!"</i><br>
-                (Luigi sighs in despair.)
-            </p>
-
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/-xQa7dxpWYA?si=IgVFBmsR4ABSPgmf"
-                title="YouTube video player" frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen></iframe>
-            <img src="static/images/cat.jpg" alt="cat" with="400px" height="400px">
-            <img src="static/images/gheko.jpg" alt="cat" with="400px" height="400px">
-
-            -->
-        </div>
     </router-outlet>
 
 

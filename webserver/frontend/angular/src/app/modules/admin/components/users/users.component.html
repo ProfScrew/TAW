@@ -1,0 +1,53 @@
+<!-- user-form.component.html -->
+<div class="content-border">
+    <mat-card class="card">
+        <section class="section-center">
+            <mat-card-header>
+                <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+                        <mat-form-field>
+                            <input matInput placeholder="Username" formControlName="username" />
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <input matInput placeholder="Name" formControlName="name" />
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <input matInput placeholder="Surname" formControlName="surname" />
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput placeholder="Phone" formControlName="phone" />
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <input matInput type="password" placeholder="Password" formControlName="password" />
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <input matInput type="password" placeholder="Confirm Password"
+                                formControlName="confirmPassword" />
+                        </mat-form-field>
+
+                    <br>
+                    <section class="section-center">
+                        <mat-checkbox-group formControlName="role">
+                            <mat-checkbox value="admin">Admin</mat-checkbox>
+                            <mat-checkbox value="waiter">Waiter</mat-checkbox>
+                            <mat-checkbox value="production">Production</mat-checkbox>
+                            <mat-checkbox value="cashier">Cashier</mat-checkbox>
+                            <mat-checkbox value="analytics">Analytics</mat-checkbox>
+                        </mat-checkbox-group>
+                    </section>
+                    <br>
+                    <section class="section-center">
+                        <button mat-raised-button color="primary" type="submit">Submit</button>
+                    </section>
+                    <br>
+                </form>
+
+            </mat-card-header>
+        </section>
+    </mat-card>
+
+
+</div>

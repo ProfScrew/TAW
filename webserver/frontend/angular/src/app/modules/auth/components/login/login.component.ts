@@ -36,7 +36,7 @@ export class LoginComponent {
     } else {
       this.auth.login(this.username, this.password, this.rememberMe).subscribe({
         next: (d) => {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/core']);
           //use notifier component
           this.notifier.showSuccess("Login Successful");
           // this.errorMessage.openFromComponent(MessageAlertComponent, {
