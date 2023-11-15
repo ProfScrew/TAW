@@ -13,7 +13,7 @@ import { NotifierComponent } from 'src/app/core/components/notifier/notifier.com
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-
+  hide=true;
   username: string = '';
   password: string = '';
   rememberMe: boolean = true;

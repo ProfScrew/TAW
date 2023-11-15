@@ -4,45 +4,47 @@
         <section class="section-center">
             <mat-card-header>
                 <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-                        <mat-form-field>
-                            <input matInput placeholder="Username" formControlName="username" />
-                        </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Username" formControlName="username" />
+                    </mat-form-field>
 
-                        <mat-form-field>
-                            <input matInput placeholder="Name" formControlName="name" />
-                        </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Name" formControlName="name" />
+                    </mat-form-field>
+                    
+                    <mat-form-field>
+                        <input matInput placeholder="Surname" formControlName="surname" />
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Phone" formControlName="phone" />
+                    </mat-form-field>
 
-                        <mat-form-field>
-                            <input matInput placeholder="Surname" formControlName="surname" />
-                        </mat-form-field>
-                        <mat-form-field>
-                            <input matInput placeholder="Phone" formControlName="phone" />
-                        </mat-form-field>
-
-                        <mat-form-field>
-                            <input matInput type="password" placeholder="Password" formControlName="password" />
-                        </mat-form-field>
-
-                        <mat-form-field>
-                            <input matInput type="password" placeholder="Confirm Password"
-                                formControlName="confirmPassword" />
-                        </mat-form-field>
+                    <mat-form-field>
+                        <input matInput [type]="hide ? 'password' : 'text'" placeholder="Password" formControlName="password">
+                        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
 
                     <br>
                     <section class="section-center">
-                        <mat-checkbox-group formControlName="role">
-                            <mat-checkbox value="admin">Admin</mat-checkbox>
-                            <mat-checkbox value="waiter">Waiter</mat-checkbox>
-                            <mat-checkbox value="production">Production</mat-checkbox>
-                            <mat-checkbox value="cashier">Cashier</mat-checkbox>
-                            <mat-checkbox value="analytics">Analytics</mat-checkbox>
+                        <mat-checkbox-group formGroupName="role">
+                            <!-- <mat-checkbox formControlName="admin">Admin</mat-checkbox>
+                            <mat-checkbox formControlName="waiter">Waiter</mat-checkbox>
+                            <mat-checkbox formControlName="production">Production</mat-checkbox>
+                            <mat-checkbox formControlName="cashier">Cashier</mat-checkbox>
+                            <mat-checkbox formControlName="analytics">Analytics</mat-checkbox> -->
+                            <mat-checkbox *ngFor="let role of rolesList" [formControlName]="role">{{ role }}</mat-checkbox>
                         </mat-checkbox-group>
                     </section>
                     <br>
                     <section class="section-center">
-                        <button mat-raised-button color="primary" type="submit">Submit</button>
+                        <button mat-raised-button color="primary" [disabled]="userForm.invalid" type="submit">Submit</button>
                     </section>
                     <br>
+                    <div *ngIf="userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)">
+                        Please provide a name.
+                      </div>
                 </form>
 
             </mat-card-header>
