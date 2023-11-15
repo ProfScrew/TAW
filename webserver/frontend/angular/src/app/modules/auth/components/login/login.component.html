@@ -1,46 +1,3 @@
-<!--
-<div class="container">
-    <form (ngSubmit)="onSubmit()">
-        <div class="row">
-            <h1>Login to your account</h1>
-        </div>
-        
-        <div class="row error" *ngIf="errorMessage">
-            <i class="fa fa-exclamation-triangle"></i>
-            <span>{{ errorMessage }}</span>
-        </div>
-        
-        <div class="row">
-            <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
-        </div>
-        <div class="row">
-            <input matInput type="password" placeholder="Password" [(ngModel)]="password" name="password" required>
-        </div>
-                <div class="row inline">
-            <label for="Remember">Remember me</label>
-            <checkbox id="remember"></checkbox>
-        </div>
-    
-        <div class="row buttons">
-            <button mat-raised-button color="primary" type="submit">Login</button>
-        </div>
-    </form>
-</div>
-
--->
-
-<!--
-<mat-grid-list cols="2" rowHeight="2:1">
-    <mat-grid-tile>1</mat-grid-tile>
-    <mat-grid-tile>2</mat-grid-tile>
-    <mat-grid-tile>3</mat-grid-tile>
-    <mat-grid-tile>4</mat-grid-tile>
-</mat-grid-list>
-
--->
-
-
-
 <div class="login-container">
     <mat-card class="mat-card-cool">
         <mat-card-header class="section-center">
@@ -54,6 +11,7 @@
                 </mat-form-field>
 
                 <mat-form-field class="full-width">
+                    <mat-label>Password</mat-label>
                     <input matInput [type]="hide ? 'password' : 'text'" type="password" [(ngModel)]="password" name="password" required>
                     <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                       <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>

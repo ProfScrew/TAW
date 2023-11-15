@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { iRole, iUser } from 'src/app/core/models/user.model';
 import { ApiService } from 'src/app/core/services/api.service';
+import { io } from 'socket.io-client';
 
 @Component({
   selector: 'app-users',
@@ -35,7 +36,18 @@ export class UsersComponent {
       role: this.fb.group(this.roles),
 
     });
+
+    // Create a socket connection to the server
+    const socket = io({ path: '/socket/'});
+    
+    //Connect to the server
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
+
+    
   }
+
 
 
   onSubmit() {
