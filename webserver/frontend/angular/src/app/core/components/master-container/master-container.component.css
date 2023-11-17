@@ -2,24 +2,27 @@
   flex: 1 1 auto;
 }
 
+.mat-toolbar {
+  height: 64px; /* Adjust this to match your actual toolbar height */
+}
 
 
 .container {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 64px);
   border: 1px solid rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  height:  100vh;
 
 }
 .sidenav-content {
   display: flex;
-  height: 100%;
   align-items: center;
   justify-content: center;
 }
 
 .sidenav {
+  height: 100%;
+  display: flex;
   padding: 20px;
   background-color: #673ab7;
 }
@@ -33,7 +36,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 99vh;
   margin: 0;
 
 }

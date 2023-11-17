@@ -13,19 +13,19 @@ export class NotifierComponent {
   ngOnInit(): void {
   }
 
-  showSuccess(message: string, title?: string, options?: any) {
-    this.toastr.success(message, title, options);
+  showSuccess(statuscode: number, message : string, title?: string, options?: any) {
+    this.toastr.success(statuscode+": "+message, title, options);
   }
 
-  showError(message: string, title?: string, options?: any) {
-    this.toastr.error(message, title, options);
+  showError(statuscode: number, message : string, title?: string, options?: any) {
+    this.toastr.error(statuscode+": "+message, title, options);
   }
 
-  showWarning(message: string, title?: string, options?: any) {
-    this.toastr.warning(message, title, options);
+  showInfo(statuscode: number, message : string, title?: string, options?: any) {
+    this.toastr.info(statuscode+": "+message, title, options);
   }
 
-  showInfo(message: string, title?: string, options?: any) {
-    this.toastr.info(message, title, options);
+  showWarning(statuscode: number, message : string, title?: string, options?: any) {
+    this.toastr.warning(statuscode+": "+message, title, options);
   }
 }

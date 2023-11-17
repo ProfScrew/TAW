@@ -26,7 +26,7 @@ export class ApiService {
 
 
   get(url: string, query?: string): Observable<any> {
-    return this.http.get(ApiService.API_BACKEND + url + (query ? ('?' + query) : ''), { headers: this.headers }).pipe(
+    return this.http.get(ApiService.API_BACKEND + url + (query ? ('?' + query) : ''), { headers: this.headers, observe: 'response' }).pipe(
       tap((data: any) => {
         this.handleResponse(data);  //calls alert but also returns data
       })
@@ -34,15 +34,16 @@ export class ApiService {
   }
 
   post(url: string, data: any, params?: string): Observable<any> {
-    return this.http.post(ApiService.API_BACKEND + url + (params ? (params) : ''), data, { headers: this.headers }).pipe(
+    return this.http.post(ApiService.API_BACKEND + url + (params ? (params) : ''), data, { headers: this.headers, observe: 'response'  }).pipe(
       tap((data: any) => {
         this.handleResponse(data);  //calls alert but also returns data
       })
     );
+    
   }
 
   put(url: string, data: any, params?: string): Observable<any> {
-    return this.http.put(ApiService.API_BACKEND + url + (params ? (params) : ''), data, { headers: this.headers }).pipe(
+    return this.http.put(ApiService.API_BACKEND + url + (params ? (params) : ''), data, { headers: this.headers, observe: 'response'  }).pipe(
       tap((data: any) => {
         this.handleResponse(data);  //calls alert but also returns data
       })
@@ -50,7 +51,7 @@ export class ApiService {
   }
 
   delete(url: string, params?: string): Observable<any> {
-    return this.http.delete(ApiService.API_BACKEND + url + (params ? (params) : ''), { headers: this.headers }).pipe(
+    return this.http.delete(ApiService.API_BACKEND + url + (params ? (params) : ''), { headers: this.headers, observe: 'response'  }).pipe(
       tap((data: any) => {
         this.handleResponse(data);  //calls alert but also returns data
       })

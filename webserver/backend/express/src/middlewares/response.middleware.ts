@@ -73,7 +73,7 @@ export class cResponse {
     public static genericMessage(statusCode: eHttpCode, payload?: unknown) {
         switch (statusCode) {
             case eHttpCode.OK:
-                return new cResponse(statusCode, false, "OK", payload);
+                return new cResponse(statusCode, false, "Success", payload);
             case eHttpCode.CREATED:
                 return new cResponse(statusCode, false, "Created", payload);
             case eHttpCode.ACCEPTED:

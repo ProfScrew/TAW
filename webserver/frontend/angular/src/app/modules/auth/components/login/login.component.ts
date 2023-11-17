@@ -27,7 +27,7 @@ export class LoginComponent {
     console.log('Remember Me:', this.rememberMe);
     if (!this.username || !this.password) {
       //use notifier component
-      this.notifier.showError("Error: Please fill out all fields");
+      this.notifier.showError(404,"Error: Please fill out all fields");
       // this.errorMessage.openFromComponent(MessageAlertComponent, {
       //   data: { message: "Error: Please fill out all fields" },
       //   duration: 10000, // Adjust the duration as needed
@@ -35,10 +35,11 @@ export class LoginComponent {
       return;
     } else {
       this.auth.login(this.username, this.password, this.rememberMe).subscribe({
-        next: (d) => {
+        next: (response:any) => {
           this.router.navigate(['/core']);
           //use notifier component
-          this.notifier.showSuccess("Login Successful");
+          console.log(response);
+          this.notifier.showSuccess(response.status, response.body.message);
           // this.errorMessage.openFromComponent(MessageAlertComponent, {
           //   data: { message: "Login Successful" },
           //   duration: 10000, // Adjust the duration as needed
@@ -47,7 +48,7 @@ export class LoginComponent {
         error: (err) => {
           console.log(err);
           //use notifier component
-          this.notifier.showError("Error: Login Failed");
+          this.notifier.showError(err.status, err.error.message);
           // this.errorMessage.openFromComponent(MessageAlertComponent, {
           //   data: { message: "Error: Login Failed" },
           //   duration: 10000, // Adjust the duration as needed

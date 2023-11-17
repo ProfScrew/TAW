@@ -53,12 +53,13 @@ export class AuthService {
         'Authorization': 'Basic ' + btoa(username + ':' + password),
         'Cache-Control': 'no-cache',
         'Content-Type': 'application/x-www-form-urlencoded',
-      })
-    }
-    console.log(options)
+      }),
+      observe: 'response' as 'response',
+    };
+    console.log(options);
     return this.http.post(environment.URL_BACKEND + environment.VERSION + '/users/login/', {}, options).pipe(
-      tap((data: any) => {
-        const token = data.payload as string;
+      tap((response: any) => {
+        const token = response.body.payload as string;
         this.set_token(token, remember);
       })
     );

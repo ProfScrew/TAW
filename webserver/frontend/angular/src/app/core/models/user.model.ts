@@ -14,8 +14,9 @@ export interface iUser {
     name: string;
     surname: string;
     phone: string;
-    password_hash: string;
-    password_salt: string;
+    password?: string;
+    password_hash?: string;
+    password_salt?: string;
 
     role: iRole;
     category?: iCategory['_id'][];

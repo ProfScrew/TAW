@@ -5,51 +5,112 @@
             <mat-card-header>
                 <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
                     <mat-form-field>
+                        <mat-label>Username</mat-label>
                         <input matInput placeholder="Username" formControlName="username" />
                     </mat-form-field>
 
                     <mat-form-field>
+                        <mat-label>Name</mat-label>
                         <input matInput placeholder="Name" formControlName="name" />
                     </mat-form-field>
-                    
+
                     <mat-form-field>
+                        <mat-label>Surname</mat-label>
                         <input matInput placeholder="Surname" formControlName="surname" />
                     </mat-form-field>
                     <mat-form-field>
+                        <mat-label>Phone</mat-label>
                         <input matInput placeholder="Phone" formControlName="phone" />
                     </mat-form-field>
 
                     <mat-form-field>
-                        <input matInput [type]="hide ? 'password' : 'text'" placeholder="Password" formControlName="password">
-                        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                        </button>
+                        <mat-label>Password</mat-label>
+                        <input matInput formControlName="password" value="Password">
                     </mat-form-field>
 
                     <br>
                     <section class="section-center">
                         <mat-checkbox-group formGroupName="role">
-                            <!-- <mat-checkbox formControlName="admin">Admin</mat-checkbox>
-                            <mat-checkbox formControlName="waiter">Waiter</mat-checkbox>
-                            <mat-checkbox formControlName="production">Production</mat-checkbox>
-                            <mat-checkbox formControlName="cashier">Cashier</mat-checkbox>
-                            <mat-checkbox formControlName="analytics">Analytics</mat-checkbox> -->
-                            <mat-checkbox *ngFor="let role of rolesList" [formControlName]="role">{{ role }}</mat-checkbox>
+                            <mat-checkbox *ngFor="let role of rolesList" [formControlName]="role">{{ role
+                                }}</mat-checkbox>
                         </mat-checkbox-group>
                     </section>
                     <br>
                     <section class="section-center">
-                        <button mat-raised-button color="primary" [disabled]="userForm.invalid" type="submit">Submit</button>
+                        <button mat-raised-button color="primary" [disabled]="userForm.invalid"
+                            type="submit">Submit</button>
                     </section>
                     <br>
-                    <div *ngIf="userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)">
+                    <div
+                        *ngIf="userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)">
                         Please provide a name.
-                      </div>
+                    </div>
                 </form>
 
             </mat-card-header>
         </section>
     </mat-card>
 
+    <div class="content-border"></div>
+
+    <mat-card class="card">
+        <mat-accordion class="example-headers-align" multi>
+
+            <mat-expansion-panel *ngFor="let user of userFormArray">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <mat-icon>person</mat-icon>
+                        {{ user[0].username }}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        <span>Name: {{ user[0].name }}&nbsp;&nbsp;
+                            Surname: {{ user[0].surname }}</span>
+                            <mat-icon>edit</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <form [formGroup]="user[1]">
+                    <mat-form-field>
+                        <mat-label>Username</mat-label>
+                        <input matInput formControlName="username">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Name</mat-label>
+                        <input matInput formControlName="name" value="Name">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Surname</mat-label>
+                        <input matInput formControlName="surname" value="Surname">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Phone</mat-label>
+                        <input matInput formControlName="phone" value="Phone">
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Password</mat-label>
+                        <input matInput formControlName="password" value="Password">
+                    </mat-form-field>
+                    <br>
+                    <section class="section-center">
+                        <mat-checkbox-group formGroupName="role">
+                            <mat-checkbox *ngFor="let role of rolesList" [formControlName]="role">{{ role
+                                }}</mat-checkbox>
+                        </mat-checkbox-group>
+                    </section>
+                    <br>
+                    
+                    <mat-action-row>
+                        <button mat-raised-button color="primary" (click)="onDeleteUser(user[0].username)">Delete</button>
+                        <button mat-raised-button color="primary" (click)="onChangeUser(user[0].username)">Submit</button>
+                    </mat-action-row>
+                </form>
+
+            </mat-expansion-panel>
+
+
+
+        </mat-accordion>
+    </mat-card>
 
 </div>

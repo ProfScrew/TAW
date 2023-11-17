@@ -12,9 +12,9 @@ import { Server as IoServer } from 'socket.io';
 
 const server = express();
 const httpServer = new Server(server);
-const io = new IoServer(httpServer, {
+export const io = new IoServer(httpServer, {
     cors: {
-        origin: "*", // Adjust this according to your needs
+        origin: "*", 
     },
     "path": "/socket/"
 });
@@ -25,12 +25,17 @@ server.use(express.json())
 server.use('/v1', v1)
 
 io.on('connection', (socket) => {
-    console.log('A user connected');
-  
-    socket.on('disconnect', () => {
-      console.log('A user disconnected');
+    console.log('🧑 🔌\tA user connected to the Socket');
+
+    socket.on('joinRoom', (roomName) => {
+        socket.join(roomName);
+        console.log(`🧑 🚪\tA user joined the room ${roomName}`);
     });
-  });
+
+    socket.on('disconnect', () => {
+        console.log('🧑 💥\tA user disconnected from the Socket');
+    });
+});
 
 httpServer.listen(PORT_BACKEND, () => {
     if (URL_DATABASE === undefined || NAME_DATABASE === undefined) {

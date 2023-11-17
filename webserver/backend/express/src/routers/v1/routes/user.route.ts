@@ -8,6 +8,7 @@ import { isNumeric } from 'validator';
 import { iCategory } from '../../../models/category.model';
 import { iRoom } from '../../../models/room.model';
 import { cResponse, eHttpCode } from '../../../middlewares/response.middleware';
+import { io } from '../../../app';
 
 
 const user = Router();
@@ -51,7 +52,7 @@ user.post('/login', passport.authenticate(authenticate, { session: false }), asy
         room: user.room ? user.room[0] : undefined,
     });
 
-    return next(cResponse.success(eHttpCode.OK, signed));
+    return next(cResponse.genericMessage(eHttpCode.OK, signed));
 });
 
 /**
@@ -101,7 +102,8 @@ user.post('/', authorize, (req, res, next) => {
 
     // Try to save the user
     user.save().then((data) => {
-        return next(cResponse.success(eHttpCode.OK, { id: data._id }));
+        io.to('admin').emit('userListUpdated', { message: 'User list updated!' });
+        return next(cResponse.genericMessage(eHttpCode.OK, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000)
             return next(cResponse.error(409, 'Username or Phone already exists'));
@@ -150,6 +152,11 @@ user.get('/', authorize, (req, res, next) => {
             next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'An error occurred while fetching users'));
 
         } else {
+            //io.to('admin').emit('userListUpdated', { message: 'User list updated!' });
+            //send bradcast to all users
+            //io.local.emit('userListUpdated', { message: 'User list updated!' });
+            
+            //io.emit('userListUpdated', { message: 'User list updated!' });
             next(cResponse.genericMessage(eHttpCode.OK, users));
         }
     });
@@ -223,6 +230,7 @@ user.put("/:username", authorize, async (req, res, next) => {
     try {
         await User.findOneAndUpdate({ username: username }, new_user, { new: true }).maxTimeMS(1000).orFail();
         blacklistUser(username, new Date(Date.now()));
+        io.to('admin').emit('userListUpdated', { message: 'User list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK));
     } catch (reason: any) {
         if (reason.code === 11000)
@@ -274,6 +282,7 @@ user.delete("/:username", authorize, async (req, res, next) => {
 
     try {
         await User.deleteOne({ username: username }).orFail();
+        io.to('admin').emit('userListUpdated', { message: 'User list updated!' });
         next(cResponse.genericMessage(eHttpCode.OK));
 
     } catch (err: any) {

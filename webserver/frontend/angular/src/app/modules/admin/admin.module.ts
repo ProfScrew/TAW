@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule} from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    MatExpansionModule
+    
   ]
 })
 export class AdminModule { }
