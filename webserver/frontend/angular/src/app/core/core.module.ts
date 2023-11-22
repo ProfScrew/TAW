@@ -14,6 +14,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import { MatBadgeModule} from '@angular/material/badge';
 import { ToastrModule } from 'ngx-toastr';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -28,7 +29,7 @@ import { LogoComponent } from './components/logo/logo.component';
   declarations: [
     MasterContainerComponent,
     NotifierComponent,
-    LogoComponent
+    LogoComponent,
   ],
   imports: [
     CommonModule,
@@ -44,6 +45,7 @@ import { LogoComponent } from './components/logo/logo.component';
     MatListModule,
     NgIf,
     MatBadgeModule,
+    FormsModule,
 
     // Toastr
     ToastrModule.forRoot(

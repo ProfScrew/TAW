@@ -12,10 +12,10 @@ interface iTokenData {
   exp: number;
   name: string,
   surname: string,
-  email: string,
   role: iRole,
   room: [string],
   category: [string],
+  username: string,
 }
 
 @Injectable({
@@ -81,7 +81,7 @@ export class AuthService {
   get token(): string { return this.auth; }
   get name(): string { return jwt_decode<iTokenData>(this.auth).name; }
   get surname(): string { return jwt_decode<iTokenData>(this.auth).surname; }
-  get email(): string { return jwt_decode<iTokenData>(this.auth).email; }
+  get username(): string { return jwt_decode<iTokenData>(this.auth).username; }
   get role(): iRole { return jwt_decode<iTokenData>(this.auth).role; }
   get exp(): number { return jwt_decode<iTokenData>(this.auth).exp; }
 

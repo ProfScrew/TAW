@@ -1,55 +1,6 @@
 <!-- user-form.component.html -->
-<div class="content-border">
-    <mat-card class="card">
-        <section class="section-center">
-            <mat-card-header>
-                <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-                    <mat-form-field>
-                        <mat-label>Username</mat-label>
-                        <input matInput placeholder="Username" formControlName="username" />
-                    </mat-form-field>
 
-                    <mat-form-field>
-                        <mat-label>Name</mat-label>
-                        <input matInput placeholder="Name" formControlName="name" />
-                    </mat-form-field>
-
-                    <mat-form-field>
-                        <mat-label>Surname</mat-label>
-                        <input matInput placeholder="Surname" formControlName="surname" />
-                    </mat-form-field>
-                    <mat-form-field>
-                        <mat-label>Phone</mat-label>
-                        <input matInput placeholder="Phone" formControlName="phone" />
-                    </mat-form-field>
-
-                    <mat-form-field>
-                        <mat-label>Password</mat-label>
-                        <input matInput formControlName="password" value="Password">
-                    </mat-form-field>
-
-                    <br>
-                    <section class="section-center">
-                        <mat-checkbox-group formGroupName="role">
-                            <mat-checkbox *ngFor="let role of rolesList" [formControlName]="role">{{ role
-                                }}</mat-checkbox>
-                        </mat-checkbox-group>
-                    </section>
-                    <br>
-                    <section class="section-center">
-                        <button mat-raised-button color="primary" [disabled]="userForm.invalid"
-                            type="submit">Submit</button>
-                    </section>
-                    <br>
-                    <div
-                        *ngIf="userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)">
-                        Please provide a name.
-                    </div>
-                </form>
-
-            </mat-card-header>
-        </section>
-    </mat-card>
+<app-dynamic-form [model] = 'modelInput'></app-dynamic-form>
 
     <div class="content-border"></div>
 
@@ -101,8 +52,8 @@
                     <br>
                     
                     <mat-action-row>
-                        <button mat-raised-button color="primary" (click)="onDeleteUser(user[0].username)">Delete</button>
                         <button mat-raised-button color="primary" (click)="onChangeUser(user[0].username)">Submit</button>
+                        <button mat-raised-button color="warn" (click)="onDeleteUser(user[0].username)">Delete</button>
                     </mat-action-row>
                 </form>
 
@@ -112,5 +63,3 @@
 
         </mat-accordion>
     </mat-card>
-
-</div>

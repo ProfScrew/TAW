@@ -4,6 +4,9 @@ import { iRole, iUser } from 'src/app/core/models/user.model';
 import { ApiService } from 'src/app/core/services/api.service';
 import { SocketService } from 'src/app/core/services/socket.service';
 import { NotifierComponent } from 'src/app/core/components/notifier/notifier.component';
+import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
+import { Output, EventEmitter } from '@angular/core';
+import { PageInfoService } from 'src/app/core/services/page-info.service';
 
 @Component({
   selector: 'app-users',
@@ -12,13 +15,98 @@ import { NotifierComponent } from 'src/app/core/components/notifier/notifier.com
 })
 
 export class UsersComponent {
-  userForm: FormGroup;
+
 
   users: iUser[] = [];
   userForms: FormGroup[] = [];
 
   userFormArray: [iUser, FormGroup][] = [];
 
+  modelInput: iDynamicForm = {
+    route: '/users',
+    formName: 'newUser',
+    textFields: [
+      {
+        name: 'username',
+        label: 'Username',
+        type: 'text',
+        required: true,
+        value: '',
+      },
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        required: true,
+        value: '',
+      },
+      {
+        name: 'surname',
+        label: 'Surname',
+        type: 'text',
+        required: true,
+        value: '',
+      },
+      {
+        name: 'phone',
+        label: 'Phone',
+        type: 'text',
+        required: true,
+        value: '',
+      },
+      {
+        name: 'password',
+        label: 'Password',
+        type: 'password',
+        required: true,
+        value: '',
+      },
+    ],
+    checkBoxes: {
+      name: 'role',
+      elements: [
+        {
+          name: 'admin',
+          label: 'Admin',
+          value: false,
+        },
+        {
+          name: 'waiter',
+          label: 'Waiter',
+          value: false,
+        },
+        {
+          name: 'production',
+          label: 'Production',
+          value: false,
+        },
+        {
+          name: 'cashier',
+          label: 'Cashier',
+          value: false,
+        },
+        {
+          name: 'analytics',
+          label: 'Analytics',
+          value: false,
+        }
+      ]
+    },
+    
+    elementsFromDatabaseMultipleChoice: [
+      {
+        name: 'rooms',
+        label: 'Rooms',
+        route: '/rooms/',
+      },
+      
+      {
+        name: 'categories',
+        label: 'Categories',
+        route: '/categories/',
+      },
+    ],
+  }
 
   roles: iRole = {
     admin: false,
@@ -30,20 +118,7 @@ export class UsersComponent {
 
   rolesList: string[] = ['admin', 'waiter', 'production', 'cashier', 'analytics'];
 
-  constructor(private fb: FormBuilder, private api: ApiService, private socketService: SocketService, private notifier: NotifierComponent) {
-
-
-
-    this.userForm = this.fb.group({
-      username: ['', Validators.required],
-      name: ['', Validators.required],
-      surname: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern('[0-9]{10}')]],
-      password: ['', Validators.required],
-      role: this.fb.group(this.roles),
-    });
-
-
+  constructor(private fb: FormBuilder, private api: ApiService, private socketService: SocketService, private notifier: NotifierComponent, private pageInfo: PageInfoService) {
 
 
 
@@ -53,16 +128,15 @@ export class UsersComponent {
       // Update your UI as needed
       this.getUsersUpdate();
     });
-
     // this.socketService.listen('userListUpdated').subscribe((data) => {
     //   console.log('User list updated:', data);
     //   // Update your UI as needed
     // });
-
-
   }
+  
 
   ngOnInit(): void {
+    Promise.resolve().then(() => this.pageInfo.setPageMessage("📃User Managment"));
     this.getUsers();
   }
 
@@ -71,7 +145,6 @@ export class UsersComponent {
     this.api.get('/users').subscribe({
       next: (response) => {
         let data = response.body;
-        this.users = data.payload;
         for (let singleUser of data.payload) {
 
           this.userFormArray.push([singleUser as iUser, this.fb.group({
@@ -94,12 +167,10 @@ export class UsersComponent {
 
 
   getUsersUpdate() {
-    //this.userFormArray = [];
     this.api.get('/users').subscribe({
       next: (response) => {
         let data = response.body
         console.log(data);
-        this.users = data.payload;
         for (let backendUser of data.payload) {
           let found = false;
           for (let existingUser of this.userFormArray) {
@@ -113,12 +184,11 @@ export class UsersComponent {
                   name: [backendUser.name, Validators.required],
                   surname: [backendUser.surname, Validators.required],
                   phone: [backendUser.phone, [Validators.required, Validators.pattern('[0-9]{10}')]],
-                  password: ['password', Validators.required],
+                  password: ['newPassword', Validators.required],
                   role: this.fb.group(backendUser.role as iRole),
                 });
-                //this.userFormArray.splice(this.userFormArray.indexOf(existingUser), 1);
               }
-            } 
+            }
           }
           if (!found) {
             console.log("add");
@@ -132,14 +202,14 @@ export class UsersComponent {
             })]);
           }
         }
-        for(let existingUser of this.userFormArray){
+        for (let existingUser of this.userFormArray) {
           let found = false;
-          for(let backendUser of data.payload){
-            if(backendUser.username == existingUser[0].username){
+          for (let backendUser of data.payload) {
+            if (backendUser.username == existingUser[0].username) {
               found = true;
             }
           }
-          if(!found){
+          if (!found) {
             console.log("delete");
             this.userFormArray.splice(this.userFormArray.indexOf(existingUser), 1);
           }
@@ -147,22 +217,22 @@ export class UsersComponent {
       },
       error: (err) => {
         this.notifier.showError(err.status, err.error.message);
-        //console.log(err);
       }
     });
   }
 
 
-  onChangeUser(username: string) {
+  onChangeUser(username: string) { //remember to add if the the password
     for (let user of this.userFormArray) {
-      if (user[0].username == username) {//review the put method
+      if (user[0].username == username) {
+        if(user[1].value.password == 'newPassword'){
+          delete user[1].value.password;
+        } 
         this.api.put('/users/' + username, user[1].value as iUser).subscribe({
           next: (response) => {
-            //console.log(data);
             this.notifier.showSuccess(response.status, response.body.message);
           },
           error: (err) => {
-            //console.log(err);
             this.notifier.showError(err.status, err.error.message);
           }
         });
@@ -183,27 +253,8 @@ export class UsersComponent {
     });
   }
 
-  onSubmit() {
-    // Handle form submission logic
-    const formData: iUser = this.userForm.value;
-    console.log(formData);
-    
-    if(formData.password == '' || formData.password == 'newPassword'){
-      formData.password = undefined;
-    }
-    
-    this.api.post('/users', formData).subscribe({
-      next: (response) => {
-        console.log(response);
-        this.notifier.showSuccess(response.status, response.body.message);
-      },
-      error: (err) => {
-        //console.log(err);
-        this.notifier.showError(err.status, err.error.message);
-      }
-    });
+  
 
 
-  }
 
 }

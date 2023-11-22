@@ -122,3 +122,11 @@
   overflow: hidden;
 }
 
+.message{
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: left;
+  overflow: hidden;
+}

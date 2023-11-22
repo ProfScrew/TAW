@@ -1,0 +1,72 @@
+Types of input used in form:
+
+1. Text fields
+    a. Simple Text(No constraints)
+    b. phone number
+
+
+2. Checkboxes (array of elements)
+
+
+3. Array of Fields (alergens)
+
+4. Elements from database (checkbox)
+    a. single
+    b. multiple
+
+
+Data Input:
+
+InputJson: {
+
+    "route": "/users",
+    TextFiels: {[{
+            name: "name",
+            type: "text",
+            constraints: {
+                required: true,
+                minLength: 3,
+                maxLength: 10
+            },
+            name: "Name",
+        },
+        {   
+            name: "phone",
+            type: "number",
+            constraints: {
+                required: true,
+                minLength: 10,
+                maxLength: 10
+            },
+            name: "Phone"
+        }
+    ]
+    },
+    Checkboxes: {
+        name: "role",
+        role: [
+            {
+                name: "Admin",
+                value: "admin"
+            },
+            {
+                name: "Waiter",
+                value: "User"
+            }
+        ]
+    },
+    ArrayOfFields: {
+        name: "alergens",
+        //list: []
+
+    },
+    ElementsFromDB: {
+        name: "category",
+        route: "/categories/....",
+    }
+}
+FormGroup: {
+    name: ["", [Validators.required, Validators.minLength(3), Validators.maxLength(10)]],
+    ...
+    role: []
+}

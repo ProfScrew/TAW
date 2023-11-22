@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../services/api.service';
+import { PageInfoService } from '../../services/page-info.service';
 
 @Component({
   selector: 'app-master-container',
@@ -13,15 +14,16 @@ import { ApiService } from '../../services/api.service';
 })
 export class MasterContainerComponent {
   items = [
-    { name: 'Admin', subItems: ['Users', 'Recipes', "Info Restaurant"] },
-    { name: 'Production', subItems: [] },
-    { name: 'Waiter', subItems: [] },
-    { name: 'Cashier', subItems: [] },
-    { name: 'Analytics', subItems: [] },
+    { name: 'Admin', subItems: ['Users', 'Recipes', "Info Restaurant"], subLinks: ['/core/admin/users', '/core/admin/recipes', '/core/admin/info'] },
+    { name: 'Production', subItems: [], subLinks: [] },
+    { name: 'Waiter', subItems: [], subLinks : [] },
+    { name: 'Cashier', subItems: [], subLinks: [] },
+    { name: 'Analytics', subItems: [], subLinks: [] },
   ];
 
   showFiller = true;
-  constructor(private router: Router, private auth: AuthService, private api: ApiService) {
+  constructor(private router: Router, private auth: AuthService, private api: ApiService, protected pageInfo: PageInfoService) {
+    
   }
 
 

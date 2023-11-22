@@ -1,0 +1,27 @@
+.section-center {
+    display: flex;
+    justify-content: center;
+}
+
+.example-action-buttons {
+  padding-bottom: 20px;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.example-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
+  margin-left: 8px;
+}
+
+
+.inputs-row {
+    display: flex; /* Use flexbox for horizontal alignment */
+  }
+  
+  .input-container {
+    margin-right: 10px; /* Adjust margin between inputs if needed */
+  }
+

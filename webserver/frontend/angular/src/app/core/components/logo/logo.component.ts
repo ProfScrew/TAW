@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PageInfoService } from '../../services/page-info.service';
 
 @Component({
   selector: 'app-logo',
@@ -6,5 +7,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./logo.component.css']
 })
 export class LogoComponent {
+
+  constructor(private pageInfo: PageInfoService) { 
+    Promise.resolve().then(() => pageInfo.setPageMessage("Welcome!"));
+    
+  }
 
 }

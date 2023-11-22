@@ -1,37 +1,40 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TableComponent } from './components/table/table.component';
 
-import { AdminRoutingModule } from './admin-routing.module';
-import { UsersComponent } from './components/users/users.component';
+//angualr material
 
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatExpansionModule} from '@angular/material/expansion';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
-    UsersComponent
+    TableComponent,
+    DynamicFormComponent
   ],
   imports: [
     CommonModule,
-    AdminRoutingModule,
-
+    MatCardModule,
     MatFormFieldModule,
     MatCheckboxModule,
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
-    MatCardModule,
     MatIconModule,
-    MatExpansionModule,
-    SharedModule,
-    
+    MatOptionModule,
+    MatSelectModule,
+  ],
+  exports: [
+    TableComponent,
+    DynamicFormComponent,
   ]
 })
-export class AdminModule { }
+export class SharedModule { }

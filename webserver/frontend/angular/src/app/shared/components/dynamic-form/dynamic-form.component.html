@@ -1,0 +1,106 @@
+<mat-card class="card">
+
+    <section class="section-center">
+        <br>
+        <mat-card-header>
+
+            <form [formGroup]="dynamicFormGroup" (ngSubmit)="onSubmit()">
+                <ng-container *ngIf="model?.textFields !==undefined">
+                    <ng-container *ngFor="let textfield of model?.textFields">
+                        <mat-form-field>
+                            <mat-label>{{ textfield.label }}</mat-label>
+                            <input matInput [placeholder]="textfield.name" [formControlName]="textfield.name" />
+                        </mat-form-field>
+                    </ng-container>
+                </ng-container>
+                
+
+                <ng-container *ngIf="model?.elementsFromDatabaseSingleChoice !== undefined">
+                    <ng-container
+                        *ngFor="let elementFromSingleDB of model?.elementsFromDatabaseSingleChoice!; let ind = index">
+                        <mat-form-field>
+                            <mat-label>{{ elementFromSingleDB.label }}</mat-label>
+                            <mat-select [formControlName]="elementFromSingleDB.name">
+                                <mat-option *ngFor="let option of singleElementsFromDatabase[ind]"
+                                    [value]="option?._id">
+                                    {{ option.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="model?.elementsFromDatabaseMultipleChoice !== undefined">
+                    <ng-container
+                        *ngFor="let elementFromMultipleDB of model?.elementsFromDatabaseMultipleChoice!; let ind = index">
+                        <mat-form-field>
+                            <mat-label>{{ elementFromMultipleDB.label }}</mat-label>
+                            <mat-select [formControlName]="elementFromMultipleDB.name" multiple>
+                                <mat-option *ngFor="let option of multipleElementsFromDatabase[ind]"
+                                    [value]="option?._id">
+                                    {{ option.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container>
+
+                </ng-container>
+
+                <ng-container *ngIf="model?.checkBoxes != undefined">
+                    <section class="section-center">
+                        <mat-checkbox-group [formGroupName]='model?.checkBoxes?.name!'>
+                            <mat-checkbox *ngFor="let checkBox of model?.checkBoxes?.elements"
+                                [formControlName]="checkBox.name">
+                                {{ checkBox.label }}</mat-checkbox>
+                        </mat-checkbox-group>
+                    </section>
+                </ng-container>
+
+                <br>
+                <br>
+                <ng-container *ngIf="model?.arrayTextFields != undefined">
+                    <section class="section-center">
+                        <div>
+                            <ng-container [formArrayName]="model?.arrayTextFields?.name!">
+                                <ng-container *ngFor="let elementArray of ElementsArray.controls; let i = index">
+                                    <ng-container [formGroupName]="i">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>{{ model?.arrayTextFields?.label}}</mat-label>
+                                            <input matInput [formControlName]="model?.arrayTextFields?.name!"
+                                                placeholder="">
+                                        </mat-form-field>
+                                        <mat-icon class="delete-btn" (click)="deleteElementArray(i)">
+                                            delete_forever</mat-icon>
+                                    </ng-container>
+
+                                </ng-container>
+                            </ng-container>
+                            {{ model?.arrayTextFields?.label}}
+                            <button mat-raised-button color="primary" (click)="addElementArray()">
+                                Add
+                            </button>
+
+                        </div>
+                    </section>
+                </ng-container>
+                <br>
+
+
+
+
+
+
+                <section class="section-center">
+                    <button mat-raised-button color="primary" type="submit">Submit</button>
+                </section>
+                <br>
+            </form>
+
+
+
+
+
+        </mat-card-header>
+    </section>
+
+
+</mat-card>
