@@ -18,9 +18,10 @@
   <mat-drawer #drawer class="sidenav" mode="side">
     <mat-list class="noscrolbar">
       <ng-container *ngFor="let item of items">
-        <button mat-list-item class="main-item-button" [ngClass]="{'main-item': !isSubItem(item)}">
-          <div class="main-item">{{ item.name }}</div>
-        </button>
+        <mat-expansion-panel class="mat-elevation-z0">
+          <mat-expansion-panel-header>
+              <mat-panel-title mat-list-item class="main-item-button" [ngClass]="{'main-item': !isSubItem(item)}">{{ item.name }}</mat-panel-title>
+          </mat-expansion-panel-header>
 
         <mat-list *ngIf="isSubItem(item)">
           <a mat-list-item
@@ -30,6 +31,7 @@
             <div class="sub-item">{{ subItem }}</div>
           </a>
         </mat-list>
+      </mat-expansion-panel>
         <!--
           <mat-list *ngIf="isSubItem(item)">
             <button mat-list-item *ngFor="let subItem of item.subItems" class="sub-item-button">

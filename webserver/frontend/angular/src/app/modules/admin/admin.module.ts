@@ -13,10 +13,22 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule} from '@angular/material/expansion';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { InfoRestaurantComponent } from './components/info-restaurant/info-restaurant.component';
+import { RecipesComponent } from './components/recipes/recipes.component';
+import { IngredientsComponent } from './components/ingredients/ingredients.component';
+import { CategoriesComponent } from './components/categories/categories.component';
+import { RoomsComponent } from './components/rooms/rooms.component';
+import { TablesComponent } from './components/tables/tables.component';
 
 @NgModule({
   declarations: [
-    UsersComponent
+    UsersComponent,
+    InfoRestaurantComponent,
+    RecipesComponent,
+    IngredientsComponent,
+    CategoriesComponent,
+    RoomsComponent,
+    TablesComponent,
   ],
   imports: [
     CommonModule,

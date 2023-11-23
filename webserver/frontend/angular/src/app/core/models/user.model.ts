@@ -23,3 +23,8 @@ export interface iUser {
     room?: iRoom['_id'][];
 
 }
+
+export interface iUserTable{
+    username: string;
+    name: string;
+}

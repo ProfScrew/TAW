@@ -15,6 +15,7 @@ import {MatListModule} from '@angular/material/list';
 import { MatBadgeModule} from '@angular/material/badge';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
+import { MatExpansionModule } from '@angular/material/expansion'; 
 
 
 
@@ -46,6 +47,7 @@ import { LogoComponent } from './components/logo/logo.component';
     NgIf,
     MatBadgeModule,
     FormsModule,
+    MatExpansionModule,
 
     // Toastr
     ToastrModule.forRoot(

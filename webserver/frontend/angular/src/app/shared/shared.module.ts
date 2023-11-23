@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableComponent } from './components/table/table.component';
 
 //angualr material
 
@@ -14,11 +13,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { DynamicTableComponent } from './components/dynamic-table/dynamic-table.component';
+import { DynamicTableFormComponent } from './components/dynamic-table-form/dynamic-table-form.component';
+
+import { MatPaginatorModule} from '@angular/material/paginator';
+import { MatSortModule} from '@angular/material/sort';
+import { MatTableModule} from '@angular/material/table';
 
 @NgModule({
   declarations: [
-    TableComponent,
-    DynamicFormComponent
+    DynamicFormComponent,
+    DynamicTableComponent,
+    DynamicTableFormComponent
   ],
   imports: [
     CommonModule,
@@ -31,10 +37,14 @@ import { MatSelectModule } from '@angular/material/select';
     MatIconModule,
     MatOptionModule,
     MatSelectModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatTableModule
   ],
   exports: [
-    TableComponent,
     DynamicFormComponent,
+    DynamicTableComponent,
+    DynamicTableFormComponent,
   ]
 })
 export class SharedModule { }

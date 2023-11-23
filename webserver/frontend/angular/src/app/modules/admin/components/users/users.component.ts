@@ -95,13 +95,13 @@ export class UsersComponent {
     
     elementsFromDatabaseMultipleChoice: [
       {
-        name: 'rooms',
+        name: 'room',
         label: 'Rooms',
         route: '/rooms/',
       },
       
       {
-        name: 'categories',
+        name: 'category',
         label: 'Categories',
         route: '/categories/',
       },

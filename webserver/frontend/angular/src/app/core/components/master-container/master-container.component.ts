@@ -14,7 +14,8 @@ import { PageInfoService } from '../../services/page-info.service';
 })
 export class MasterContainerComponent {
   items = [
-    { name: 'Admin', subItems: ['Users', 'Recipes', "Info Restaurant"], subLinks: ['/core/admin/users', '/core/admin/recipes', '/core/admin/info'] },
+    { name: 'Admin', subItems: ['Users', 'Categories', 'Recipes', 'Ingredients', "Info Restaurant", 'Rooms', 'Tables'],
+    subLinks: ['/core/admin/users', '/core/admin/categories', '/core/admin/recipes','/core/admin/ingredients', '/core/admin/info-restaurant', '/core/admin/rooms', '/core/admin/tables'] },
     { name: 'Production', subItems: [], subLinks: [] },
     { name: 'Waiter', subItems: [], subLinks : [] },
     { name: 'Cashier', subItems: [], subLinks: [] },

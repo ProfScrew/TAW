@@ -129,6 +129,13 @@ export class DynamicFormComponent {
     if (formData.password == '' || formData.password == 'newPassword') {
       formData.password = undefined;
     }
+    if(this.model?.arrayTextFields !== undefined){
+      let tempArray = [] as any;
+      for (const element of formData[this.model?.arrayTextFields.name!]) {
+        tempArray.push(element[this.model?.arrayTextFields.name!]);
+      }
+      formData[this.model?.arrayTextFields.name!] = tempArray;
+    }
     if (this.model?.route !== undefined) {
       this.api.post(this.model.route, formData).subscribe({
         next: (response) => {
