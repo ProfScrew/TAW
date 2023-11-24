@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
+import { iDynamicTable } from 'src/app/core/models/dynamic_table.model';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 
 @Component({
@@ -37,6 +38,30 @@ export class CategoriesComponent {
     ],
   };
 
+  modelTable: iDynamicTable = {
+    route: '/categories/',
+    shadow: false,
+    columns: [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+      },
+      {
+        name: 'color',
+        label: 'Color',
+        type: 'text',
+      },
+      {
+        name: 'order',
+        label: 'Order',
+        type: 'text',
+      },
+      
+    ],
+    expandable: false,
+
+  }
 
 
   constructor(private pageInfo: PageInfoService){

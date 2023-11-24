@@ -20,14 +20,14 @@ export class DynamicFormComponent {
   multipleElementsFromDatabase: any[] = [];
 
   constructor(private api: ApiService, private notifier: NotifierComponent) {
-    console.log(this.model);
+    
+
   }
 
   ngOnInit(): void {
     if (this.model == undefined) {
       console.log("model is undefined");
     } else {//build form
-      console.log(this.model);
 
       this.buildForm();
     }
@@ -35,7 +35,6 @@ export class DynamicFormComponent {
 
 
   buildForm() {
-    console.log("build form");
 
     const formGroupField = this.getFormControlsFields();
 
@@ -81,7 +80,6 @@ export class DynamicFormComponent {
           }
           this.singleElementsFromDatabase.push(temp);
         });
-        console.log('AAAAAAAAAAAAAAAAAAb');
 
 
       }
@@ -99,7 +97,6 @@ export class DynamicFormComponent {
           }
 
           this.multipleElementsFromDatabase.push(temp);
-          console.log(this.multipleElementsFromDatabase);
         });
       }
     }
@@ -122,10 +119,8 @@ export class DynamicFormComponent {
     this.ElementsArray.removeAt(elementIndex);
   }
   onSubmit() {
-    console.log(this.dynamicFormGroup.value);
 
     const formData = this.dynamicFormGroup.value;
-    console.log(formData);
     if (formData.password == '' || formData.password == 'newPassword') {
       formData.password = undefined;
     }
@@ -139,7 +134,6 @@ export class DynamicFormComponent {
     if (this.model?.route !== undefined) {
       this.api.post(this.model.route, formData).subscribe({
         next: (response) => {
-          console.log(response);
           this.notifier.showSuccess(response.status, response.body.message);
         },
         error: (err) => {

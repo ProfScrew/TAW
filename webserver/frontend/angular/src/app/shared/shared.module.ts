@@ -19,6 +19,7 @@ import { DynamicTableFormComponent } from './components/dynamic-table-form/dynam
 import { MatPaginatorModule} from '@angular/material/paginator';
 import { MatSortModule} from '@angular/material/sort';
 import { MatTableModule} from '@angular/material/table';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { MatTableModule} from '@angular/material/table';
     MatSelectModule,
     MatPaginatorModule,
     MatSortModule,
-    MatTableModule
+    MatTableModule,
+    MatExpansionModule,
   ],
   exports: [
     DynamicFormComponent,

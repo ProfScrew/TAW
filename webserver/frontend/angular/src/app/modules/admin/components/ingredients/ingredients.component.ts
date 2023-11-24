@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
+import { iDynamicTable } from 'src/app/core/models/dynamic_table.model';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 
 @Component({
@@ -42,6 +43,35 @@ export class IngredientsComponent {
 
   };
 
+  modelTable: iDynamicTable = {
+    route: '/ingredients/',
+    shadow: false,
+    columns: [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+      },
+      {
+        name: 'modification_price',
+        label: 'Modification Price',
+        type: 'text',
+      },
+      {
+        name: 'modification_percentage',
+        label: 'Modification Percentage',
+        type: 'text',
+      },
+      {
+        name: 'alergens',
+        label: 'Allergens',
+        type: 'text',
+      },
+      
+    ],
+    expandable: false,
+
+  }
 
   constructor(private pageInfo: PageInfoService) {
     Promise.resolve().then(() => this.pageInfo.pageMessage = "🍎Ingredients");

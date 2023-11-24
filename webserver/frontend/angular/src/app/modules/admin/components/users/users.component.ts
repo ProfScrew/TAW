@@ -7,6 +7,7 @@ import { NotifierComponent } from 'src/app/core/components/notifier/notifier.com
 import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
 import { Output, EventEmitter } from '@angular/core';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
+import { iDynamicTable } from 'src/app/core/models/dynamic_table.model';
 
 @Component({
   selector: 'app-users',
@@ -107,7 +108,36 @@ export class UsersComponent {
       },
     ],
   }
+  
+  modelTable: iDynamicTable = {
+    route: '/users/',
+    shadow: false,
+    columns: [
+      {
+        name: 'username',
+        label: 'Username',
+        type: 'text',
+      },
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+      },
+      {
+        name: 'surname',
+        label: 'Surname',
+        type: 'text',
+      },
+      {
+        name: 'phone',
+        label: 'Phone',
+        type: 'text',
+      },
+      
+    ],
+    expandable: true,
 
+  }
   roles: iRole = {
     admin: false,
     waiter: false,

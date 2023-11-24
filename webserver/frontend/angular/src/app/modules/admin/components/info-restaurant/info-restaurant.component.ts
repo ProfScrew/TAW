@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
+import { iDynamicTable } from 'src/app/core/models/dynamic_table.model';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 
 @Component({
@@ -64,6 +65,50 @@ export class InfoRestaurantComponent {
     ],
   };
 
+  modelTable: iDynamicTable = {
+    route: '/restaurant_informations/',
+    shadow: false,
+    columns: [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+      },
+      {
+        name: 'address',
+        label: 'Address',
+        type: 'text',
+      },
+      {
+        name: 'phone',
+        label: 'Phone',
+        type: 'text',
+      },
+      {
+        name: 'email',
+        label: 'Email',
+        type: 'text',
+      },
+      {
+        name: 'logo',
+        label: 'Logo',
+        type: 'text',
+      },
+      {
+        name: 'iva',
+        label: 'Iva',
+        type: 'string',
+      },
+      {
+        name: 'charge_per_person',
+        label: 'Charge per person',
+        type: 'number',
+      },
+      
+    ],
+    expandable: false,
+
+  }
 
   constructor(private pageInfo: PageInfoService) {
     Promise.resolve(null).then(() => this.pageInfo.pageMessage = '🏢Info restaurant');

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
+import { iDynamicTable } from 'src/app/core/models/dynamic_table.model';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 
 @Component({
@@ -22,6 +23,20 @@ export class RoomsComponent {
       },
     ],
   };
+  modelTable: iDynamicTable = {
+    route: '/rooms/',
+    shadow: false,
+    columns: [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+      },
+      
+    ],
+    expandable: false,
+
+  }
     
   constructor(private pageInfo: PageInfoService) {
     Promise.resolve(null).then(() => this.pageInfo.pageMessage = "🚪Rooms");
