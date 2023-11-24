@@ -58,3 +58,8 @@ table {
   .example-element-description-attribution {
     opacity: 0.5;
   }
+  
+  .mat-row-hover:hover {
+    background-color: #f0f0f0; /* Change to the desired hover color */
+    cursor: pointer; /* Change cursor to indicate interactivity */
+}

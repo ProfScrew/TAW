@@ -8,7 +8,7 @@ import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
 import { Output, EventEmitter } from '@angular/core';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { iDynamicTable } from 'src/app/core/models/dynamic_table.model';
-
+import { iDynamicTableForm } from 'src/app/core/models/dynamic_table_form.model';
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
@@ -99,18 +99,21 @@ export class UsersComponent {
         name: 'room',
         label: 'Rooms',
         route: '/rooms/',
+        value: [],
       },
       
       {
         name: 'category',
         label: 'Categories',
         route: '/categories/',
+        value: [],
       },
     ],
   }
   
   modelTable: iDynamicTable = {
     route: '/users/',
+
     shadow: false,
     columns: [
       {
@@ -133,11 +136,19 @@ export class UsersComponent {
         label: 'Phone',
         type: 'text',
       },
-      
     ],
     expandable: true,
+    subModelInput: {
+      ...this.modelInput as Partial<iDynamicTableForm>,
+      formName: 'modifyUser',
+      routeModify: '/users/',
+      routeDelete: '/users/',
 
-  }
+    }
+
+  };
+  
+  
   roles: iRole = {
     admin: false,
     waiter: false,
@@ -149,7 +160,6 @@ export class UsersComponent {
   rolesList: string[] = ['admin', 'waiter', 'production', 'cashier', 'analytics'];
 
   constructor(private fb: FormBuilder, private api: ApiService, private socketService: SocketService, private notifier: NotifierComponent, private pageInfo: PageInfoService) {
-
 
 
     this.socketService.joinRoom('admin');

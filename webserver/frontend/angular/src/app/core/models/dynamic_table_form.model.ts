@@ -1,49 +1,48 @@
+export interface iDynamicTableForm {
 
-
-export interface iDynamicForm {
-    route: string;
+    
+    routeModify: string;
+    routeDelete: string;
 
     formName: string;
 
-    textFields?:
-    {
+    textFields?: {
         name: string;
         label: string;
         type: string;
         required: boolean;
-        value?: string;
+        value: string;
     }[];
 
     checkBoxes?: {
         name: string;
-        elements:
-        {
+        elements: {
             name: string;
             label: string;
-            value?: boolean;
+            value: boolean;
         }[];
-
     };
 
     arrayTextFields?: {
         name: string;
         label: string;
-        value?: string[];
-    };
+        type: string;
+        value: string[];
+    }[];
 
-    elementsFromDatabaseSingleChoice?:
-    {
+    elementsFromDatabaseSingleChoice?: {
         name: string;
         label: string;
         route: string;
-        value?: string;
+        value: string;
     }[];
-    elementsFromDatabaseMultipleChoice?:
-    {
+
+    elementsFromDatabaseMultipleChoice?: {
         name: string;
         label: string;
         route: string;
-        value?: string[];
+        value: string[];
     }[];
+
 
 }

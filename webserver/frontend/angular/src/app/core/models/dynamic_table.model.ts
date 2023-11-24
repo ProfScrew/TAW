@@ -1,3 +1,5 @@
+import { iDynamicTableForm } from "./dynamic_table_form.model";
+
 export interface iDynamicTable {
     route: string;
     shadow: boolean;
@@ -13,11 +15,6 @@ export interface iDynamicTable {
     
     expandable: boolean;
 
-    subModelInput?:{
-        // implement later for expandable forms
-    }
-
-
-
+    subModelInput?: iDynamicTableForm;
 
 }
