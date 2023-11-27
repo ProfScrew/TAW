@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MasterContainerComponent } from './components/master-container/master-container.component';
 import { authGuard } from './guards/auth.guard';
 import { LogoComponent } from './components/logo/logo.component';
+import { ErrorPageComponent } from './components/error-page/error-page.component';
 
 const routes: Routes = [
 
@@ -52,10 +53,21 @@ const routes: Routes = [
       },
       */
       {
+        path: 'forbidden',
+        component: ErrorPageComponent,
+        data: { errorCode: 403 , errorMessage: 'Forbidden, You have no Permissions to Enter Here!',image: 'gheko.jpg'}
+      },
+      {
         path: '',
         redirectTo: 'logo',
         pathMatch: 'full'
-      }
+      },
+      { 
+        path: '**',
+        pathMatch: 'full',  
+        component: ErrorPageComponent,
+        data: { errorCode: 404, errorMessage: 'Page not found',image: 'cat.jpg'}
+      }, 
 
     ]
   }

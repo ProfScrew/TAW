@@ -28,7 +28,7 @@ export interface iDynamicTableForm {
         label: string;
         type: string;
         value: string[];
-    }[];
+    };
 
     elementsFromDatabaseSingleChoice?: {
         name: string;

@@ -104,6 +104,15 @@ resturant_informations.post("/", authorize, async (req, res, next) => {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, "Invalid form data"));
     }
 
+    RestaurantInformation.find({}).then((data) => {
+        if (data.length > 0) {
+            return next(cResponse.error(eHttpCode.CONFLICT,'RestaurantInformation already exists'));
+        }
+    }).catch((err) => {
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+    });
+  
+
     const resturantInformation = new RestaurantInformation(restaurant_information);
 
     resturantInformation.save().then((data) => {

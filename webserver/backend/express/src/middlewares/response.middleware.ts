@@ -15,6 +15,7 @@ export enum eHttpCode {
     FORBIDDEN = 403,
     NOT_FOUND = 404,
     METHOD_NOT_ALLOWED = 405,
+    CONFLICT = 409,
     TOO_MANY_REQUESTS = 429,
     //5xx
     INTERNAL_SERVER_ERROR = 500,

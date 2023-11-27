@@ -24,12 +24,15 @@ import { MasterContainerComponent } from './components/master-container/master-c
 import { NotifierComponent } from './components/notifier/notifier.component';
 import { ApiService } from './services/api.service';
 import { LogoComponent } from './components/logo/logo.component';
+import { ErrorPageComponent } from './components/error-page/error-page.component';
+
 
 
 @NgModule({
   declarations: [
     MasterContainerComponent,
     NotifierComponent,
+    ErrorPageComponent,
     LogoComponent,
   ],
   imports: [

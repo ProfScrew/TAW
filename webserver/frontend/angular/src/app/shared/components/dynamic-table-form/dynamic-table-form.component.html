@@ -1,9 +1,80 @@
 <br>
 
-    <section class="section-center">
-        <br>
-        {{model?.routeDelete}}
-    </section>
+<section class="section-center">
+    <br>
+    {{model?.routeDelete}}
+    <br>
 
+    <form [formGroup]="dynamicFormGroup">
+        <!-- textfields-->
+        <ng-container *ngFor="let element of  model?.textFields">
+            <mat-form-field>
+                <mat-label>{{element.label}}</mat-label>
+                <input matInput [formControlName]="element.name" [value]="element.value">
+            </mat-form-field>
+        </ng-container>
+        <!--elements from database multiple -->
+        <ng-container *ngIf="model?.elementsFromDatabaseMultipleChoice !== undefined">
+            <ng-container
+                *ngFor="let elementFromMultipleDB of model?.elementsFromDatabaseMultipleChoice!; let ind = index">
+                <mat-form-field>
+                    <mat-label>{{ elementFromMultipleDB.label }}</mat-label>
+                    <mat-select  [formControlName]="elementFromMultipleDB.name" multiple>
+                        <mat-option *ngFor="let option of multipleElementsFromDatabase[ind]"
+                            [value]="option?._id" [attr.selected] = "true">
+                            {{ option.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </ng-container>
+
+        </ng-container>
+        <br>
+        <section class="section-center">
+            <!-- checkboxes-->
+            <ng-container *ngIf="model?.checkBoxes">
+                <mat-checkbox-group [formGroupName]="model?.checkBoxes?.name ?? null">
+                    <mat-checkbox *ngFor="let element of model?.checkBoxes?.elements" [formControlName]="element.name">
+                        {{element.name}}
+                    </mat-checkbox>
+                </mat-checkbox-group>
+            </ng-container>
+        </section>
+
+
+
+        <br>
+
+        <section class="section-center">
+            <!-- array form
+            -->
+            <ng-container *ngIf="model?.arrayTextFields">
+                <ng-container [formArrayName]="model?.arrayTextFields?.name!">
+                    <ng-container *ngFor="let elementArray of ElementsArray.controls; let i = index">
+                        <ng-container [formGroupName]="i">
+                            <mat-form-field appearance="fill">
+                                <mat-label>{{ model?.arrayTextFields?.label}}</mat-label>
+                                <input matInput [formControlName]="model?.arrayTextFields?.name!" placeholder="">
+                            </mat-form-field>
+                            <mat-icon class="delete-btn" (click)="deleteElementArray(i)">
+                                delete_forever</mat-icon>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+                {{ model?.arrayTextFields?.label}}
+                        <button mat-raised-button color="primary" type="button" (click)="addElementArray()">
+                            Add
+                        </button>
+            </ng-container>
+        </section>
+
+        <br>
+
+        
+
+    </form>
+</section>
+
+<br>
 
 <br>
