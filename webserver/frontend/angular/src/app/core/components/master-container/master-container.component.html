@@ -27,7 +27,7 @@
           <a mat-list-item
             *ngFor="let subItem of item.subItems; let i = index"
             class="sub-item-button"
-            [routerLink]="item.subLinks[i]">
+            [routerLink]="item.subLinks[i]" (click)="closeDrawer()">
             <div class="sub-item">{{ subItem }}</div>
           </a>
         </mat-list>

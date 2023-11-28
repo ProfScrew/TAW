@@ -19,7 +19,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 
 
 
-
 import { MasterContainerComponent } from './components/master-container/master-container.component';
 import { NotifierComponent } from './components/notifier/notifier.component';
 import { ApiService } from './services/api.service';

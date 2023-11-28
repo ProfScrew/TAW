@@ -19,9 +19,9 @@
 
 .inputs-row {
     display: flex; /* Use flexbox for horizontal alignment */
-  }
+}
   
-  .input-container {
-    margin-right: 10px; /* Adjust margin between inputs if needed */
-  }
+.input-container {
+  margin-right: 10px; /* Adjust margin between inputs if needed */
+}
 

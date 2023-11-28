@@ -1,18 +1,20 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
 
-import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { PageInfoService } from '../../services/page-info.service';
+import { MatDrawer } from '@angular/material/sidenav';
+
 
 @Component({
   selector: 'app-master-container',
   templateUrl: './master-container.component.html',
   styleUrls: ['./master-container.component.css'],
-
 })
 export class MasterContainerComponent {
+  @ViewChild('drawer') drawer!: MatDrawer;
+
 
   items = [
     { name: 'Admin', subItems: ['Users', 'Categories', 'Recipes', 'Ingredients', "Info Restaurant", 'Rooms', 'Tables'],
@@ -34,6 +36,10 @@ export class MasterContainerComponent {
 
   isValidRole(item: string) {
     return (this.auth.role as any)[item.toLowerCase()];
+  }
+
+  closeDrawer() {
+    this.drawer.close();
   }
 
   exitApp() {

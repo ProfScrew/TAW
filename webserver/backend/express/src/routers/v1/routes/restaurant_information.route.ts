@@ -106,7 +106,7 @@ resturant_informations.post("/", authorize, async (req, res, next) => {
 
     RestaurantInformation.find({}).then((data) => {
         if (data.length > 0) {
-            return next(cResponse.error(eHttpCode.CONFLICT,'RestaurantInformation already exists'));
+            return next(cResponse.error(eHttpCode.CONFLICT,'Information of the Restaurant already exists'));
         }
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));

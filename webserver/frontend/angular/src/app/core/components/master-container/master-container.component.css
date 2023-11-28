@@ -70,7 +70,6 @@
 
 }
 
-
 .mat-expansion-panel{
   background-color: #673ab7;
 }
@@ -96,7 +95,6 @@
   padding: 1px 1px;
   font-size: 5px;
   /*cursor: pointer;*/
-  transition: all 0.3s;
   box-shadow: none;
   overflow: hidden;
 }

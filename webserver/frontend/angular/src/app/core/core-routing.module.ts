@@ -55,7 +55,7 @@ const routes: Routes = [
       {
         path: 'forbidden',
         component: ErrorPageComponent,
-        data: { errorCode: 403 , errorMessage: 'Forbidden, You have no Permissions to Enter Here!',image: 'gheko.jpg'}
+        data: { errorCode: 403 , errorMessage: 'Forbidden',image: 'gheko.jpg'}
       },
       {
         path: '',
