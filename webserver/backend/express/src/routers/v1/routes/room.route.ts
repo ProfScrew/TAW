@@ -4,6 +4,8 @@ import { Room, iRoom, verifyRoomData } from "../../../models/room.model";
 import mongoose, { isValidObjectId } from 'mongoose';
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import { Redis } from "../../../services/redis.service";
+import { io } from '../../../app';
+import { eListenChannels } from "../../../models/channels.enum";
 
 const rooms = Router();
 
@@ -103,6 +105,7 @@ rooms.post("/", authorize, async (req, res, next) => {
 
     newRoom.save().then((data) => {
         Redis.delete("Room:" + JSON.stringify({}));
+        io.to('admin').emit(eListenChannels.rooms, { message: 'Rooms list updated!' });
         return next(cResponse.genericMessage(eHttpCode.CREATED, data));
     }).catch((err) => {
         console.log(err.message);
@@ -164,6 +167,7 @@ rooms.put("/:id", authorize, async (req, res, next) => {
     Room.findOneAndUpdate({ _id: mongoose.Types.ObjectId(id) }, { name: room.name }).then((data) => {
         Redis.delete("Room:" + JSON.stringify({}));
         Redis.delete("Room:" + JSON.stringify({ _id: id }));
+        io.to('admin').emit(eListenChannels.rooms, { message: 'Rooms list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
@@ -207,6 +211,7 @@ rooms.delete("/:id", authorize, async (req, res, next) => {
     Room.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
         Redis.delete("Room:" + JSON.stringify({}));
         Redis.delete("Room:" + JSON.stringify({ _id: id }));
+        io.to('admin').emit(eListenChannels.rooms, { message: 'Rooms list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));

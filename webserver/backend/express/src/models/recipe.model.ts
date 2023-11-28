@@ -19,7 +19,7 @@ export interface iRecipe {
 }
 
 const RecipeSchema = new Schema<iRecipe>({
-    name:        { type:  String, required: true, unique: true },
+    name:        { type:  String, required: true, unique: false },
     description: { type:  String, required: false },
     ingredients: [{ type: Schema.Types.ObjectId, ref: 'Ingredient' }],
     base_price:  { type:  Number, required: true },

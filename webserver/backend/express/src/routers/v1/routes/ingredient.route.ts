@@ -5,6 +5,8 @@ import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import mongoose, { isValidObjectId } from "mongoose";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import { Redis } from "../../../services/redis.service";
+import { io } from '../../../app';
+import { eListenChannels } from "../../../models/channels.enum";
 
 const ingredients = Router();
 
@@ -136,6 +138,7 @@ ingredients.post("/", authorize, async (req, res, next) => {
     ingredient.save().then((data) => {
         Redis.delete("Ingredient:" + JSON.stringify({}));
         Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false }  }));
+        io.to('admin').emit(eListenChannels.ingredients, { message: 'Ingredients list updated!' });
         return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
@@ -233,6 +236,7 @@ ingredients.put('/:id', authorize, async (req, res, next) => {
                     Redis.delete("Ingredient:" + JSON.stringify({}));
                     Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: true }  }));
                     Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false }  }));
+                    io.to('admin').emit(eListenChannels.ingredients, { message: 'Ingredients list updated!' });
                     return next(cResponse.genericMessage(eHttpCode.OK, { id: data._id }));
                 }).catch((errCreate: mongoose.Error) => {
                     return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + errCreate.message));
@@ -309,6 +313,7 @@ ingredients.delete("/:id", authorize, async (req, res, next) => {
             Redis.delete("Ingredient:" + JSON.stringify({ _id: id }));
             Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: true }  }));
             Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: false }  }));
+            io.to('admin').emit(eListenChannels.ingredients, { message: 'Ingredients list updated!' });
             return next(cResponse.genericMessage(eHttpCode.OK, data));
         })
         .catch((error) => {

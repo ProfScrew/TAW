@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
-import { iDynamicTable } from 'src/app/core/models/dynamic_table.model';
+import { eListenChannels, iDynamicTable } from 'src/app/core/models/dynamic_table.model';
 import { iDynamicTableForm } from 'src/app/core/models/dynamic_table_form.model';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 
@@ -26,7 +26,8 @@ export class RoomsComponent {
   };
   modelTable: iDynamicTable = {
     route: '/rooms/',
-    shadow: false,
+    archive: false,
+    tableListener: eListenChannels.rooms,
     columns: [
       {
         name: 'name',
