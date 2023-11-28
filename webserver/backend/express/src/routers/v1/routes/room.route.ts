@@ -55,7 +55,7 @@ rooms.get("/", authorize, async (req, res, next) => {
 
     Room.find(query).then((data) => {
         Redis.set<iRoom[]>("Room:" + JSON.stringify(query), data);
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
@@ -103,7 +103,7 @@ rooms.post("/", authorize, async (req, res, next) => {
 
     newRoom.save().then((data) => {
         Redis.delete("Room:" + JSON.stringify({}));
-        return next(cResponse.success(eHttpCode.CREATED, data));
+        return next(cResponse.genericMessage(eHttpCode.CREATED, data));
     }).catch((err) => {
         console.log(err.message);
         if (err.code === 11000) {
@@ -164,7 +164,7 @@ rooms.put("/:id", authorize, async (req, res, next) => {
     Room.findOneAndUpdate({ _id: mongoose.Types.ObjectId(id) }, { name: room.name }).then((data) => {
         Redis.delete("Room:" + JSON.stringify({}));
         Redis.delete("Room:" + JSON.stringify({ _id: id }));
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
@@ -207,7 +207,7 @@ rooms.delete("/:id", authorize, async (req, res, next) => {
     Room.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
         Redis.delete("Room:" + JSON.stringify({}));
         Redis.delete("Room:" + JSON.stringify({ _id: id }));
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });

@@ -77,7 +77,7 @@ recipes.get('/', authorize, async (req, res, next) => {     //todo shadow delete
    
     Recipe.find(query).then((data) => {
         Redis.set<iRecipe[]>("Recipe:" + JSON.stringify(query), data);
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
@@ -125,7 +125,7 @@ recipes.post('/', authorize, async (req, res, next) => {
     newRecipe.save().then((data) => {
         Redis.delete("Recipe:" + JSON.stringify({}));
         Redis.delete("Recipe:" + JSON.stringify({ deleted : { $exists: false } }));
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         if(err.code === 11000){
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Recipe already exists'));
@@ -209,7 +209,7 @@ recipes.put('/:id', authorize, async (req, res, next) => {
                 Redis.delete("Recipe:" + JSON.stringify({}));
                 Redis.delete("Recipe:" + JSON.stringify({ deleted:  { $exists: true } }));
                 Redis.delete("Recipe:" + JSON.stringify({ deleted:  { $exists: false } }));
-                return next(cResponse.success(eHttpCode.OK, data));
+                return next(cResponse.genericMessage(eHttpCode.OK, data));
             }).catch((err) => {
                 return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, '3 DB error: ' + err));
             });
@@ -270,7 +270,7 @@ recipes.delete('/', authorize, async (req, res, next) => {
         Redis.delete("Recipe:" + JSON.stringify({_id : id, deleted : { $exists: true }}));
         Redis.delete("Recipe:" + JSON.stringify({ deleted:  { $exists: true } }));
         Redis.delete("Recipe:" + JSON.stringify({ deleted:  { $exists: false } }));
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         if(err.name === 'DocumentNotFoundError'){
             return next(cResponse.error(eHttpCode.NOT_FOUND, 'Recipe not found'));

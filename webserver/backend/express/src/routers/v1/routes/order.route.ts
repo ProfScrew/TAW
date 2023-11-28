@@ -124,7 +124,7 @@ orders.post("/", authorize, async (req, res, next) => {
     }
 
     order.save().then((data) => {
-        return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
+        return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Order already exists'));

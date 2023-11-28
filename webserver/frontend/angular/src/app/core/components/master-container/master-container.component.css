@@ -46,6 +46,11 @@
   display: flex;
 }
 
+.mat-expansion-panel,
+.mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-header:not([aria-disabled=true]):hover{
+  background: #673ab7;
+}
+
 .letter {
   font-family: impact;
   margin: 10px;
@@ -68,10 +73,6 @@
   box-shadow: none;
   overflow: hidden;
 
-}
-
-.mat-expansion-panel{
-  background-color: #673ab7;
 }
 
 .main-item-button{
@@ -126,7 +127,7 @@
 
 .message{
   color: white;
-  font-size: 16px;
+  font-size: 3vmin;
   font-weight: 500;
   text-decoration: none;
   text-align: left;

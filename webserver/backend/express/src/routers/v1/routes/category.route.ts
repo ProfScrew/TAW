@@ -117,7 +117,7 @@ categories.post("/", authorize, async (req, res, next) => {
 
     category.save().then((data) => {
         Redis.delete("Category: " + JSON.stringify({}));
-        return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
+        return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Category already exists'));
@@ -177,7 +177,7 @@ categories.put("/:id", authorize, async (req, res, next) => {
     Category.updateOne({ _id: mongoose.Types.ObjectId(id) }, category).then((data) => {
         Redis.delete("Category:" + JSON.stringify({}));
         Redis.delete("Category:" + JSON.stringify({ _id: id }));
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
@@ -227,7 +227,7 @@ categories.delete("/:id", authorize, async (req, res, next) => {
     Category.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
         Redis.delete("Category:" + JSON.stringify({}));
         Redis.delete("Category:" + JSON.stringify({ _id: id }));
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }
     ).catch((err) => {
         if (err.name === 'DocumentNotFoundError') {

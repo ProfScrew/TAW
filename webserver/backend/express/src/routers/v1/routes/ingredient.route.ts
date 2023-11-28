@@ -136,7 +136,7 @@ ingredients.post("/", authorize, async (req, res, next) => {
     ingredient.save().then((data) => {
         Redis.delete("Ingredient:" + JSON.stringify({}));
         Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false }  }));
-        return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
+        return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Ingredient already exists'));
@@ -233,7 +233,7 @@ ingredients.put('/:id', authorize, async (req, res, next) => {
                     Redis.delete("Ingredient:" + JSON.stringify({}));
                     Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: true }  }));
                     Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false }  }));
-                    return next(cResponse.success(eHttpCode.OK, { id: data._id }));
+                    return next(cResponse.genericMessage(eHttpCode.OK, { id: data._id }));
                 }).catch((errCreate: mongoose.Error) => {
                     return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + errCreate.message));
                 });
@@ -309,7 +309,7 @@ ingredients.delete("/:id", authorize, async (req, res, next) => {
             Redis.delete("Ingredient:" + JSON.stringify({ _id: id }));
             Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: true }  }));
             Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: false }  }));
-            return next(cResponse.success(eHttpCode.OK, { message: 'Ingredient deleted' }));
+            return next(cResponse.genericMessage(eHttpCode.OK, data));
         })
         .catch((error) => {
             if (error.name === 'DocumentNotFoundError') {

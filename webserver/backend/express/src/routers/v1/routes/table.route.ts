@@ -93,7 +93,7 @@ const  tables = Router();
 
     table.save().then((data) => {
         // function that creates virtual tables
-        return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
+        return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Table already exists'));
@@ -154,7 +154,7 @@ tables.put("/:id/status/:type", authorize, async (req, res, next) => {
     }
 
     Table.updateOne({_id: mongoose.Types.ObjectId(id)}, {status: type}).then((data) => {
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
@@ -210,7 +210,7 @@ tables.put("/:id", authorize, async (req, res, next) => {
     }
 
     Table.updateOne({_id: mongoose.Types.ObjectId(id)},  table).then((data) => {
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
@@ -258,7 +258,7 @@ tables.put("/:id", authorize, async (req, res, next) => {
 
 
     Table.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }
     ).catch((err) => {
         if(err.name === 'DocumentNotFoundError'){

@@ -25,3 +25,16 @@
   margin-right: 10px; /* Adjust margin between inputs if needed */
 }
 
+@media (min-width: 768px) {
+  mat-card {
+    width: 100%;
+  }
+}
+
+mat-card {
+  display: inline-flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+

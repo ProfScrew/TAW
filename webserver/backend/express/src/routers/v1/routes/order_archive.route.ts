@@ -62,7 +62,7 @@ order_archives.get("/", authorize, async (req, res, next) => {
     const query: any = id ? { _id: id } : {};
 
     OrderArchive.find(query).then((order_archives) => {
-        return next(cResponse.success(eHttpCode.OK, order_archives));
+        return next(cResponse.genericMessage(eHttpCode.OK, order_archives));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, err));
     });
@@ -266,7 +266,7 @@ order_archives.post("/:id", authorize, async (req, res, next) => {
     // so push copies to reddis/file that will help recover the data
     // when databse is up again, we can recover the data from reddis/file and save it to database
 
-    return next(cResponse.success(eHttpCode.OK, orderArchive));
+    return next(cResponse.genericMessage(eHttpCode.OK, orderArchive));
 
 });
 

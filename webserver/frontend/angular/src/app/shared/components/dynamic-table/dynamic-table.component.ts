@@ -1,16 +1,15 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { iDynamicTable } from 'src/app/core/models/dynamic_table.model';
-import { iUser, iUserTable } from 'src/app/core/models/user.model';
 import { ApiService } from 'src/app/core/services/api.service';
 import { SocketService } from 'src/app/core/services/socket.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { iDynamicTableForm } from 'src/app/core/models/dynamic_table_form.model';
 
 export interface iRowCheck {
-  name: string;
+  id: string;
   value: boolean;
 }[]
 
@@ -44,6 +43,15 @@ export class DynamicTableComponent {
     this.socketService.listen('userListUpdated').subscribe((data) => {
       console.log('User list updated:', data);
       // Update your UI as needed
+      //TODO UPDATE TABLE SO THAT I DON'T HAVE DUPLICATES
+      this.selectedRowCheck = [];
+      this.dataSource = new MatTableDataSource();
+      setTimeout(() => {// wait for the animation to finish
+        this.currentRow = "";
+        for (const element of this.selectedRowCheck) {
+          element.value = false;
+        }
+      }, 300);
       this.getTableData();
     });
   }
@@ -52,9 +60,9 @@ export class DynamicTableComponent {
     this.api.get(this.model?.route!).subscribe((data: any) => {
 
       for (const element of data.body.payload) {
-        this.selectedRowCheck.push({ name: element.name, value: false });
+        this.selectedRowCheck.push({ id: element._id, value: false });
       }
-      console.log(this.selectedRowCheck)
+      //console.log("what=?",this.selectedRowCheck)
 
       this.dataSource = new MatTableDataSource(data.body.payload);
       this.dataSource.paginator = this.paginator!;
@@ -101,7 +109,7 @@ export class DynamicTableComponent {
 
   selectRow(rowData: any) {
     // Your logic when a row is clicked
-    if (this.currentRow == rowData.name) {
+    if (this.currentRow == rowData._id) {
       setTimeout(() => {// wait for the animation to finish
         this.currentRow = "";
         for (const element of this.selectedRowCheck) {
@@ -110,10 +118,10 @@ export class DynamicTableComponent {
 
       }, 300);
     } else {
-      this.currentRow = rowData.name;
-      console.log(this.selectedRowCheck[rowData.name])
+      this.currentRow = rowData._id;
+      console.log("rowcheck", this.selectedRowCheck)
       for (const element of this.selectedRowCheck) {
-        if (element.name != rowData.name) {
+        if (element.id != rowData._id) {
           element.value = false;
         } else {
           element.value = true;
@@ -121,14 +129,14 @@ export class DynamicTableComponent {
       }
       this.setSelectedRowData(rowData);
     }
-    console.log('Hello World!', rowData); // Example: Log the clicked row data
+    //console.log('Row Data Passed from table', rowData); // Example: Log the clicked row data
   }
 
   setSelectedRowData(rowData: any) {
 
     this.selectedRow = this.model?.subModelInput as iDynamicTableForm;
     this.selectedRow.formName = "modifyUser";
-    if (rowData._id != undefined) { // all other cases
+    if (rowData.username == undefined) { // all other cases
       this.selectedRow.routeModify = this.model?.route! + rowData._id;
       this.selectedRow.routeDelete = this.model?.route! + rowData._id;
     } else { // case for users
@@ -146,14 +154,15 @@ export class DynamicTableComponent {
     }
 
     if (this.selectedRow.arrayTextFields != undefined) {
-      console.log("array text fields", this.selectedRow.arrayTextFields)
       this.selectedRow.arrayTextFields!.value = rowData[this.selectedRow.arrayTextFields!.name];
     }
-    if (this.selectedRow.arrayCheckBoxes != undefined) {
-      if (this.selectedRow.elementsFromDatabaseSingleChoice != undefined) {
-        this.selectedRow.elementsFromDatabaseSingleChoice!.value = rowData[this.selectedRow.elementsFromDatabaseSingleChoice!.name];
+
+    if (this.selectedRow.elementsFromDatabaseSingleChoice != undefined) {
+      for (let element of this.selectedRow.elementsFromDatabaseSingleChoice!) {
+        element.value = rowData[element.name];
       }
     }
+
     if (this.selectedRow.elementsFromDatabaseMultipleChoice != undefined) {
       for (let element of this.selectedRow.elementsFromDatabaseMultipleChoice!) {
         element.value = rowData[element.name];

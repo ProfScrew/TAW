@@ -117,7 +117,7 @@ resturant_informations.post("/", authorize, async (req, res, next) => {
 
     resturantInformation.save().then((data) => {
         Redis.delete("RestaurantInformation:" + JSON.stringify({}));
-        return next(cResponse.success(eHttpCode.CREATED, { id: data._id }));
+        return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'ResturantInformation already exists'));
@@ -177,7 +177,7 @@ resturant_informations.put("/:id", authorize, async (req, res, next) => {
     RestaurantInformation.updateOne({ _id: mongoose.Types.ObjectId(id) }, restaurant_information).then((data) => {
         Redis.delete("RestaurantInformation:" + JSON.stringify({}));
         Redis.delete("RestaurantInformation:" + JSON.stringify({ _id: id }));
-        return next(cResponse.success(eHttpCode.OK, data));
+        return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });

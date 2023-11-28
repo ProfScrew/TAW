@@ -28,7 +28,7 @@
                                 [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                                 <ng-container *ngFor="let elementRowCheck of selectedRowCheck">
                                     <ng-container
-                                        *ngIf="elementRowCheck.name == element.name && elementRowCheck.value ">
+                                        *ngIf="elementRowCheck.id == element._id && elementRowCheck.value ">
                                         <app-dynamic-table-form [model]='this.selectedRow'>
                                         </app-dynamic-table-form>
 

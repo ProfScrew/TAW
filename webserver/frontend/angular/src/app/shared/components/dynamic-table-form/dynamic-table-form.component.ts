@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { NotifierComponent } from 'src/app/core/components/notifier/notifier.component';
 import { iDynamicTableForm } from 'src/app/core/models/dynamic_table_form.model';
 import { ApiService } from 'src/app/core/services/api.service';
 
@@ -11,7 +12,7 @@ import { ApiService } from 'src/app/core/services/api.service';
 
 export class DynamicTableFormComponent {
   dynamicFormGroup: FormGroup = new FormGroup({});
-
+  selectedValues: string[] = [];
 
 
   @Input() model: iDynamicTableForm | undefined;
@@ -21,18 +22,17 @@ export class DynamicTableFormComponent {
 
 
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private notifier: NotifierComponent) {
 
   }
 
 
   ngOnInit(): void {
-    console.log("not hello ", this.model)
+    console.log("model inside the form table", this.model)
     if (this.model == undefined) {
       console.log("model is undefined");
     } else {//build form
       this.buildForm();
-      console.log(this.model);
     }
   }
 
@@ -48,11 +48,11 @@ export class DynamicTableFormComponent {
         this.addElementArray(field);
       }
     }
+    //seting up selected value for multiple choice from database
   }
 
   getFormControlsFields() {
     const formGroupField: any = {};
-    console.log("hello there", this.model)
     // Text fields  ✅
     if (this.model?.textFields !== undefined) {
       for (const field of this.model?.textFields!) {
@@ -71,7 +71,7 @@ export class DynamicTableFormComponent {
       }
     }
 
-    //array text fields
+    //array text fields ✅
 
     if (this.model?.arrayTextFields !== undefined) {
       formGroupField[this.model?.arrayTextFields.name] = new FormArray([]);
@@ -80,17 +80,18 @@ export class DynamicTableFormComponent {
 
     // Single select ✅
     if (this.model?.elementsFromDatabaseSingleChoice !== undefined) {
-      /*
-      formGroupField[this.model?.elementsFromDatabaseSingleChoice.name] = new FormControl();
-      this.api.get(this.model?.elementsFromDatabaseSingleChoice.route!).subscribe((data: any) => {
-        this.singleElementsFromDatabase = data.body.payload;
-      });
-      */
+      for (const field of this.model?.elementsFromDatabaseSingleChoice) {
+        formGroupField[field.name] = new FormControl();
+        this.api.get(field.route).subscribe((data: any) => {
+          const selectedValue = data.body.payload.find((element: any) => element._id === field.value);
+          formGroupField[field.name].setValue(field.value);
+          this.singleElementsFromDatabase.push(data.body.payload);
+        });
+      }
     }
     
     // Multiple select ✅
     if (this.model?.elementsFromDatabaseMultipleChoice !== undefined) {
-      console.log("single choice", this.model?.elementsFromDatabaseMultipleChoice)
       
       for (const field of this.model?.elementsFromDatabaseMultipleChoice) {
         formGroupField[field.name] = new FormControl();
@@ -98,27 +99,29 @@ export class DynamicTableFormComponent {
 
           let temp = [] as any
           for (const element of data.body.payload) {
-            element.checked = true;
+            if(field.value.includes(element._id)){
+              element.checked = true;
+            }
             temp.push(element);
           }
-          console.log("temp", temp)
 
+          const selectedValues = [];
+          for (const element of temp) {
+            if (element.checked) {
+              selectedValues.push(element._id);
+            }
+          }
+          formGroupField[field.name].setValue(selectedValues);
           this.multipleElementsFromDatabase.push(temp);
         });
       }
-      /*
-      formGroupField[this.model?.elementsFromDatabaseMultipleChoice.name] = new FormControl();
-      this.api.get(this.model?.elementsFromDatabaseMultipleChoice.route!).subscribe((data: any) => {
-        this.multipleElementsFromDatabase = data.body.payload;
-      });
-      */
     }
     return formGroupField;
   }
 
 
 
-  //arraytextfields
+  //arraytextfields ✅
 
   get ElementsArray(): FormArray {
     return this.dynamicFormGroup.controls[this.model?.arrayTextFields?.name!] as FormArray;
@@ -132,10 +135,28 @@ export class DynamicTableFormComponent {
     this.ElementsArray.removeAt(elementIndex);
   }
 
-
+  onDelete(){
+    console.log("delete");
+    this.api.delete(this.model?.routeDelete!).subscribe({
+      next: (response) => {
+        this.notifier.showSuccess(response.status, response.body.message);
+      },
+      error: (error) => {
+        this.notifier.showError(error.status, error.body.message);
+      }
+    })
+  }
   onSubmit() {
     console.log("submitted");
     console.log(this.dynamicFormGroup.value);
+    this.api.put(this.model?.routeModify!, this.dynamicFormGroup.value).subscribe({
+      next: (response) => {
+        console.log("responce" ,response.body)
+        this.notifier.showSuccess(response.status, response.body.message);
+      }, error: (error) => {
+        this.notifier.showError(error.status, error.body.message);
+      }
+    });
   }
 
 
