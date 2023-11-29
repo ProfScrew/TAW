@@ -20,7 +20,7 @@ export class MasterContainerComponent {
     { name: 'Admin', subItems: ['Users', 'Categories', 'Recipes', 'Ingredients', "Info Restaurant", 'Rooms', 'Tables'],
     subLinks: ['/core/admin/users', '/core/admin/categories', '/core/admin/recipes','/core/admin/ingredients', '/core/admin/info-restaurant', '/core/admin/rooms', '/core/admin/tables'] },
     { name: 'Production', subItems: [], subLinks: [] },
-    { name: 'Waiter', subItems: [], subLinks : [] },
+    { name: 'Waiter', subItems: ['Orders'], subLinks : ['/core/waiter/orders'] },
     { name: 'Cashier', subItems: [], subLinks: [] },
     { name: 'Analytics', subItems: [], subLinks: [] },
   ];

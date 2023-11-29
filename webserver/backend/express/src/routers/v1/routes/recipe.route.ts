@@ -7,7 +7,7 @@ import { Redis } from '../../../services/redis.service';
 import { iUserAction } from '../../../models/user_action.object';
 import { Ingredient } from '../../../models/ingredient.model';
 import { io } from '../../../app';
-import { eListenChannels } from "../../../models/channels.enum";
+import { eListenChannels, eSocketRooms } from "../../../models/channels.enum";
 
 const recipes = Router();
 /**
@@ -127,7 +127,7 @@ recipes.post('/', authorize, async (req, res, next) => {
     newRecipe.save().then((data) => {
         Redis.delete("Recipe:" + JSON.stringify({}));
         Redis.delete("Recipe:" + JSON.stringify({ deleted: { $exists: false } }));
-        io.to('admin').emit(eListenChannels.recipes, { message: 'Recipes list updated!' });
+        io.to(eSocketRooms.admin).emit(eListenChannels.recipes, { message: 'Recipes list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         if (err.code === 11000) {
@@ -210,7 +210,7 @@ recipes.put('/:id', authorize, async (req, res, next) => {
                 Redis.delete("Recipe:" + JSON.stringify({}));
                 Redis.delete("Recipe:" + JSON.stringify({ deleted: { $exists: true } }));
                 Redis.delete("Recipe:" + JSON.stringify({ deleted: { $exists: false } }));
-                io.to('admin').emit(eListenChannels.recipes, { message: 'Recipes list updated!' });
+                io.to(eSocketRooms.admin).emit(eListenChannels.recipes, { message: 'Recipes list updated!' });
                 return next(cResponse.genericMessage(eHttpCode.OK, data));
             }).catch((err) => {
                 console.log(err)
@@ -273,7 +273,7 @@ recipes.delete('/:id', authorize, async (req, res, next) => {
         Redis.delete("Recipe:" + JSON.stringify({ _id: id, deleted: { $exists: true } }));
         Redis.delete("Recipe:" + JSON.stringify({ deleted: { $exists: true } }));
         Redis.delete("Recipe:" + JSON.stringify({ deleted: { $exists: false } }));
-        io.to('admin').emit(eListenChannels.recipes, { message: 'Recipes list updated!' });
+        io.to(eSocketRooms.admin).emit(eListenChannels.recipes, { message: 'Recipes list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         if (err.name === 'DocumentNotFoundError') {

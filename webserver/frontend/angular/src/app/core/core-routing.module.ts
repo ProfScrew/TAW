@@ -25,16 +25,16 @@ const routes: Routes = [
         canActivate: [authGuard],
         data: { type: 'admin' }
       },
+      {
+        path: 'waiter',
+        loadChildren: () => import('../modules/waiter/waiter.module').then(m => m.WaiterModule),
+        data: { type: 'waiter' }
+      },
       /*
       {
         path: 'production',
         loadChildren: () => import('../modules/production/production.module').then(m => m.ProductionModule),
         data: { type: 'production' }
-      },
-      {
-        path: 'waiter',
-        loadChildren: () => import('../modules/waiter/waiter.module').then(m => m.WaiterModule),
-        data: { type: 'waiter' }
       },
       {
         path: 'cashier',
