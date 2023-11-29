@@ -1,5 +1,5 @@
 
-import { Component, ViewChild, ViewChildren, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 
@@ -12,13 +12,23 @@ import { NotifierComponent } from 'src/app/core/components/notifier/notifier.com
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   hide=true;
   username: string = '';
   password: string = '';
   rememberMe: boolean = true;
 
   constructor(private router: Router, private errorMessage: MatSnackBar, private auth: AuthService,private notifier: NotifierComponent) { }
+
+  ngOnInit(): void {
+    this.autoLogin();
+  }
+
+  autoLogin() {
+    if (this.auth.isLogged()) {
+      this.router.navigate(['/core/logo']);
+    }
+  }
 
   onSubmit() {
     // Add your login logic here (e.g., send a request to the server).
