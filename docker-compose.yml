@@ -11,6 +11,7 @@ services:
             - ./webserver/backend/express:/app/backend
         depends_on:
             - mongodb
+            - redis
         networks:
             - Internal
             - External
@@ -68,6 +69,7 @@ services:
         - ./reverseproxy/contents/certificates:/etc/nginx/ssl
         depends_on:
             - frontend
+            - backend
         restart: unless-stopped          
 
 
