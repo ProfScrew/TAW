@@ -12,10 +12,13 @@ build_cordova() {
   cp -r $source_angular $destination_cordova
 
   # Copy general config files to Cordova project
-  cp -r general_config/* $destination_cordova/src/environments/
+  cp general_config/environment.ts $destination_cordova/src/environments/environment.ts
+  cp general_config/environment.development.ts $destination_cordova/src/environments/environment.development.ts
+  cp general_config/socket.service.ts $destination_cordova/src/app/core/services/socket.service.ts
 
   # Copy Cordova config files to Cordova project
-  cp -r cordova/* $destination_cordova/src/
+  cp cordova/index.html $destination_cordova/src/index.html
+  cp cordova/main.ts $destination_cordova/src/main.ts
 
   cd $destination_cordova/..
 
@@ -33,7 +36,6 @@ build_cordova() {
   # Set Android SDK path
   export ANDROID_HOME=/home/stefano/Android/Sdk
   export ANDROID_SDK_ROOT=/home/stefano/Android/Sdk
-
   cordova build
 }
 
@@ -46,7 +48,9 @@ build_electron() {
   cp -r $source_angular $destination_electron
 
   # Copy general config files to Electron project
-  cp -r general_config/* $destination_electron/src/environments/
+  cp general_config/environment.ts $destination_electron/src/environments/environment.ts
+  cp general_config/environment.development.ts $destination_electron/src/environments/environment.development.ts
+  cp general_config/socket.service.ts $destination_electron/src/app/core/services/socket.service.ts
 
   # Copy Cordova config files to Electron project
   cp electron/index.html $destination_electron/src/index.html
