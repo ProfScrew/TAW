@@ -1,0 +1,47 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button class="icon" aria-label="menu" (click)="drawer.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span routerLink="/core/">CookHub</span>
+  <span class="spacer"></span>
+  <span class = "message">&nbsp;&nbsp; {{pageInfo.pageMessage}}</span>
+  <span class="spacer"></span>
+  <button mat-icon-button class="icon favorite-icon" aria-label="Delete?"><mat-icon matBadge="0"
+      matBadgeColor="warn">comment</mat-icon>
+  </button>
+  <button mat-icon-button class="icon" aria-label="Exit App" (click)="exitApp()">
+    <mat-icon>exit_to_app</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-drawer-container class="container" autosize>
+  <mat-drawer #drawer class="sidenav" mode="side">
+    <mat-list class="noscrolbar">
+      <ng-container *ngFor="let item of items">
+        <mat-expansion-panel class="mat-elevation-z0" *ngIf="isValidRole(item.name)">
+          <mat-expansion-panel-header>
+              <mat-panel-title mat-list-item class="main-item-button" [ngClass]="{'main-item': !isSubItem(item)}">{{ item.name }}</mat-panel-title>
+          </mat-expansion-panel-header>
+
+        <mat-list *ngIf="isSubItem(item)">
+          <a mat-list-item
+            *ngFor="let subItem of item.subItems; let i = index"
+            class="sub-item-button"
+            [routerLink]="item.subLinks[i]" (click)="closeDrawer()">
+            <div class="sub-item">{{ subItem }}</div>
+          </a>
+        </mat-list>
+      </mat-expansion-panel>
+      </ng-container>
+    </mat-list>
+
+
+
+  </mat-drawer>
+  <div class="content-border">
+    <router-outlet>
+
+    </router-outlet>
+  </div>
+
+</mat-drawer-container>

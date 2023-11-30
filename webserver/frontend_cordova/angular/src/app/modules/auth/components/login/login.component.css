@@ -1,0 +1,27 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    /* Horizontal centering */
+    align-items: center;
+    /* Vertical centering */
+    height: 100vh;
+    /* 100% viewport height to center vertically */
+    color: black;
+    background-color: #673ab7;
+}
+
+.mat-card-cool {
+    max-width: 400px;
+    background-color: white;
+    
+
+}
+
+.section-center {
+    display: flex;
+    justify-content: center;
+}
+
+.full-width {
+    width: 100%;
+}

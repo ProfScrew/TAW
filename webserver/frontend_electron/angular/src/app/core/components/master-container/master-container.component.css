@@ -1,0 +1,135 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mat-toolbar {
+  height: 64px; /* Adjust this to match your actual toolbar height */
+}
+
+
+.container {
+  width: 100%;
+  height: calc(100% - 64px);
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+
+}
+.sidenav-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidenav {
+  height: 100%;
+  display: flex;
+  padding: 20px;
+  background-color: #673ab7;
+}
+
+.centered-container {
+  width: 100%;
+  /* Set the width of the container */
+  text-align: center;
+  /* Center the text horizontally */
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+
+}
+
+.logo {
+  font-size: 3em;
+  color: #673ab7;
+  display: flex;
+}
+
+.mat-expansion-panel,
+.mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-header:not([aria-disabled=true]):hover{
+  background: #673ab7;
+}
+
+.letter {
+  font-family: impact;
+  margin: 10px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.button{
+  background-color: #673ab7;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  /*cursor: pointer;*/
+  transition: all 0.3s;
+  
+  box-shadow: none;
+  overflow: hidden;
+
+}
+
+.main-item-button{
+  background-color: #673ab7;
+  color: white;
+  border: none;
+  border-radius: 2px;
+  padding: 1px 1px;
+  font-size: 16px;
+  /*cursor: pointer;*/
+  transition: all 0.3s;
+  box-shadow: none;
+  overflow: hidden;
+
+}
+.sub-item-button{
+  background-color: #673ab7;
+  color: white;
+  border: none;
+  border-radius: 2px;
+  padding: 1px 1px;
+  font-size: 5px;
+  /*cursor: pointer;*/
+  box-shadow: none;
+  overflow: hidden;
+}
+
+
+.main-item {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: left;
+  overflow: hidden;
+}
+
+.sub-item {
+  color: white;
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 400;
+  text-align:left;
+  padding-left: 10px;
+  overflow: hidden;
+}
+
+.mat-drawer-inner-container {
+  overflow: hidden;
+}
+
+.message{
+  color: white;
+  font-size: 3vmin;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: left;
+  overflow: hidden;
+}
