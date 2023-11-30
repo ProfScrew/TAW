@@ -1,36 +1,51 @@
-<section class="section-center">
-    
-<ng-container *ngIf="dataLoaded">
-    
-    <form [formGroup]="OrderFormGroup" (ngSubmit)="onSubmit()">
-            <mat-form-field>
-                <mat-label>Guests</mat-label>
-                <input matInput placeholder="guests" formControlName="guests">
-            </mat-form-field>
-            <ng-container *ngIf="tableReference !== undefined">
-            <mat-form-field>
-                <mat-label>Table</mat-label>
-                <mat-select formControlName="tables" placeholder="tables">
-                    <mat-option *ngFor="let table of tableReference" [value]="table._id">
-                            {{table.name}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </ng-container>
-            <ng-container *ngIf="roomReference !== undefined">
+<mat-card class="responsive-form">
+    <br>
+    <br>
+    <mat-card-header>
+        <mat-card-title style="padding-top: 20px;">
+                New Order
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="flex-container">
+        
+        <section class="section-center">
+            
+
+            <form [formGroup]="OrderFormGroup" (ngSubmit)="onSubmit()">
                 <mat-form-field>
-                    <mat-label>Room</mat-label>
-                <mat-select formControlName="room" placeholder="room">
-                        <mat-option *ngFor="let room of roomReference" [value]="room._id">
-                            {{room.name}}
-                        </mat-option>
-                    </mat-select>
+                    <mat-label>Guests</mat-label>
+                    <input matInput placeholder="guests" formControlName="guests">
                 </mat-form-field>
-            </ng-container>
-            
-            <!-- button-->
-            <button mat-raised-button color="primary" type="submit">Submit</button>
-            
-        </form>
-    </ng-container>
-</section>
+                <ng-container *ngIf="roomReference !== undefined">
+                    <mat-form-field>
+                        <mat-label>Room</mat-label>
+                        <mat-select formControlName="room" placeholder="room">
+                            <mat-option *ngFor="let room of roomReference" [value]="room._id"
+                                (click)="selectRoom(room._id)">
+                                {{room.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </ng-container>
+                <ng-container *ngIf="tableReference !== undefined && tableReference !== null">
+                    <mat-form-field>
+                        <mat-label>Table</mat-label>
+                        <mat-select formControlName="tables" placeholder="tables" multiple>
+                            <mat-option *ngFor="let table of RoomTablesList" [value]="table._id">
+                                {{table.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </ng-container>
+                <!-- button-->
+                <br>
+                <section class="section-center">
+                <button mat-raised-button color="primary" type="submit">Submit</button>
+                </section>
+
+            </form>
+        </section>
+
+    </mat-card-content>
+</mat-card>
+<br>

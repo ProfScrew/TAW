@@ -10,6 +10,7 @@ import { iRoom } from '../../../models/room.model';
 import { cResponse, eHttpCode } from '../../../middlewares/response.middleware';
 import { io } from '../../../app';
 import { eListenChannels,eSocketRooms } from '../../../models/channels.enum';
+import { Redis } from '../../../services/redis.service';
 
 
 
@@ -295,7 +296,30 @@ user.delete("/:username", authorize, async (req, res, next) => {
         }
     }
 });
+/**
+ * @swagger
+ * /users/resetCache:
+ *   get:
+ *     tags: [Users]
+ *     summary: Reset the cache.
+ *     description: Reset the cache used by the application.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Cache reset successfully.
+ *       401:
+ *         description: Unauthorized.
+ *       403:
+ *         description: Forbidden.
+ */
 
 
+user.get('/resetCache', authorize, async (req, res, next) => {
+    const requester = (req.user as iTokenData);
+    if (!requester.role.admin) return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
+    await Redis.deleteAll();
+    return next(cResponse.genericMessage(eHttpCode.OK));
+});
 
 export default user;

@@ -5,6 +5,8 @@ import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import mongoose, { Schema, isValidObjectId } from "mongoose";
 import { iUserAction } from "../../../models/user_action.object";
 import { Table, eTableStatus } from "../../../models/table.model";
+import { io } from "../../../app";
+import { eListenChannels, eSocketRooms } from "../../../models/channels.enum";
 
 const orders = Router();
 
@@ -119,11 +121,13 @@ orders.post("/", authorize, async (req, res, next) => {
     const tables = order.tables;
     for (const table of tables) {
         Table.findByIdAndUpdate(table, { status: eTableStatus.busy }).catch((err: any) => {
+            io.to(eSocketRooms.waiter).emit(eListenChannels.tables, { message: 'Table list updated!' });
             return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
         });
     }
 
     order.save().then((data) => {
+        io.to(eSocketRooms.waiter).emit(eListenChannels.orders, { message: 'Order list updated!' });
         return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {

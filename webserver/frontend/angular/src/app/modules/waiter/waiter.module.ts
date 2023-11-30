@@ -18,6 +18,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { OrderFormComponent } from './components/order-form/order-form.component';
 import { MatOptionModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 
 
 
@@ -45,6 +46,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     SharedModule,
     MatOptionModule,
     ReactiveFormsModule,
+    MatSelectModule,
 
 
 
