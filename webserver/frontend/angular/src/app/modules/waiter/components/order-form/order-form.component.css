@@ -1,0 +1,20 @@
+.section-center {
+    display: flex;
+    justify-content: center;
+}
+
+@media (min-width: 768px) {
+    .responsive-form {
+      width: 100%;
+    }
+  }
+  
+  .responsive-form {
+    display: inline-flex;
+    flex-flow: row wrap;
+    justify-content: center;
+  }
+
+  .flex-container{
+    padding-top: 20px;
+  }

@@ -7,6 +7,7 @@ import { eListenChannels, eSocketRooms } from 'src/app/core/models/channels.enum
 import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
 import { eOrderStatus, iOrder } from 'src/app/core/models/order.model';
 import { ApiService } from 'src/app/core/services/api.service';
+import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { SocketService } from 'src/app/core/services/socket.service';
 
 
@@ -40,9 +41,10 @@ export class OrdersTableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild(MatSort) sort: MatSort | undefined;
 
-  constructor(private api: ApiService, private sockerService: SocketService) {
+  constructor(private api: ApiService, private sockerService: SocketService,private pageInfo: PageInfoService) {
     this.dataSource = new MatTableDataSource();
     this.getReferences();
+    Promise.resolve().then(() => this.pageInfo.pageMessage = "🏃‍♀️Orders");
   }
 
   getReferences() {
@@ -88,6 +90,11 @@ export class OrdersTableComponent implements AfterViewInit {
       this.api.get('/tables').subscribe((responce) => {
         this.tableReference = responce.body.payload;
       });
+    });
+    
+    this.sockerService.listen(eListenChannels.orders).subscribe((responce) => {
+      console.log(responce);
+      this.ngOnInit();
     });
 
   }

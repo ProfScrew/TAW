@@ -62,6 +62,11 @@ export class Redis {
         console.log("🗑️ 🎒\tDeleting key: " + key);
         await Redis.client.del(key);
     }
+    
+    public static async deleteAll() {
+        console.log("🗑️ 🎒\tDeleting all keys");
+        await Redis.client.flushAll();
+    }
 }
 
 

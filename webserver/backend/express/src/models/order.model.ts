@@ -49,8 +49,8 @@ const OrderSchema = new Schema<iOrder>({
     guests: { type: Number, required: true },
     capacity: { type: Number, required: true },
     status: { type: eOrderStatus, required: false, enum: eOrderStatus, default: eOrderStatus.waiting },
-    room: { type: Schema.Types.ObjectId, required: true, ref: 'Room' },
-    tables: { type: [Schema.Types.ObjectId], required: true, ref: 'Table' },
+    room: { type: Schema.Types.ObjectId, required: true, ref: 'Room', unique: false},
+    tables: { type: [Schema.Types.ObjectId], required: true, ref: 'Table'},
     logs_order: {
         created_order: { type: UserAction, required: true },
         //taken_order: { type: UserAction, required: false },

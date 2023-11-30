@@ -13,7 +13,7 @@ export interface iIngredient {
 }
 
 export const IngredientSchema = new Schema<iIngredient>({
-    name:                       {type: String, required: true},
+    name:                       {type: String, required: true, unique: false},
     alergens:                   {type: [String]},
     modification_price:         {type: Number, required: true},
     modification_percentage:    {type: Number, required: true},

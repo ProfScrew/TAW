@@ -133,3 +133,6 @@
   text-align: left;
   overflow: hidden;
 }
+.content-border{
+  padding: 15px;
+}
