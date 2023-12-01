@@ -9,15 +9,15 @@ import { eOrderStatus, iOrder } from 'src/app/core/models/order.model';
 import { ApiService } from 'src/app/core/services/api.service';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { SocketService } from 'src/app/core/services/socket.service';
+import { Router } from '@angular/router';
+import { PageDataService } from 'src/app/core/services/page-data.service';
+import { iOrderData, iOrderPlusReferences } from '../../models/order.model';
+import { iRoom } from 'src/app/core/models/room.model';
+import { iTable } from 'src/app/core/models/table.model';
+import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
 
 
 
-interface iOrderData {
-  room: string;
-  tables: string;
-  guests: string;
-  status: eOrderStatus;
-}
 
 
 
@@ -34,14 +34,14 @@ export class OrdersTableComponent implements AfterViewInit {
   displayedColumns: string[] = ['room', 'tables', 'guests', 'status'];
   dataSource: MatTableDataSource<iOrderData>;
 
-  roomReference: any[] = [];
-  tableReference: any[] = [];
+  roomReference: iRoom[] = [];
+  tableReference: iTable[] = [];
   orders: iOrder[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild(MatSort) sort: MatSort | undefined;
 
-  constructor(private api: ApiService, private sockerService: SocketService,private pageInfo: PageInfoService) {
+  constructor(private api: ApiService, private sockerService: SocketService,private pageInfo: PageInfoService, private pageData: PageDataService, private router: Router, public references: DatabaseReferencesService) {
     this.dataSource = new MatTableDataSource();
     this.getReferences();
     Promise.resolve().then(() => this.pageInfo.pageMessage = "🏃‍♀️Orders");
@@ -63,8 +63,8 @@ export class OrdersTableComponent implements AfterViewInit {
       let ordersData: iOrderData[] = [];
       this.orders.forEach((order) => {
         let orderData: iOrderData = {
-          room: this.roomReference.find((room) => room._id === order.room)?.name,
-          tables: this.tableReference.find((table) => table._id === order.tables[0])?.name,
+          room: this.roomReference.find((room) => room._id === order.room)?.name!,
+          tables: this.tableReference.find((table) => table._id === order.tables[0])?.name!,
           guests: order.guests.toString(),
           status: order.status!,
         };
@@ -107,6 +107,27 @@ export class OrdersTableComponent implements AfterViewInit {
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
+    }
+  }
+
+  sendData(data: any) {
+
+    const table = this.tableReference.find((reference) => reference.name == data.tables[0]);
+    if (table) {
+    this.orders.forEach((order) => {
+        order.tables.forEach((tableId) => {
+          if (tableId == table._id) {
+            console.log("Order Found",order);
+            const orderPlusReferences = {
+              order: order,
+              roomReference: this.roomReference,
+              tableReference: this.tableReference,
+            } as iOrderPlusReferences;
+            this.pageData.data = orderPlusReferences;
+            this.router.navigate(['/core/waiter/orders/detail']);
+          }
+        });
+      });
     }
   }
 }

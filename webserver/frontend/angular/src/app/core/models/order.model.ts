@@ -22,7 +22,7 @@ export interface iLogOrder {
 }
 
 export interface iCourse {
-    _id: String;
+    _id?: String;
     dishes: iDish['_id'][];
     logs_course?: iLogCourse;
 }

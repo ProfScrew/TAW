@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { PageInfoService } from '../../services/page-info.service';
 import { MatDrawer } from '@angular/material/sidenav';
+import { DatabaseReferencesService } from '../../services/database-references.service';
 
 
 @Component({
@@ -26,8 +27,8 @@ export class MasterContainerComponent {
   ];
 
   showFiller = true;
-  constructor(private router: Router, private auth: AuthService, private api: ApiService, protected pageInfo: PageInfoService) {
-    
+  constructor(private router: Router, private auth: AuthService, private api: ApiService, protected pageInfo: PageInfoService, private databaseReferences: DatabaseReferencesService) {
+    databaseReferences.initializeAllReferences();
   }
 
   isSubItem(item: any): boolean {
@@ -36,6 +37,10 @@ export class MasterContainerComponent {
 
   isValidRole(item: string) {
     return (this.auth.role as any)[item.toLowerCase()];
+  }
+
+  isWaiter() {
+    return this.auth.role['waiter'];
   }
 
   closeDrawer() {

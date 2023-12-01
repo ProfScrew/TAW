@@ -6,7 +6,7 @@
   <span class="spacer"></span>
   <span class = "message">&nbsp;&nbsp; {{pageInfo.pageMessage}}</span>
   <span class="spacer"></span>
-  <button mat-icon-button class="icon favorite-icon" aria-label="Delete?"><mat-icon matBadge="0"
+  <button mat-icon-button class="icon favorite-icon" aria-label="Delete?" *ngIf="isWaiter()"><mat-icon matBadge="0"
       matBadgeColor="warn">comment</mat-icon>
   </button>
   <button mat-icon-button class="icon" aria-label="Exit App" (click)="exitApp()">

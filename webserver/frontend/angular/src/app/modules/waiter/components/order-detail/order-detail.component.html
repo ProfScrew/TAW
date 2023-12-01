@@ -1,1 +1,36 @@
-<p>order-detail works!</p>
+<mat-card class="responsive-form">
+    <mat-card-header>
+        <mat-card-title >
+            Order detail of tables: {{receivedData?.order?.tables}}
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="flex-container">
+        <section class="section-center">
+            <mat-divider></mat-divider>
+            Detail Order:
+            <br>
+            Room: {{displayedOrder?.room}}
+            <br>
+            Table: {{displayedOrder?.tables}}
+            <br>
+            Guests: {{displayedOrder?.guests}}
+            <br>
+            Capacity: {{displayedOrder?.capacity}}
+            <br>
+            Status: {{displayedOrder?.status}}
+            <ng-container *ngIf="displayedOrder?.courses?.length != 0">
+            <mat-divider></mat-divider>
+            Existing Courses:
+            </ng-container>
+            <ng-container *ngIf="this.receivedData?.courses != undefined">
+                <mat-divider></mat-divider>
+                About to be added Courses:
+            </ng-container>
+            <mat-divider></mat-divider><br>
+            <a routerLink="/core/waiter/orders/detail/menu" mat-raised-button color="primary">Add Course</a>
+        </section>
+
+    </mat-card-content>
+</mat-card>
+<br>
+
