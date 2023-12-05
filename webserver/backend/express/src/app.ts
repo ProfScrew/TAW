@@ -27,11 +27,6 @@ server.use('/v1', v1)
 io.on('connection', (socket) => {
     console.log('🧑 🔌\tA user connected to the Socket');
 
-    socket.on('joinRoom', (roomName) => {
-        socket.join(roomName);
-        console.log(`🧑 🚪\tA user joined the room ${roomName}`);
-    });
-
     socket.on('disconnect', () => {
         console.log('🧑 💥\tA user disconnected from the Socket');
     });

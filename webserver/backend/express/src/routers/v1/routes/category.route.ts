@@ -5,7 +5,7 @@ import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import mongoose, { isValidObjectId } from "mongoose";
 import { Redis } from "../../../services/redis.service";
 import { io } from '../../../app';
-import { eListenChannels, eSocketRooms } from "../../../models/channels.enum";
+import { eListenChannels } from "../../../models/channels.enum";
 
 const categories = Router();
 
@@ -119,7 +119,7 @@ categories.post("/", authorize, async (req, res, next) => {
 
     category.save().then((data) => {
         Redis.delete("Category: " + JSON.stringify({}));
-        io.to(eSocketRooms.admin).emit(eListenChannels.categories, { message: 'Categories list updated!' });
+        io.emit(eListenChannels.categories, { message: 'Categories list updated!' });
         return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
@@ -180,9 +180,14 @@ categories.put("/:id", authorize, async (req, res, next) => {
     Category.updateOne({ _id: mongoose.Types.ObjectId(id) }, category).then((data) => {
         Redis.delete("Category:" + JSON.stringify({}));
         Redis.delete("Category:" + JSON.stringify({ _id: id }));
-        io.to(eSocketRooms.admin).emit(eListenChannels.categories, { message: 'Categories list updated!' });
+        io.emit(eListenChannels.categories, { message: 'Categories list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
+        console.log(err)
+        //order camp should be unique 
+        if(err.code === 11000){
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, "Category already exists or order is already taken"));
+        }
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
 });
@@ -231,7 +236,7 @@ categories.delete("/:id", authorize, async (req, res, next) => {
     Category.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
         Redis.delete("Category:" + JSON.stringify({}));
         Redis.delete("Category:" + JSON.stringify({ _id: id }));
-        io.to(eSocketRooms.admin).emit(eListenChannels.categories, { message: 'Categories list updated!' });
+        io.emit(eListenChannels.categories, { message: 'Categories list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }
     ).catch((err) => {

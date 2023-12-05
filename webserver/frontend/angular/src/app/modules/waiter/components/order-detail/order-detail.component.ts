@@ -3,6 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { iOrder } from 'src/app/core/models/order.model';
 import { PageDataService } from 'src/app/core/services/page-data.service';
 import { iOrderPlusReferences } from '../../models/order.model';
+import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
+import { SocketService } from 'src/app/core/services/socket.service';
+import { eListenChannels } from 'src/app/core/models/channels.enum';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-order-detail',
@@ -14,7 +18,15 @@ export class OrderDetailComponent implements OnInit {
 
   displayedOrder: iOrder | undefined;
 
-  constructor(public pageData: PageDataService) { }
+  referenceCategory: any;
+  subscription: Subscription | undefined;
+
+  constructor(public pageData: PageDataService, public reference : DatabaseReferencesService, private io : SocketService) {
+    this.subscription = this.reference.categoriesReferenceObservable.subscribe((value) => {
+      console.log("value", value);
+      this.referenceCategory = value;
+    });
+  }
 
   ngOnInit(): void {
     this.receivedData = this.pageData.data;
@@ -32,6 +44,10 @@ export class OrderDetailComponent implements OnInit {
       console.log("displayed",this.displayedOrder);
     }
 
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 
 

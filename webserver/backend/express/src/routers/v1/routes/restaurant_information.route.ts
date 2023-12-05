@@ -5,7 +5,7 @@ import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import mongoose, { isValidObjectId } from "mongoose";
 import { Redis } from "../../../services/redis.service";
 import { io } from '../../../app';
-import { eListenChannels, eSocketRooms } from "../../../models/channels.enum";
+import { eListenChannels } from "../../../models/channels.enum";
 
 const resturant_informations = Router();
 
@@ -119,7 +119,7 @@ resturant_informations.post("/", authorize, async (req, res, next) => {
 
     resturantInformation.save().then((data) => {
         Redis.delete("RestaurantInformation:" + JSON.stringify({}));
-        io.to(eSocketRooms.admin).emit(eListenChannels.restaurantInformation, { message: 'Restaurant Information list updated!' });
+        io.emit(eListenChannels.restaurantInformation, { message: 'Restaurant Information list updated!' });
         return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
@@ -180,7 +180,7 @@ resturant_informations.put("/:id", authorize, async (req, res, next) => {
     RestaurantInformation.updateOne({ _id: mongoose.Types.ObjectId(id) }, restaurant_information).then((data) => {
         Redis.delete("RestaurantInformation:" + JSON.stringify({}));
         Redis.delete("RestaurantInformation:" + JSON.stringify({ _id: id }));
-        io.to(eSocketRooms.admin).emit(eListenChannels.restaurantInformation, { message: 'Restaurant Information list updated!' });
+        io.emit(eListenChannels.restaurantInformation, { message: 'Restaurant Information list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));

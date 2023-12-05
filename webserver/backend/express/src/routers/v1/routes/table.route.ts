@@ -4,7 +4,7 @@ import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import mongoose from "mongoose";
 import { io } from '../../../app';
-import { eListenChannels, eSocketRooms } from "../../../models/channels.enum";
+import { eListenChannels } from "../../../models/channels.enum";
 
 const  tables = Router();
 
@@ -95,7 +95,7 @@ const  tables = Router();
 
     table.save().then((data) => {
         // function that creates virtual tables
-        io.to(eSocketRooms.admin).emit(eListenChannels.tables, { message: 'Table list updated!' });
+        io.emit(eListenChannels.tables, { message: 'Table list updated!' });
         return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000) {
@@ -157,8 +157,7 @@ tables.put("/:id/status/:type", authorize, async (req, res, next) => {
     }
 
     Table.updateOne({_id: mongoose.Types.ObjectId(id)}, {status: type}).then((data) => {
-        io.to(eSocketRooms.admin).emit(eListenChannels.tables, { message: 'Table list updated!' });
-        io.to(eSocketRooms.waiter).emit(eListenChannels.tables, { message: 'Table list updated!' });
+        io.emit(eListenChannels.tables, { message: 'Table list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
@@ -215,8 +214,7 @@ tables.put("/:id", authorize, async (req, res, next) => {
     }
 
     Table.updateOne({_id: mongoose.Types.ObjectId(id)},  table).then((data) => {
-        io.to(eSocketRooms.admin).emit(eListenChannels.tables, { message: 'Table list updated!' });
-        io.to(eSocketRooms.waiter).emit(eListenChannels.tables, { message: 'Table list updated!' });
+        io.emit(eListenChannels.tables, { message: 'Table list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
@@ -265,7 +263,7 @@ tables.put("/:id", authorize, async (req, res, next) => {
 
 
     Table.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
-        io.to(eSocketRooms.admin).emit(eListenChannels.tables, { message: 'Table list updated!' });
+        io.emit(eListenChannels.tables, { message: 'Table list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }
     ).catch((err) => {

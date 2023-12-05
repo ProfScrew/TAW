@@ -13,7 +13,7 @@ export enum eListenChannels {
 
 
 }
-
+/*
 export enum eSocketRooms {
     admin = "admin",
     waiter = "waiter",
@@ -21,3 +21,4 @@ export enum eSocketRooms {
     cashier = "cashier",
     analytics = "analytics",
 }
+*/

@@ -5,89 +5,96 @@ import { iRoom } from '../models/room.model';
 import { iTable } from '../models/table.model';
 import { iCategory } from '../models/category.model';
 import { ApiService } from './api.service';
+import { SocketService } from './socket.service';
+import { io } from 'socket.io-client';
+import { eListenChannels } from '../models/channels.enum';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DatabaseReferencesService {
-  categoriesReference : iCategory[] | undefined;
-  ingredientsReference : iIngredient[] | undefined;
-  recipesReference : iRecipe[] | undefined;
+  private categoriesReference : BehaviorSubject<iCategory[] | undefined> = new BehaviorSubject<iCategory[] | undefined>(undefined);
+  public categoriesReferenceObservable = this.categoriesReference.asObservable();
 
-  roomsReference : iRoom[] | undefined;
-  tablesReference : iTable[] | undefined;
+  private ingredientsReference : BehaviorSubject<iIngredient[] | undefined> = new BehaviorSubject<iIngredient[] | undefined>(undefined);
+  public ingredientsReferenceObservable = this.ingredientsReference.asObservable();
+
+  private recipesReference : BehaviorSubject<iRecipe[] | undefined> = new BehaviorSubject<iRecipe[] | undefined>(undefined);
+  public recipesReferenceObservable = this.recipesReference.asObservable();
+
+  private roomsReference : BehaviorSubject<iRoom[] | undefined> = new BehaviorSubject<iRoom[] | undefined>(undefined);
+  public roomsReferenceObservable = this.roomsReference.asObservable();
+
+  private tablesReference : BehaviorSubject<iTable[] | undefined> = new BehaviorSubject<iTable[] | undefined>(undefined);
+  public tablesReferenceObservable = this.tablesReference.asObservable();
 
 
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private io: SocketService) {
   }
 
-  initializeAllReferences(){
-    this.api.get('/categories').subscribe((responce) => {
-      this.categoriesReference = responce.body.payload;
-      
-    console.log("categoriesReference",this.categoriesReference);
+  initializeAllReferences() {
+    this.getCategoriesReference();
+    this.getIngredientsReference();
+    this.getRecipesReference();
+    this.getRoomsReference();
+    this.getTablesReference();
+
+    this.initializeListeners();
+  }
+
+  initializeListeners() {
+    this.io.listen(eListenChannels.categories).subscribe((response) => {
+      this.getCategoriesReference();
     });
-    this.api.get('/ingredients').subscribe((responce) => {
-      this.ingredientsReference = responce.body.payload;
+    this.io.listen(eListenChannels.ingredients).subscribe((response) => {
+      this.getIngredientsReference();
     });
-    this.api.get('/recipes').subscribe((responce) => {
-      this.recipesReference = responce.body.payload;
-    });
-
-    this.api.get('/rooms').subscribe((responce) => {
-      this.roomsReference = responce.body.payload;
-    });
-    this.api.get('/tables').subscribe((responce) => {
-      this.tablesReference = responce.body.payload;
+    this.io.listen(eListenChannels.recipes).subscribe((response) => {
+      this.getRecipesReference();
     });
 
-    
+    this.io.listen(eListenChannels.rooms).subscribe((response) => {
+      this.getRoomsReference();
+    });
+    this.io.listen(eListenChannels.tables).subscribe((response) => {
+      this.getTablesReference();
+    });
   }
 
-
-
-
-
-
-
-
-
-
-
-  setCategoriesReference(categories: iCategory[]) {
-    this.categoriesReference = categories;
-  }
-  setIngredientsReference(ingredients: iIngredient[]) {
-    this.ingredientsReference = ingredients;
-  }
-  setRecipesReference(recipes: iRecipe[]) {
-    this.recipesReference = recipes;
-  }
-
-  setRoomsReference(rooms: iRoom[]) {
-    this.roomsReference = rooms;
-  }
-  setTablesReference(tables: iTable[]) {
-    this.tablesReference = tables;
-  }
 
   getCategoriesReference() {
-    return this.categoriesReference;
+    this.api.get('/categories').subscribe((response) => {
+      this.categoriesReference.next(response.body.payload);
+    });
   }
   getIngredientsReference() {
-    return this.ingredientsReference;
+    this.api.get('/ingredients').subscribe((response) => {
+      this.ingredientsReference.next(response.body.payload)
+    });
   }
   getRecipesReference() {
-    return this.recipesReference;
+    this.api.get('/recipes').subscribe((response) => {
+      this.recipesReference.next(response.body.payload);
+    });
   }
 
   getRoomsReference() {
-    return this.roomsReference;
+    this.api.get('/rooms').subscribe((response) => {
+      this.roomsReference.next(response.body.payload);
+    });
   }
   getTablesReference() {
-    return this.tablesReference;
+    this.api.get('/tables').subscribe((response) => {
+      this.tablesReference.next(response.body.payload);
+    });
   }
+
+
+
+
+
 
 
 

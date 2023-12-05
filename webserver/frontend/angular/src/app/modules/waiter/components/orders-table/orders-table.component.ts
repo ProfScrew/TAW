@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { eListenChannels, eSocketRooms } from 'src/app/core/models/channels.enum';
+import { eListenChannels } from 'src/app/core/models/channels.enum';
 import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
 import { eOrderStatus, iOrder } from 'src/app/core/models/order.model';
 import { ApiService } from 'src/app/core/services/api.service';
@@ -15,8 +15,7 @@ import { iOrderData, iOrderPlusReferences } from '../../models/order.model';
 import { iRoom } from 'src/app/core/models/room.model';
 import { iTable } from 'src/app/core/models/table.model';
 import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
-
-
+import { Subscription } from 'rxjs';
 
 
 
@@ -27,7 +26,7 @@ import { DatabaseReferencesService } from 'src/app/core/services/database-refere
   styleUrls: ['./orders-table.component.css']
 })
 export class OrdersTableComponent implements AfterViewInit {
-  
+
 
   route = '/orders';
 
@@ -36,46 +35,57 @@ export class OrdersTableComponent implements AfterViewInit {
 
   roomReference: iRoom[] = [];
   tableReference: iTable[] = [];
+  subscriptionRoom: Subscription | undefined;
+  subscriptionTable: Subscription | undefined;
   orders: iOrder[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild(MatSort) sort: MatSort | undefined;
 
-  constructor(private api: ApiService, private sockerService: SocketService,private pageInfo: PageInfoService, private pageData: PageDataService, private router: Router, public references: DatabaseReferencesService) {
+  constructor(private api: ApiService, private sockerService: SocketService, private pageInfo: PageInfoService, private pageData: PageDataService, private router: Router, public references: DatabaseReferencesService) {
     this.dataSource = new MatTableDataSource();
-    this.getReferences();
+
     Promise.resolve().then(() => this.pageInfo.pageMessage = "🏃‍♀️Orders");
+
   }
 
-  getReferences() {
-    this.api.get('/rooms').subscribe((responce) => {
-      this.roomReference = responce.body.payload;
-    });
-    this.api.get('/tables').subscribe((responce) => {
-      this.tableReference = responce.body.payload;
-    });
+  ngOnDestroy(): void {
+    this.subscriptionRoom?.unsubscribe();
+    this.subscriptionTable?.unsubscribe();
   }
 
 
   ngOnInit(): void {
+    this.subscriptionRoom = this.references.roomsReferenceObservable.subscribe((value) => {
+      this.roomReference = value!;
+      this.pushdataToSource();
+    });
+    this.subscriptionTable = this.references.tablesReferenceObservable.subscribe((value) => {
+      this.tableReference = value!;
+      this.pushdataToSource();
+    });
     this.api.get(this.route).subscribe((responce) => {
       this.orders = responce.body.payload;
-      let ordersData: iOrderData[] = [];
-      this.orders.forEach((order) => {
-        let orderData: iOrderData = {
-          room: this.roomReference.find((room) => room._id === order.room)?.name!,
-          tables: this.tableReference.find((table) => table._id === order.tables[0])?.name!,
-          guests: order.guests.toString(),
-          status: order.status!,
-        };
-        ordersData.push(orderData);
-      });
-
-      this.dataSource = new MatTableDataSource<iOrderData>(ordersData);
+      this.pushdataToSource();
       this.dataSource.paginator = this.paginator!;
       this.dataSource.sort = this.sort!;
     });
   }
+  pushdataToSource() {
+    let ordersData: iOrderData[] = [];
+    this.orders.forEach((order) => {
+      let orderData: iOrderData = {
+        room: this.roomReference.find((room) => room._id === order.room)?.name!,
+        tables: this.tableReference.find((table) => table._id === order.tables[0])?.name!,
+        guests: order.guests.toString(),
+        status: order.status!,
+      };
+      ordersData.push(orderData);
+    });
+
+    this.dataSource = new MatTableDataSource<iOrderData>(ordersData);
+  }
+
 
   ngAfterViewInit() {
     if (this.paginator) {
@@ -84,14 +94,13 @@ export class OrdersTableComponent implements AfterViewInit {
     if (this.sort) {
       this.dataSource.sort = this.sort;
     }
-    this.sockerService.joinRoom(eSocketRooms.waiter);
     this.sockerService.listen(eListenChannels.tables).subscribe((responce) => {
       console.log(responce);
       this.api.get('/tables').subscribe((responce) => {
         this.tableReference = responce.body.payload;
       });
     });
-    
+
     this.sockerService.listen(eListenChannels.orders).subscribe((responce) => {
       console.log(responce);
       this.ngOnInit();
@@ -114,15 +123,15 @@ export class OrdersTableComponent implements AfterViewInit {
 
     const table = this.tableReference.find((reference) => reference.name == data.tables[0]);
     if (table) {
-    this.orders.forEach((order) => {
+      this.orders.forEach((order) => {
         order.tables.forEach((tableId) => {
           if (tableId == table._id) {
-            console.log("Order Found",order);
+            console.log("Order Found", order);
             const orderPlusReferences = {
               order: order,
               roomReference: this.roomReference,
               tableReference: this.tableReference,
-            } as iOrderPlusReferences;
+            } as iOrderPlusReferences;    //**** todo change thi and use database reference service */
             this.pageData.data = orderPlusReferences;
             this.router.navigate(['/core/waiter/orders/detail']);
           }

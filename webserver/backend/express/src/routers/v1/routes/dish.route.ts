@@ -107,6 +107,7 @@ dishes.post("/", authorize, async (req, res, next) => {
     }
 
     Dish.insertMany(dishData).then((data) => {
+        io.emit(eListenChannels.dishes, { message: 'Dish list updated!' })
         return next(cResponse.genericMessage(eHttpCode.CREATED, data.map((dish) => dish._id)));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
@@ -183,6 +184,7 @@ dishes.put("/:id/action/:type", authorize, async (req, res, next) => {
                     if (data.n === 0) {
                         return next(cResponse.error(eHttpCode.NOT_FOUND, "Dish not found."));
                     }
+                    io.emit(eListenChannels.dishes, { message: 'Dish list updated!' })
                     return next(cResponse.genericMessage(eHttpCode.OK, data));
                 }).catch((err) => {
                     return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
@@ -197,6 +199,7 @@ dishes.put("/:id/action/:type", authorize, async (req, res, next) => {
                     if (data.n === 0) {
                         return next(cResponse.error(eHttpCode.NOT_FOUND, "Dish not found."));
                     }
+                    io.emit(eListenChannels.dishes, { message: 'Dish list updated!' })
                     return next(cResponse.genericMessage(eHttpCode.OK, data));
                 }).catch((err) => {
                     return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
@@ -263,6 +266,7 @@ dishes.put("/:id", authorize, async (req, res, next) => { //not used by the fron
         if (data.n === 0) {
             return next(cResponse.error(eHttpCode.NOT_FOUND, "Dish not found."));
         }
+        io.emit(eListenChannels.dishes, { message: 'Dish list updated!' })
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
@@ -308,6 +312,7 @@ dishes.delete("/:id", authorize, async (req, res, next) => {  //not used by fron
         if (data.n === 0) {
             return next(cResponse.error(eHttpCode.NOT_FOUND, "Dish not found."));
         }
+        io.emit(eListenChannels.dishes, { message: 'Dish list updated!' })
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
         if (err.name === 'DocumentNotFoundError') {

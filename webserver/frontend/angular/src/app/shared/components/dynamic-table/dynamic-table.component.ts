@@ -7,7 +7,6 @@ import { ApiService } from 'src/app/core/services/api.service';
 import { SocketService } from 'src/app/core/services/socket.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { iDynamicTableForm } from 'src/app/core/models/dynamic_table_form.model';
-import { eSocketRooms } from 'src/app/core/models/channels.enum';
 
 
 export interface iRowCheck {
@@ -139,7 +138,6 @@ export class DynamicTableComponent {
   }
 
   ngAfterViewInit() {// setting up the socket listener
-    this.socketService.joinRoom(eSocketRooms.admin);
     console.log("table listener", this.model?.tableListener)
     this.socketService.listen(this.model?.tableListener!).subscribe((data) => {
       console.log('User list updated:', data);
@@ -254,3 +252,59 @@ export class DynamicTableComponent {
     }
   }
 }
+
+
+/*
+
+  valueReferenceSingle: [(iTable[] | iCategory[] | iRoom[] | iIngredient[]), string][] = [];
+  valueReferenceMultiple: [(iTable[] | iCategory[] | iRoom[] | iIngredient[]), string][] = [];
+  subscriptionsSingle: [Subscription, string][] = [];
+  subscriptionsMultiple: [Subscription, string][] = [];
+
+  buildSubscriptions() {
+
+    // Single select ✅
+    if (this.model?.elementsFromDatabaseSingleChoice != undefined) {
+      for (const element of this.model?.elementsFromDatabaseSingleChoice!) {
+        if (element.name == eSubscriptionElements.room) {
+          this.createSubscription(this.subscriptionsSingle, this.valueReferenceSingle, this.references.roomsReferenceObservable, eSubscriptionElements.room);
+        }
+        if (element.name == eSubscriptionElements.category) {
+          this.createSubscription(this.subscriptionsSingle, this.valueReferenceSingle, this.references.categoriesReferenceObservable, eSubscriptionElements.category);
+        }
+        if (element.name == eSubscriptionElements.ingredients) {
+          this.createSubscription(this.subscriptionsSingle, this.valueReferenceSingle, this.references.ingredientsReferenceObservable, eSubscriptionElements.ingredients);
+        }
+      }
+    }
+    if (this.model?.elementsFromDatabaseMultipleChoice != undefined){
+      // Multiple select ✅
+      for (const element of this.model?.elementsFromDatabaseMultipleChoice!) {
+        if (element.name == eSubscriptionElements.room) {
+          this.createSubscription(this.subscriptionsMultiple, this.valueReferenceMultiple, this.references.roomsReferenceObservable, eSubscriptionElements.room);
+        }
+        if (element.name == eSubscriptionElements.category) {
+          this.createSubscription(this.subscriptionsMultiple, this.valueReferenceMultiple, this.references.categoriesReferenceObservable, eSubscriptionElements.category);
+        }
+        if (element.name == eSubscriptionElements.ingredients) {
+          this.createSubscription(this.subscriptionsMultiple, this.valueReferenceMultiple, this.references.ingredientsReferenceObservable, eSubscriptionElements.ingredients);
+        }
+      }
+    }
+  }
+
+
+  createSubscription(subscription: [Subscription, string][], valueReference: [(iTable[] | iCategory[] | iRoom[] | iIngredient[]), string][] | undefined, observable: Observable<any>, subscriptionElement: eSubscriptionElements) {
+
+    subscription.push([observable.subscribe((value) => {
+      if (valueReference?.length == 0) {
+        valueReference.push([value!, subscriptionElement]);
+      } else if (valueReference!.find((element) => element[1] == subscriptionElement)) {
+        valueReference!.find((element) => element[1] == subscriptionElement)![0] = value!;
+      } else {
+        valueReference!.push([value!, subscriptionElement]);
+      }
+    }), subscriptionElement]);
+    console.log("valueReference", valueReference)
+  }
+  */

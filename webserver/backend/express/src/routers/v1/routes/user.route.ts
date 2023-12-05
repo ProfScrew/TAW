@@ -9,7 +9,7 @@ import { iCategory } from '../../../models/category.model';
 import { iRoom } from '../../../models/room.model';
 import { cResponse, eHttpCode } from '../../../middlewares/response.middleware';
 import { io } from '../../../app';
-import { eListenChannels,eSocketRooms } from '../../../models/channels.enum';
+import { eListenChannels } from '../../../models/channels.enum';
 import { Redis } from '../../../services/redis.service';
 
 
@@ -105,7 +105,7 @@ user.post('/', authorize, (req, res, next) => {
 
     // Try to save the user
     user.save().then((data) => {
-        io.to(eSocketRooms.admin).emit(eListenChannels.users, { message: 'User list updated!' });
+        io.emit(eListenChannels.users, { message: 'User list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
         if (reason.code === 11000)
@@ -233,7 +233,7 @@ user.put("/:username", authorize, async (req, res, next) => {
     try {
         await User.findOneAndUpdate({ username: username }, new_user, { new: true }).maxTimeMS(1000).orFail();
         blacklistUser(username, new Date(Date.now()));
-        io.to(eSocketRooms.admin).emit(eListenChannels.users, { message: 'User list updated!' });
+        io.emit(eListenChannels.users, { message: 'User list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK));
     } catch (reason: any) {
         if (reason.code === 11000)
@@ -285,7 +285,7 @@ user.delete("/:username", authorize, async (req, res, next) => {
 
     try {
         await User.deleteOne({ username: username }).orFail();
-        io.to(eSocketRooms.admin).emit(eListenChannels.users, { message: 'User list updated!' });
+        io.emit(eListenChannels.users, { message: 'User list updated!' });
         next(cResponse.genericMessage(eHttpCode.OK));
 
     } catch (err: any) {
