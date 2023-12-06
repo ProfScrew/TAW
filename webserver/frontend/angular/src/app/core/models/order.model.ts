@@ -37,6 +37,7 @@ export interface iOrder {
 
     logs_order?: iLogOrder;
     courses: iCourse[];
+    tempCourses?: iCourse[];
 
 
     final_price?: number;

@@ -118,7 +118,7 @@ categories.post("/", authorize, async (req, res, next) => {
     const category = new Category(categoryData);
 
     category.save().then((data) => {
-        Redis.delete("Category: " + JSON.stringify({}));
+        Redis.delete("Category:" + JSON.stringify({}));
         io.emit(eListenChannels.categories, { message: 'Categories list updated!' });
         return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {

@@ -1,0 +1,36 @@
+.pannel-recipes {
+    background-color: #f0f0f0;
+}
+
+.form-inline {
+  display: flex;
+  align-items: flex-start; /* Align items at the start of the flex container */
+}
+
+.flex-grow {
+  flex-grow: 1; /* Allows the textarea to grow and take available space */
+}
+
+.full-width {
+  width: 100%; /* Makes the textarea fill the entire available width */
+}
+
+.ml-2 {
+  margin-left: 8px; /* Adjust as needed to create spacing between textarea and button */
+}
+
+
+.mod-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between; /* Aligns items at the start and end of the flex container */
+  }
+  
+  .mod-details {
+    flex-grow: 1; /* Allows the details to take up available space */
+  }
+  
+  .mod-button {
+    margin-left: 8px; /* Adjust margin as needed for space between details and button */
+  }
+  

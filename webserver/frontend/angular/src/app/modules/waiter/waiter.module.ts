@@ -20,6 +20,9 @@ import { MatOptionModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatExpansionModule } from '@angular/material/expansion';
+
 
 
 
@@ -49,6 +52,10 @@ import { MatDividerModule } from '@angular/material/divider';
     ReactiveFormsModule,
     MatSelectModule,
     MatDividerModule,
+    MatTabsModule,
+    MatExpansionModule,
+  
+    
 
 
 

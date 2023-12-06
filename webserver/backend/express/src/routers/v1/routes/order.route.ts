@@ -120,8 +120,9 @@ orders.post("/", authorize, async (req, res, next) => {
 
     const tables = order.tables;
     for (const table of tables) {
-        Table.findByIdAndUpdate(table, { status: eTableStatus.busy }).catch((err: any) => {
+        Table.findByIdAndUpdate(table, { status: eTableStatus.busy }).then((data: any) => {
             io.emit(eListenChannels.tables, { message: 'Table list updated!' });
+        }).catch((err: any) => {
             return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
         });
     }

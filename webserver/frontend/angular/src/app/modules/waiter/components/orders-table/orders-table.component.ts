@@ -11,7 +11,7 @@ import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { SocketService } from 'src/app/core/services/socket.service';
 import { Router } from '@angular/router';
 import { PageDataService } from 'src/app/core/services/page-data.service';
-import { iOrderData, iOrderPlusReferences } from '../../models/order.model';
+import { iOrderData, iTempOrder } from '../../models/order.model';
 import { iRoom } from 'src/app/core/models/room.model';
 import { iTable } from 'src/app/core/models/table.model';
 import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
@@ -88,26 +88,25 @@ export class OrdersTableComponent implements AfterViewInit {
 
 
   ngAfterViewInit() {
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
-    }
-    if (this.sort) {
-      this.dataSource.sort = this.sort;
-    }
-    this.sockerService.listen(eListenChannels.tables).subscribe((responce) => {
-      console.log(responce);
-      this.api.get('/tables').subscribe((responce) => {
-        this.tableReference = responce.body.payload;
-      });
-    });
-
     this.sockerService.listen(eListenChannels.orders).subscribe((responce) => {
-      console.log(responce);
-      this.ngOnInit();
+      this.updateOrders();
     });
-
+  }
+  updateOrders() {
+    this.api.get(this.route).subscribe((responce) => {
+      this.orders = responce.body.payload;
+      this.pushdataToSource();
+      this.dataSource.paginator = this.paginator!;
+      this.dataSource.sort = this.sort!;
+      
+      console.log("!",this.orders);
+    });
   }
 
+  ngOndestroy() {
+    this.subscriptionRoom?.unsubscribe();
+    this.subscriptionTable?.unsubscribe();
+  }
 
 
   applyFilter(event: Event) {
@@ -120,19 +119,16 @@ export class OrdersTableComponent implements AfterViewInit {
   }
 
   sendData(data: any) {
-
+    //find order by table id and send it to the order detail page
     const table = this.tableReference.find((reference) => reference.name == data.tables[0]);
     if (table) {
       this.orders.forEach((order) => {
         order.tables.forEach((tableId) => {
           if (tableId == table._id) {
-            console.log("Order Found", order);
-            const orderPlusReferences = {
+            const tempOrder = {
               order: order,
-              roomReference: this.roomReference,
-              tableReference: this.tableReference,
-            } as iOrderPlusReferences;    //**** todo change thi and use database reference service */
-            this.pageData.data = orderPlusReferences;
+            } as iTempOrder;
+            this.pageData.data = tempOrder;
             this.router.navigate(['/core/waiter/orders/detail']);
           }
         });

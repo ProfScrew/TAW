@@ -1,7 +1,7 @@
 import { iUserAction } from "./user_action.object";
 
 export interface iIngredient {
-    _id:                    String;
+    _id:                    string;
     name:                   string;
     alergens:               string[];
     modification_price:     number;

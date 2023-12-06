@@ -87,6 +87,7 @@ export class DatabaseReferencesService {
   }
   getTablesReference() {
     this.api.get('/tables').subscribe((response) => {
+      console.log("UPDATE TABLES ",response);
       this.tablesReference.next(response.body.payload);
     });
   }

@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { NotifierComponent } from 'src/app/core/components/notifier/notifier.component';
 import { ApiService } from 'src/app/core/services/api.service';
+import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
 
 @Component({
   selector: 'app-order-form',
@@ -10,17 +12,28 @@ import { ApiService } from 'src/app/core/services/api.service';
 })
 
 export class OrderFormComponent {
-  @Input() tableReference: any;
-  @Input() roomReference: any;
+  tableReference: any;
+  roomReference: any;
+  tableSubscription: Subscription | undefined;
+  roomSubscription: Subscription | undefined;
 
   chosenRoom: any;
   RoomTablesList: any;
   OrderFormGroup: FormGroup = new FormGroup({});
 
-  constructor(public notifier: NotifierComponent, private api : ApiService) {
+  constructor(public notifier: NotifierComponent, private api : ApiService, private databaseReferences: DatabaseReferencesService) {
     this.buildForm();
+
+    this.tableSubscription = this.databaseReferences.tablesReferenceObservable.subscribe((value) => {
+      this.tableReference = value!;
+    });
+    this.roomSubscription = this.databaseReferences.roomsReferenceObservable.subscribe((value) => {
+      this.roomReference = value!;
+    });
+
   }
   
+
   buildForm() {
 
     this.OrderFormGroup = new FormGroup({
@@ -62,8 +75,13 @@ export class OrderFormComponent {
       this.api.post('/orders', value).subscribe((res: any) => {
         console.log(res);
         this.notifier.showSuccess(res.status,res.body.message)
+        this.OrderFormGroup.reset();
+        
+        this.RoomTablesList = []
+        
       }, (err: any) => {
         console.log(err);
+        this.OrderFormGroup.reset();
         this.notifier.showError(err.status, err.error.message)
       })
     }
