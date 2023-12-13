@@ -3,15 +3,10 @@
   "version": "0.0.0",
   "main": "main.js",
   "scripts": {
-    "ng": "ng",
     "electron": "ng build --base-href ./ && electron .",
-    "setup-dev": "yarn install && yarn start",
-    "start": "npx ng serve --open --host 0.0.0.0 --poll=500 --disable-host-check",
-    "build": "npx ng build --prod demo",
-    "build-electron": "ng build && electron .",
-    "test": "npx ng test --browsers=ChromeHeadless",
-    "lint": "npx ng lint",
-    "e2e": "npx ng e2e"
+    "package-mac": "ng build --base-href ./ && npx electron-packager . CookHub --platform=darwin --arch=x64 --overwrite",
+    "package-win": "ng build --base-href ./ && npx electron-packager . CookHub --platform=win32 --arch=x64 --overwrite",
+    "package-linux": "ng build --base-href ./ && npx electron-packager . CookHub --platform=linux --arch=x64 --overwrite"
   },
   "private": true,
   "dependencies": {

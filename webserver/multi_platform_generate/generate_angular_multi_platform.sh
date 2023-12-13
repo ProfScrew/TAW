@@ -62,14 +62,14 @@ build_electron() {
   npm install
 
   #Run Electron app for development
-  npm run electron
+  #npm run electron
 
   # Build Electron app for windows
-  #npx electron-packager . CookHub --platform=win32 --arch=x64 --overwrite
+  npm run package-win
   # Build Electron app for linux
-  #npx electron-packager . CookHub --platform=linux --arch=x64 --overwrite
+  npm run package-linux
   # Build Electron app for mac
-  #npx electron-packager . CookHub --platform=darwin --arch=x64 --overwrite
+  npm run package-mac
 }
 
 # Parse command line options
