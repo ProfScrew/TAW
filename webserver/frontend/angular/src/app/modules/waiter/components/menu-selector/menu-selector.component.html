@@ -1,7 +1,7 @@
 <mat-card>
     <mat-card-header>
         <mat-card-title>
-            Order detail of tables: {{receivedData?.order?.tables}}
+            Adding a new Dish to the course:
         </mat-card-title>
     </mat-card-header>
 
@@ -25,15 +25,20 @@
                                             {{rec.description}}
                                         </mat-panel-description>
                                         <mat-panel-description>
-                                            {{rec.base_price}} &euro;
+                                            {{rec.base_price}}&euro;
                                         </mat-panel-description>
                                     </mat-expansion-panel-header>
                                     <mat-divider></mat-divider>
-                                    <b>Recipe Details</b>
-                                    <br>
-                                    <b>Item:</b> {{rec.name}} <b>Description:</b> {{rec.description}}
-                                    <br>
-                                    <b>Price:</b> {{rec.base_price}} &euro; <b>Ingredients:</b> {{rec.ingredients}}
+                                    <strong id="sub-title">Recipe Details</strong>
+                                    <div>
+                                        <strong>Item:</strong> {{rec.name}} 
+                                        <br>
+                                        <strong>Description:</strong> {{rec.description}}
+                                        <br>
+                                        <strong>Price:</strong> {{rec.base_price}}&euro;
+                                        <br>
+                                        <strong>Ingredients:</strong> {{rec.ingredients}}
+                                    </div>
                                     <mat-action-row>
                                         <button mat-raised-button color="primary" (click)="addCourse(rec)">Add</button>
                                     </mat-action-row>
@@ -53,7 +58,7 @@
 <mat-card>
     <mat-card-header>
         <mat-card-title>
-            Elements added to course:
+            Dishes added to course:
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
@@ -68,18 +73,21 @@
                             {{dish.description}}
                         </mat-panel-description>
                         <mat-panel-description>
-                            {{dish.actual_price}} &euro;
+                            {{dish.actual_price}}&euro;
                         </mat-panel-description>
                     </mat-expansion-panel-header>
                     <mat-divider></mat-divider>
-                    <b>Recipe Details</b>
+                    <strong id="sub-title">Receipe Details</strong><br>
+                    <strong>Item:</strong> {{dish.name}} 
                     <br>
-                    <b>Item:</b> {{dish.name}} <b>Description:</b> {{dish.description}}
+                    <strong>Description:</strong> {{dish.description}}
                     <br>
-                    <b>Price:</b> {{dish.actual_price}} &euro; <b>Ingredients:</b> {{dish.ingredients}}
+                    <strong>Price:</strong> {{dish.actual_price}}&euro;
+                    <br>
+                    <strong>Ingredients:</strong> {{dish.ingredients}}
+                    <br>
                     <mat-divider></mat-divider>
-                    <b>Notes:</b> {{dish.notes}}
-                    <mat-divider></mat-divider>
+                    <strong id="sub-title">Notes:</strong> {{dish.notes}}
                     <!--notes-->
                     <br>
                     <form [formGroup]="dish?.formNotes!" (ngSubmit)="onAddNote(i)" class="form-inline">
@@ -90,26 +98,29 @@
                         </mat-form-field>
                         <button mat-raised-button color="primary" type="submit" class="ml-2">Add Note</button>
                     </form>
+                    <br>
 
                     <mat-divider></mat-divider>
-                    <b>Modifications:</b>
+                    <strong id="sub-title">Modifications:</strong>
                     <ng-container *ngFor="let mod of dish.modifications, let indMod = index">
                         <div class="mod-container">
                             <div class="mod-details">
-                                <b>Ingredient:</b> {{mod.name}} <b>Type:</b> {{mod.type}} <b>Price:</b> {{mod.price_modification}}
+                                <b>Ingredient:</b> {{mod.name}} <br>
+                                <b>Type:</b> {{mod.type}} <br>
+                                <b>Price:</b> {{mod.price_modification}}&euro;
                             </div>
                             <div class="mod-button">
-                                <button mat-raised-button color="warn"
-                                    (click)="removeIngredient(i, indMod)">Remove</button>
+                                <button mat-raised-button color="warn" (click)="removeIngredient(i, indMod)">Remove</button>
                             </div>
                         </div>
+                        <!-- Add a horizontal line or any other separator between modifications -->
+                        <hr style="margin: 10px 0; border: 1px solid #ddd;">
                     </ng-container>
                     <br>
-                    <mat-divider></mat-divider>
 
                     <br>
 
-                    <form [formGroup]="dish?.formIngredients!" (ngSubmit)="onAddIngredient(i)" class="form-inline">
+                    <form [formGroup]="dish?.formIngredients!" (ngSubmit)="onAddIngredient(i)">
                         <mat-form-field>
                             <mat-label>Ingredient</mat-label>
                             <mat-select placeholder="ingredients" formControlName="ingredients" class="full-width">
@@ -126,14 +137,13 @@
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-
                         <button mat-raised-button color="primary" type="submit" class="ml-2">Add Ingredient</button>
                     </form>
 
                     <br>
 
                     <mat-action-row>
-                        <button mat-raised-button color="warn" (click)="removeCourse(i)">Remove</button>
+                        <button mat-raised-button color="warn" (click)="removeCourse(i)">Delete</button>
                     </mat-action-row>
                 </mat-expansion-panel>
             </ng-container>
@@ -141,7 +151,7 @@
     </mat-card-content>
 
     <ng-container *ngIf="tempDishes.length !== 0">
-        <mat-card-actions align="end">
+        <mat-card-actions >
             <button mat-raised-button color="accent" (click)="sendData()">Send</button>
         </mat-card-actions>
 

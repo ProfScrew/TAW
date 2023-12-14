@@ -9,6 +9,7 @@ export enum eRole {
   Cashier = 'cashier',
   Production = 'production',
   Admin = 'admin',
+  Analytics = 'analytics',
   Empty = '',
 }
 
@@ -42,6 +43,12 @@ export const authGuard: CanActivateFn = (route, state) => {
     }
     case eRole.Admin: {
       if (auth.isLogged() && auth.role['admin'] == true) {
+        return true;
+      }
+      break;
+    }
+    case eRole.Analytics: {
+      if (auth.isLogged() && auth.role['analytics'] == true) {
         return true;
       }
       break;

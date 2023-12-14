@@ -1,5 +1,5 @@
 
 export interface iRoom{
-    _id: String;
+    _id: string;
     name: string;
 }

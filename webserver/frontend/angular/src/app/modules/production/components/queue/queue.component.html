@@ -1,0 +1,38 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            Queue for Production. Your Production >:(
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+        <mat-accordion class="pannel-recipes">
+            <ng-container *ngFor="let ord of orders">
+                <mat-expansion-panel class="pannel-recipes">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            {{ord.guests}}
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            {{ord.status}}
+                        </mat-panel-description>
+                        <mat-panel-description>
+                            {{ord.tables}}&euro;
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <mat-divider></mat-divider>
+
+                    <strong id="sub-title">Recipe Details</strong>
+                    <div>
+                        <strong>Item:</strong> {{ord.courses}}
+                        <br>
+                        <strong>Description:</strong> {{ord.capacity}}
+                    </div>
+                </mat-expansion-panel>
+            </ng-container>
+
+
+        </mat-accordion>
+    </mat-card-content>
+</mat-card>

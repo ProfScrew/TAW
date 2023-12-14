@@ -22,12 +22,12 @@ export interface iLogOrder {
 }
 
 export interface iCourse {
-    _id?: String;
-    dishes: iDish['_id'][];
+    _id?: string;
+    dishes?: iDish['_id'][];
     logs_course?: iLogCourse;
 }
 export interface iOrder {
-    _id: String;
+    _id?: string;
     guests: number;
     capacity: number;
 

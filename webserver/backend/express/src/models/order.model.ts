@@ -57,7 +57,7 @@ const OrderSchema = new Schema<iOrder>({
     },
     courses: {
         type: [{
-            dishes: { type: [Schema.Types.ObjectId], ref: 'Dish', unique: true, required: true },
+            dishes: { type: [Schema.Types.ObjectId], ref: 'Dish', required: true },
             logs_course: {
                 created_course: { type: UserAction, required: true },
                 served_course: { type: UserAction, required: false },

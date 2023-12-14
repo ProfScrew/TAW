@@ -30,7 +30,6 @@ const routes: Routes = [
         loadChildren: () => import('../modules/waiter/waiter.module').then(m => m.WaiterModule),
         data: { type: 'waiter' }
       },
-      /*
       {
         path: 'production',
         loadChildren: () => import('../modules/production/production.module').then(m => m.ProductionModule),
@@ -46,12 +45,6 @@ const routes: Routes = [
         loadChildren: () => import('../modules/analytics/analytics.module').then(m => m.AnalyticsModule),
         data: { type: 'analytics' }
       },
-      {
-        path: 'settings',
-        loadChildren: () => import('../modules/settings/settings.module').then(m => m.SettingsModule),
-        data: { type: 'settings' }
-      },
-      */
       {
         path: 'forbidden',
         component: ErrorPageComponent,

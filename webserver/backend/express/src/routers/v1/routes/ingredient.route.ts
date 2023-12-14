@@ -7,6 +7,7 @@ import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import { Redis } from "../../../services/redis.service";
 import { io } from '../../../app';
 import { eListenChannels } from "../../../models/channels.enum";
+import { Order } from "../../../models/order.model";
 
 const ingredients = Router();
 
@@ -63,12 +64,12 @@ ingredients.get("/", authorize, async (req, res, next) => {
     //if (all can read) return next({ statusCode: 403, error: true, errormessage: 'Forbidden' });
 
     let query: any = id ? { _id: id } : name ? { name: name } : {};
-    
-        if (archive === 'true') {
-            query = { ...query, deleted: { $exists: true } };
-        } else if (archive === 'false') {
-            query = { ...query, deleted: { $exists: false } };
-        }
+
+    if (archive === 'true') {
+        query = { ...query, deleted: { $exists: true } };
+    } else if (archive === 'false') {
+        query = { ...query, deleted: { $exists: false } };
+    }
 
     if (id && !isValidObjectId(id)) {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid id'));
@@ -129,6 +130,7 @@ ingredients.post("/", authorize, async (req, res, next) => {
         return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
     }
 
+
     const ingredientData = req.body as iIngredient;
     if (!verifyIngredientData(ingredientData)) {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));
@@ -137,7 +139,7 @@ ingredients.post("/", authorize, async (req, res, next) => {
 
     ingredient.save().then((data) => {
         Redis.delete("Ingredient:" + JSON.stringify({}));
-        Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false }  }));
+        Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false } }));
         io.emit(eListenChannels.ingredients, { message: 'Ingredients list updated!' });
         return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
     }).catch((reason: { code: number, errmsg: string }) => {
@@ -197,6 +199,13 @@ ingredients.put('/:id', authorize, async (req, res, next) => {
     if (!requester.role.admin) {
         return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
     }
+
+    const orderCount = await Order.countDocuments({});
+    if (orderCount !== 0) {
+        return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Cannot modify ingredient if there are orders'));
+    }
+
+
     /*
     add check recipe
     if exist ingredient in recipe(valid, not deleted)
@@ -224,9 +233,9 @@ ingredients.put('/:id', authorize, async (req, res, next) => {
         }
         Ingredient.updateOne({ _id: mongoose.Types.ObjectId(id) }, { deleted: requesterAction }) //deleting the ingredient (shadow)
             .then((data) => {
-                Redis.delete("Ingredient: " + JSON.stringify({ _id: id}));
-                Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: true }  }));
-                Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: false }  }));
+                Redis.delete("Ingredient: " + JSON.stringify({ _id: id }));
+                Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: true } }));
+                Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: false } }));
                 const newIngredient = new Ingredient({
                     ...ingredient_data,
                     _id: new mongoose.Types.ObjectId(),
@@ -234,8 +243,8 @@ ingredients.put('/:id', authorize, async (req, res, next) => {
 
                 Ingredient.create(newIngredient).then((data) => { //creating the new ingredient with updated data
                     Redis.delete("Ingredient:" + JSON.stringify({}));
-                    Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: true }  }));
-                    Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false }  }));
+                    Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: true } }));
+                    Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false } }));
                     io.emit(eListenChannels.ingredients, { message: 'Ingredients list updated!' });
                     return next(cResponse.genericMessage(eHttpCode.OK, { id: data._id }));
                 }).catch((errCreate: mongoose.Error) => {
@@ -289,6 +298,10 @@ ingredients.delete("/:id", authorize, async (req, res, next) => {
     if (!requester.role.admin) {
         return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));
     }
+    const orderCount = await Order.countDocuments({});
+    if (orderCount !== 0) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Cannot delete ingredient if there are orders'));
+    }
     const id = req.params.id;
     /*
     add check recipe
@@ -308,11 +321,11 @@ ingredients.delete("/:id", authorize, async (req, res, next) => {
     Ingredient.updateOne({ _id: mongoose.Types.ObjectId(id) }, { deleted: requesterAction })
         .then((data) => {
             Redis.delete("Ingredient:" + JSON.stringify({}));
-            Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: true }  }));
-            Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false }  }));
+            Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: true } }));
+            Redis.delete("Ingredient:" + JSON.stringify({ deleted: { $exists: false } }));
             Redis.delete("Ingredient:" + JSON.stringify({ _id: id }));
-            Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: true }  }));
-            Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: false }  }));
+            Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: true } }));
+            Redis.delete("Ingredient:" + JSON.stringify({ _id: id, deleted: { $exists: false } }));
             io.emit(eListenChannels.ingredients, { message: 'Ingredients list updated!' });
             return next(cResponse.genericMessage(eHttpCode.OK, data));
         })

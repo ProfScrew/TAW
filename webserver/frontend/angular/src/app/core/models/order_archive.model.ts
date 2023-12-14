@@ -27,10 +27,10 @@ export interface iCourseArchive {
 
 
 export interface iOrderArchive {
-    _id:                String;
+    _id:                string;
     guests:             number;
     capacity:           number;
-    tables:             String[];
+    tables:             string[];
 
     logs_order:         iLogOrder;
 

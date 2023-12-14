@@ -1,7 +1,7 @@
 import { FormGroup } from "@angular/forms";
-import { eDishModificationType, eDishStatus } from "src/app/core/models/dish.model";
+import { eDishModificationType, eDishStatus, iDish } from "src/app/core/models/dish.model";
 import { iIngredient } from "src/app/core/models/ingredient.model";
-import { eOrderStatus, iOrder } from "src/app/core/models/order.model";
+import { eOrderStatus, iCourse, iLogCourse, iLogOrder, iOrder } from "src/app/core/models/order.model";
 import { iRecipe } from "src/app/core/models/recipe.model";
 import { iRoom } from "src/app/core/models/room.model";
 import { iTable } from "src/app/core/models/table.model";
@@ -53,4 +53,23 @@ export interface iTempOrder {
     courses?: iTempCourse[];
 }
 
+export interface iCourseToDisplay {
+    _id?: string;
+    dishes?: iDish[];
+    logs_course?: iLogCourse;
+}
+export interface iOrderToDisplay {
+    _id?: string;
+    guests: number;
+    capacity: number;
 
+    status?: eOrderStatus;
+    room: iRoom['_id'];
+    tables: iTable['_id'][];
+
+    logs_order?: iLogOrder;
+    courses: iCourseToDisplay[];
+
+
+    final_price?: number;
+}

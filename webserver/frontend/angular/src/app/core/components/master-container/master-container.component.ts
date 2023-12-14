@@ -20,10 +20,10 @@ export class MasterContainerComponent {
   items = [
     { name: 'Admin', subItems: ['Users', 'Categories', 'Recipes', 'Ingredients', "Info Restaurant", 'Rooms', 'Tables'],
     subLinks: ['/core/admin/users', '/core/admin/categories', '/core/admin/recipes','/core/admin/ingredients', '/core/admin/info-restaurant', '/core/admin/rooms', '/core/admin/tables'] },
-    { name: 'Production', subItems: [], subLinks: [] },
     { name: 'Waiter', subItems: ['Orders'], subLinks : ['/core/waiter/orders'] },
-    { name: 'Cashier', subItems: [], subLinks: [] },
-    { name: 'Analytics', subItems: [], subLinks: [] },
+    { name: 'Production', subItems: ['Queue'], subLinks: ['/core/production/queue'] },
+    { name: 'Cashier', subItems: ['Cashout'], subLinks: ['/core/cashier/cashout'] },
+    { name: 'Analytics', subItems: ['Statistics'], subLinks: ['/core/analytics/statistics'] },
   ];
 
   showFiller = true;

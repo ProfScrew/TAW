@@ -10,7 +10,7 @@ export enum eTableStatus {
 }
 
 export interface iTable {
-    _id:        String;
+    _id:        string;
     name:       string;
     capacity:   number;
     room:       iRoom['_id'];

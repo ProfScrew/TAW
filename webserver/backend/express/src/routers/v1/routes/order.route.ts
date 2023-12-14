@@ -1,4 +1,4 @@
-import { Router } from "express";
+import e, { Router } from "express";
 import { Order, eOrderStatus, iCourse, iOrder, verifyOrderData, verifyPartialOrderData } from "../../../models/order.model";
 import { authorize, iTokenData, } from "../../../middlewares/auth.middleware";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
@@ -126,7 +126,6 @@ orders.post("/", authorize, async (req, res, next) => {
             return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
         });
     }
-
     order.save().then((data) => {
         io.emit(eListenChannels.orders, { message: 'Order list updated!' });
         return next(cResponse.genericMessage(eHttpCode.CREATED, { id: data._id }));
@@ -160,7 +159,7 @@ orders.post("/", authorize, async (req, res, next) => {
  *         required: true
  *         schema:
  *           type: string
- *         description: Provide one values in this list. none, waiting, served, delivered,ID course to delete.
+ *         description: Provide one values in this list. [ordering, waiting, serving, {course_id}]
  *     requestBody:
  *       description: Order data for the update.
  *       required: true
@@ -181,6 +180,29 @@ orders.post("/", authorize, async (req, res, next) => {
 
 orders.put("/:id/action/:choice", authorize, (req, res, next) => {
 
+    /*
+        cases:
+            - ordering:
+                cambiare stato e basta
+            - waiting:
+                cambiare stato e basta
+
+            - serving:
+                cambiare stato e basta (no body)
+            - serving: (il waiter ha inserito corsi e li ha mandati in cucina)
+                ci sono dati
+                    -mettere log di creazione
+            
+            - serving specific course:
+                mando id del corso servito
+                    -mettere log di servizio
+
+                if tutti i corsi sono serviti
+                allora cambia a delivered
+
+
+    */
+
     const requester = (req.user as iTokenData);
     if (!(requester.role.waiter)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
@@ -192,6 +214,7 @@ orders.put("/:id/action/:choice", authorize, (req, res, next) => {
     }
 
     var orderData = req.body as Partial<iOrder>;
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAA", orderData)
     const requesterAction: iUserAction = {
         actor: {
             username: requester.username,
@@ -202,7 +225,7 @@ orders.put("/:id/action/:choice", authorize, (req, res, next) => {
     }
 
     const choice = req.params.choice as string;
-    if (Object.values(eOrderStatus).includes(choice as eOrderStatus)) {
+    if (choice == eOrderStatus.waiting || choice == eOrderStatus.ordering) { // case ordering an waiting (simple status change)
         Order.updateOne({ _id: mongoose.Types.ObjectId(id) }, { status: choice as eOrderStatus }).then((data) => {
             io.emit(eListenChannels.orders, { message: 'Order list updated!' });
             return next(cResponse.genericMessage(eHttpCode.OK));
@@ -210,29 +233,38 @@ orders.put("/:id/action/:choice", authorize, (req, res, next) => {
         ).catch((reason: { code: number, errmsg: string }) => {
             return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
         });
+    } else if (choice == eOrderStatus.serving && Object.keys(orderData).length === 0) { // case serving (simple status change)
+        Order.updateOne({ _id: mongoose.Types.ObjectId(id) }, { status: choice as eOrderStatus }).then((data) => {
+            io.emit(eListenChannels.orders, { message: 'Order list updated!' });
+            return next(cResponse.genericMessage(eHttpCode.OK));
+        }).catch((reason: { code: number, errmsg: string }) => {
+            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + reason.errmsg));
+        });
     } else {
-        if (choice !== "none") {
+        if (choice !== eOrderStatus.serving) { //case where i change a specific course to served through logs
             if (isValidObjectId(choice) === false) {
                 return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid order ID'));
             }
-        }
-
-
-        if (orderData.courses !== undefined) {
-            for (const course in orderData.courses) {//🤔 JS is stupid
-                if (choice !== "none") {
-                    if (choice === orderData.courses[course]._id.toString()) {
-                        orderData.courses[course].logs_course!.deleted_course = requesterAction;
-                    }
-                } else {
-                    if (orderData.courses[course].logs_course?.created_course === undefined) {
-                        orderData.courses[course].logs_course = { created_course: requesterAction };
-                    } else if (orderData.courses[course].logs_course?.served_course === undefined) {
-                        orderData.courses[course].logs_course!.served_course = requesterAction;
-                    }
+            for (const course of orderData.courses!) {
+                if (course._id === mongoose.Types.ObjectId(choice)) {
+                    course.logs_course!.served_course = requesterAction;
+                }
+            }
+            orderData.status = eOrderStatus.delivered;
+            for (const course of orderData.courses!) {
+                if (course.logs_course?.served_course === undefined) {
+                    orderData.status = eOrderStatus.serving;
+                }
+            }
+        } else if (choice === eOrderStatus.serving) { // im adding new courses to the order
+            orderData.status = eOrderStatus.serving;
+            for (const course of orderData.courses!) {
+                if (course.logs_course?.created_course === undefined) {
+                    course.logs_course = { created_course: requesterAction };
                 }
             }
         }
+
 
         if (!verifyPartialOrderData(orderData)) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Data not valid'));

@@ -74,7 +74,7 @@ export class DynamicTableComponent {
       //in the part below we create a dictionary that will be used to convert the id to the name
       //this is done becouse the user doesn't want to see the id but the name of the element
 
-      console.log("table data", this.dataSource)
+      //console.log("table data", this.dataSource)
       if (this.model?.subModelInput?.elementsFromDatabaseSingleChoice != undefined) { //substitutes the id with the name
         for (let single of this.model?.subModelInput?.elementsFromDatabaseSingleChoice!) {
           this.api.get(single.route).subscribe((data: any) => {
@@ -86,7 +86,7 @@ export class DynamicTableComponent {
               for (let b of this.singleChoiceReference[this.singleChoiceReference.length - 1].dictionary) {
                 if (b.id == element[single.name]) {
                   element[single.name] = b.name;
-                  console.log("element found adn changesd", element)
+                  //console.log("element found adn changesd", element)
                   break; //ignore this part ;-;
                 }
               }
@@ -122,7 +122,7 @@ export class DynamicTableComponent {
 
     console.log(this.model)
     if (this.model == undefined) {
-      console.log("model is undefined");
+      //console.log("model is undefined");
     } else {
       this.getTableData();
       this.buildTable();
@@ -138,9 +138,9 @@ export class DynamicTableComponent {
   }
 
   ngAfterViewInit() {// setting up the socket listener
-    console.log("table listener", this.model?.tableListener)
+    //console.log("table listener", this.model?.tableListener)
     this.socketService.listen(this.model?.tableListener!).subscribe((data) => {
-      console.log('User list updated:', data);
+      //console.log('User list updated:', data);
       // Update your UI as needed
       //TODO UPDATE TABLE SO THAT I DON'T HAVE DUPLICATES
       this.selectedRowCheck = [];
@@ -177,7 +177,7 @@ export class DynamicTableComponent {
       }, 300); // timeout to wait for the animation to finish and then close the row
     } else {//click a different row or new row
       this.currentRow = rowData._id;
-      console.log("rowcheck", this.selectedRowCheck)
+      //console.log("rowcheck", this.selectedRowCheck)
       for (const element of this.selectedRowCheck) {
         if (element.id != rowData._id) {
           element.value = false;
@@ -231,7 +231,7 @@ export class DynamicTableComponent {
         if (this.selectedRow.elementsFromDatabaseSingleChoice[element]) {
           this.selectedRow.elementsFromDatabaseSingleChoice[element].value = value;
         }
-        console.log("value updated", value);
+        //console.log("value updated", value);
       }
     }
     //converting name to id for multiple choice

@@ -5,6 +5,7 @@ import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import mongoose from "mongoose";
 import { io } from '../../../app';
 import { eListenChannels } from "../../../models/channels.enum";
+import { Order } from "../../../models/order.model";
 
 const  tables = Router();
 
@@ -205,6 +206,12 @@ tables.put("/:id", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
     const id = req.params.id as string;
 
+    const orderCount = await Order.countDocuments({});
+    if (orderCount !== 0) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Cannot change table if there are orders'));
+    }
+
+
     if(!requester.role.admin){
         return next(cResponse.genericMessage(eHttpCode.UNAUTHORIZED));
     }
@@ -252,6 +259,12 @@ tables.put("/:id", authorize, async (req, res, next) => {
  tables.delete("/:id", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
     const id = req.params.id;
+
+    const orderCount = await Order.countDocuments({});
+    if (orderCount !== 0) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Cannot delete table if there are orders'));
+    }
+
 
     if (!requester.role.admin) {
         return next(cResponse.genericMessage(eHttpCode.FORBIDDEN));

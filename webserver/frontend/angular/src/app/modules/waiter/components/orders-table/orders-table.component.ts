@@ -16,6 +16,7 @@ import { iRoom } from 'src/app/core/models/room.model';
 import { iTable } from 'src/app/core/models/table.model';
 import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
 import { Subscription } from 'rxjs';
+import { NotifierComponent } from 'src/app/core/components/notifier/notifier.component';
 
 
 
@@ -42,7 +43,8 @@ export class OrdersTableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild(MatSort) sort: MatSort | undefined;
 
-  constructor(private api: ApiService, private sockerService: SocketService, private pageInfo: PageInfoService, private pageData: PageDataService, private router: Router, public references: DatabaseReferencesService) {
+  constructor(private api: ApiService, private sockerService: SocketService, private pageInfo: PageInfoService, private pageData: PageDataService,
+     private router: Router, public references: DatabaseReferencesService, public notifier: NotifierComponent) {
     this.dataSource = new MatTableDataSource();
 
     Promise.resolve().then(() => this.pageInfo.pageMessage = "🏃‍♀️Orders");
@@ -67,16 +69,20 @@ export class OrdersTableComponent implements AfterViewInit {
     this.api.get(this.route).subscribe((responce) => {
       this.orders = responce.body.payload;
       this.pushdataToSource();
-      this.dataSource.paginator = this.paginator!;
-      this.dataSource.sort = this.sort!;
+
     });
   }
   pushdataToSource() {
     let ordersData: iOrderData[] = [];
     this.orders.forEach((order) => {
+      let tables = '';
+      order.tables.forEach((table) => {
+        tables += this.tableReference.find((tableReference) => tableReference._id === table)?.name + ', ';
+      });
+      tables = tables.slice(0, -2);
       let orderData: iOrderData = {
         room: this.roomReference.find((room) => room._id === order.room)?.name!,
-        tables: this.tableReference.find((table) => table._id === order.tables[0])?.name!,
+        tables: tables,
         guests: order.guests.toString(),
         status: order.status!,
       };
@@ -84,6 +90,8 @@ export class OrdersTableComponent implements AfterViewInit {
     });
 
     this.dataSource = new MatTableDataSource<iOrderData>(ordersData);
+    this.dataSource.paginator = this.paginator!;
+    this.dataSource.sort = this.sort!;
   }
 
 
@@ -98,8 +106,8 @@ export class OrdersTableComponent implements AfterViewInit {
       this.pushdataToSource();
       this.dataSource.paginator = this.paginator!;
       this.dataSource.sort = this.sort!;
-      
-      console.log("!",this.orders);
+
+      console.log("!", this.orders);
     });
   }
 
@@ -120,16 +128,22 @@ export class OrdersTableComponent implements AfterViewInit {
 
   sendData(data: any) {
     //find order by table id and send it to the order detail page
-    const table = this.tableReference.find((reference) => reference.name == data.tables[0]);
+    let tempTable = data.tables.split(", ") as string[]; //note the tables is a string not array
+    const table = this.tableReference.find((reference) => reference.name == tempTable[0]);
     if (table) {
       this.orders.forEach((order) => {
         order.tables.forEach((tableId) => {
           if (tableId == table._id) {
-            const tempOrder = {
-              order: order,
-            } as iTempOrder;
-            this.pageData.data = tempOrder;
-            this.router.navigate(['/core/waiter/orders/detail']);
+            if(order.status == eOrderStatus.ordering){
+              this.notifier.showError(400,"Order is taken by another waiter");
+            }else{
+              const tempOrder = {
+                order: order,
+                courses: [],
+              } as iTempOrder;
+              this.pageData.data = tempOrder;
+              this.router.navigate(['/core/waiter/orders/detail']);
+            }
           }
         });
       });

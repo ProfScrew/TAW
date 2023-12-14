@@ -2,10 +2,7 @@
     background-color: #f0f0f0;
 }
 
-.form-inline {
-  display: flex;
-  align-items: flex-start; /* Align items at the start of the flex container */
-}
+
 
 .flex-grow {
   flex-grow: 1; /* Allows the textarea to grow and take available space */
@@ -32,5 +29,12 @@
   
   .mod-button {
     margin-left: 8px; /* Adjust margin as needed for space between details and button */
+  }
+
+  mat-card-title{
+    color:red;
+  }
+  #sub-title{
+    color:blue;
   }
   

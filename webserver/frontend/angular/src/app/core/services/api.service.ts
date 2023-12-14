@@ -26,6 +26,7 @@ export class ApiService {
 
 
   get(url: string, query?: string): Observable<any> {
+    console.log("adress: " + ApiService.API_BACKEND + url + (query ? ('?' + query) : ''));
     return this.http.get(ApiService.API_BACKEND + url + (query ? ('?' + query) : ''), { headers: this.headers, observe: 'response' }).pipe(
       tap((data: any) => {
         this.handleResponse(data);  //calls alert but also returns data

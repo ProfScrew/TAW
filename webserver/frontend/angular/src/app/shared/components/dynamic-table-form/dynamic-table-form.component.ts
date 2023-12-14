@@ -28,9 +28,7 @@ export class DynamicTableFormComponent {
 
 
   ngOnInit(): void {
-    console.log("model inside the form table", this.model)
     if (this.model == undefined) {
-      console.log("model is undefined");
     } else {//build form
       this.buildForm();
     }
@@ -44,7 +42,6 @@ export class DynamicTableFormComponent {
     
     if (this.model?.arrayTextFields !== undefined) {
       for (const field of this.model?.arrayTextFields?.value!) {
-        console.log("field", field)
         this.addElementArray(field);
       }
     }
@@ -136,25 +133,22 @@ export class DynamicTableFormComponent {
   }
 
   onDelete(){
-    console.log("delete");
     this.api.delete(this.model?.routeDelete!).subscribe({
       next: (response) => {
         this.notifier.showSuccess(response.status, response.body.message);
       },
       error: (error) => {
-        this.notifier.showError(error.status, error.body.message);
+        this.notifier.showError(error.status, error.error.message);
       }
     })
   }
   onSubmit() {
-    console.log("submitted");
     console.log(this.dynamicFormGroup.value);
     this.api.put(this.model?.routeModify!, this.dynamicFormGroup.value).subscribe({
       next: (response) => {
-        console.log("responce" ,response.body)
         this.notifier.showSuccess(response.status, response.body.message);
       }, error: (error) => {
-        this.notifier.showError(error.status, error.body.message);
+        this.notifier.showError(error.status, error.error.message);
       }
     });
   }

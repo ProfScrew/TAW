@@ -3,7 +3,7 @@ import { iCategory } from "./category.model";
 import { iIngredient } from "./ingredient.model";
 
 export interface iRecipe {
-    _id:            String;
+    _id:            string;
     name:           string;
     description?:   string;
     ingredients:    iIngredient['_id'][];

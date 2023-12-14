@@ -18,17 +18,23 @@ export enum eDishModificationType {
 export interface iDishModification {
     ingredient: iIngredient['_id'];
     type:       eDishModificationType;
+
+    //for frontend display
+    name?:      string;
 }
 
 
 export interface iDish {
-    _id:                String;
+    _id?:               string;
     recipe:             iRecipe['_id'];
     actual_price:       number;
     notes?:             string;
     status:             eDishStatus;
     
     logs_status?:        {start_cooking: iUserAction, finish_cooking: iUserAction};
-
+    
     modifications?:      iDishModification[];
+    
+    //for frontend display
+    name?:              string;
 }

@@ -14,6 +14,9 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class DatabaseReferencesService {
+
+  private archived = "?archive=false";
+
   private categoriesReference : BehaviorSubject<iCategory[] | undefined> = new BehaviorSubject<iCategory[] | undefined>(undefined);
   public categoriesReferenceObservable = this.categoriesReference.asObservable();
 
@@ -70,12 +73,12 @@ export class DatabaseReferencesService {
     });
   }
   getIngredientsReference() {
-    this.api.get('/ingredients').subscribe((response) => {
+    this.api.get('/ingredients' + this.archived).subscribe((response) => {
       this.ingredientsReference.next(response.body.payload)
     });
   }
   getRecipesReference() {
-    this.api.get('/recipes').subscribe((response) => {
+    this.api.get('/recipes' + this.archived).subscribe((response) => {
       this.recipesReference.next(response.body.payload);
     });
   }

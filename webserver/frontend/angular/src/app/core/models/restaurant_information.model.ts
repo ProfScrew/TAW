@@ -1,5 +1,5 @@
 export interface iRestaurantInformation {
-    _id: String;
+    _id: string;
     name: string;
     address: string;
     phone: string;

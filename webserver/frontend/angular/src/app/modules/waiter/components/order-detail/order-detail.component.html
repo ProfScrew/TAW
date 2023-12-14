@@ -1,39 +1,77 @@
 <mat-card class="responsive-form">
     <mat-card-header>
-        <mat-card-title >
-            Order detail of tables: {{receivedData?.order?.tables}}
+        <mat-card-title>
+            Order detail of tables: {{displayedOrder?.tables}}
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="flex-container">
         <section class="section-center">
             <mat-divider></mat-divider>
-            Detail Order:
+            <b id="sub-title">Detail Order:</b>
             <br>
-            Room: {{displayedOrder?.room}}
+            <b>Room:</b> {{displayedOrder?.room}}
             <br>
-            Table: {{displayedOrder?.tables}}
+            <b>Table:</b> {{displayedOrder?.tables}}
             <br>
-            Guests: {{displayedOrder?.guests}}
+            <b>Guests:</b> {{displayedOrder?.guests}}
             <br>
-            Capacity: {{displayedOrder?.capacity}}
+            <b>Capacity:</b> {{displayedOrder?.capacity}}
             <br>
-            Status: {{displayedOrder?.status}}
+            <b>Status:</b> {{displayedOrder?.status}}
+
+
+
             <ng-container *ngIf="displayedOrder?.courses?.length != 0">
-            <mat-divider></mat-divider>
-            Existing Courses:
+                <mat-divider></mat-divider>
+                <b id="sub-title">Existing Courses:</b>
+                <ng-container *ngFor="let tempCour of displayedOrder?.courses!; let i = index">
+                    <br>
+                    <b>Course: {{i+1}}</b> <!--{{tempCour?._id!}} -->
+                    <ng-container *ngFor="let tempDish of tempCour?.dishes!">
+                        <br>
+                        &nbsp;&nbsp;&nbsp;
+                    <b>Dish:</b> {{tempDish?.name}} <!-- {{tempDish?.recipe}} --> <b>Price:</b> {{tempDish?.actual_price}}&euro;
+                        <ng-container *ngIf="tempDish?.notes != undefined">
+                            Notes: {{tempDish?.notes}}
+                        </ng-container>
+                        <ng-container *ngFor="let modific of tempDish?.modifications!">
+                            <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            Modification: {{modific?.name}} Type: {{modific?.type}};
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
             </ng-container>
+
+
             <ng-container *ngIf="this.receivedData?.courses != undefined">
                 <mat-divider></mat-divider>
-                About to be added Courses:
-            </ng-container>
-            <mat-divider></mat-divider><br>
-            <a routerLink="/core/waiter/orders/detail/menu" mat-raised-button color="primary">Add Course</a>
+                <b id="sub-title">About to be added Courses:</b>
+                <br>
+                <ng-container *ngFor="let tempCour of receivedData?.courses; let i = index">
+                    <b>Course:</b> Number {{i+1}} <button mat-raised-button color="warn"
+                        (click)="deleteCourse(i)">Delete</button>
+                    <br>
+                    <ng-container *ngFor="let tempDish of tempCour.dishes; let j = index">
+                        &nbsp;&nbsp;
+                        <b>Dish:</b><em>{{tempDish.name}}</em> {{tempDish.description}} <b>Price:</b>
+                        {{tempDish.actual_price}}&euro; <b>Notes:</b> {{tempDish.notes}}
+                        <br>
+
+                    </ng-container>
+                </ng-container>
+            </ng-container><br>
+            <button (click)="addCourse()" mat-raised-button color="primary">Add Course</button>
+            <br>
+            <br>
         </section>
 
     </mat-card-content>
 
-    <mat-divider></mat-divider>
+    <mat-action-row>
+
+        <button mat-raised-button color="primary" (click)="submitOrder()">Submit Order</button>
+    </mat-action-row>
 
 </mat-card>
 <br>
-

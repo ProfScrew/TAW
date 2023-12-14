@@ -8,6 +8,7 @@ import { iUserAction } from '../../../models/user_action.object';
 import { Ingredient } from '../../../models/ingredient.model';
 import { io } from '../../../app';
 import { eListenChannels } from "../../../models/channels.enum";
+import { Order } from '../../../models/order.model';
 
 const recipes = Router();
 /**
@@ -178,6 +179,12 @@ recipes.put('/:id', authorize, async (req, res, next) => {
     if (!requester.role.admin) {
         return next(cResponse.genericMessage(eHttpCode.UNAUTHORIZED));
     }
+    const orderCount = await Order.countDocuments({});
+    if (orderCount !== 0) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Cannot modify recipe if there are orders'));
+    }
+
+
     const recipe_data = req.body as iRecipe;
     if (!verifyRecipeData(recipe_data)) {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Recipe data is not valid'));
@@ -255,6 +262,12 @@ recipes.delete('/:id', authorize, async (req, res, next) => {
     if (!requester.role.admin) {
         return next(cResponse.genericMessage(eHttpCode.UNAUTHORIZED));
     }
+    const orderCount = await Order.countDocuments({});
+    if (orderCount !== 0) {
+            return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Cannot delete recipe if there are orders'));
+    }
+
+
     const id = req.params.id as string;
 
     const requesterAction: iUserAction = {

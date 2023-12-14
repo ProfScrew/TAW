@@ -2,10 +2,11 @@ import { Router } from "express";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
 import { Dish, eDishStatus, iDish, verifyDishData } from "../../../models/dish.model";
-import mongoose from "mongoose";
+import mongoose, { Schema, Types, isValidObjectId } from "mongoose";
 import { iUserAction } from "../../../models/user_action.object";
 import { io } from '../../../app';
 import { eListenChannels } from "../../../models/channels.enum";
+import { SchemaFieldTypes } from "redis";
 
 
 
@@ -55,16 +56,35 @@ dishes.get("/", authorize, async (req, res, next) => {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
     const id = req.query.id as string;
-
-    let query: any = id ? { _id: id } : {};
-
-    Dish.find(query).then((data) => {
-        return next(cResponse.genericMessage(eHttpCode.OK, data));
+    //validate it the id is a single id or an array of ids
+    let arrayOfIds: string[] = [];
+    if (id.at(0) === "[") {
+        //received an array of ids of order
+        let tempParse = JSON.parse(id);
+        tempParse.forEach((element: string) => {
+            arrayOfIds.push(element);
+        });
     }
-    ).catch((err) => {
-        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
-    });
+    if (arrayOfIds.length != 0) { //used by the frontend to get all the dishes in the order
+        Dish.find().where('_id').in(arrayOfIds).then((data) => {
+            return next(cResponse.genericMessage(eHttpCode.OK, data));
+        }).catch((err) => {
+            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+        });
+    }
+    else {
+
+        let query: any = id ? { _id: id } : {};
+
+        Dish.find(query).then((data) => {
+            return next(cResponse.genericMessage(eHttpCode.OK, data));
+        }
+        ).catch((err) => {
+            return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
+        });
+    }
 });
+
 /**
  * @swagger
  * /dishes:
@@ -155,7 +175,7 @@ dishes.post("/", authorize, async (req, res, next) => {
 
 dishes.put("/:id/action/:type", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
-    if (!( requester.role.production)) {
+    if (!(requester.role.production)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
     const id = req.params.id as string;
@@ -195,7 +215,7 @@ dishes.put("/:id/action/:type", authorize, async (req, res, next) => {
         } else if (type === 'finish_cooking') {
             if (data.logs_status?.finish_cooking === undefined) {
                 // finish cooking
-                Dish.updateOne({ _id: mongoose.Types.ObjectId(id) }, { status: eDishStatus.ready,'logs_status.finish_cooking': requesterAction }).then((data) => {
+                Dish.updateOne({ _id: mongoose.Types.ObjectId(id) }, { status: eDishStatus.ready, 'logs_status.finish_cooking': requesterAction }).then((data) => {
                     if (data.n === 0) {
                         return next(cResponse.error(eHttpCode.NOT_FOUND, "Dish not found."));
                     }
@@ -208,8 +228,8 @@ dishes.put("/:id/action/:type", authorize, async (req, res, next) => {
                 return next(cResponse.error(eHttpCode.BAD_REQUEST, "Dish already finished cooking."));
             }
         }
-    }).catch((err) => { 
-        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg)); 
+    }).catch((err) => {
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
     });
 
 
