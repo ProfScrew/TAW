@@ -25,6 +25,9 @@ export interface iCourse {
     _id?: string;
     dishes?: iDish['_id'][];
     logs_course?: iLogCourse;
+    //used by frontend production
+    dishes_obj?: iDish[];
+    tablesNames?: string;
 }
 export interface iOrder {
     _id?: string;

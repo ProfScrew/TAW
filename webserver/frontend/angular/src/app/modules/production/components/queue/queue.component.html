@@ -6,33 +6,52 @@
     </mat-card-header>
 
     <mat-card-content>
-        <mat-accordion class="pannel-recipes">
-            <ng-container *ngFor="let ord of orders">
-                <mat-expansion-panel class="pannel-recipes">
+        <mat-accordion class="pannel-recipes" multi>
+            <ng-container *ngFor="let course of courses!; let i = index">
+                <mat-expansion-panel class="pannel-recipes" [expanded]="i < 3">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            {{ord.guests}}
+                            Course of Tables {{course.tablesNames}}
                         </mat-panel-title>
                         <mat-panel-description>
-                            {{ord.status}}
+                            Number of dishes: {{course.dishes?.length}}
                         </mat-panel-description>
                         <mat-panel-description>
-                            {{ord.tables}}&euro;
+                            hello
                         </mat-panel-description>
                     </mat-expansion-panel-header>
 
                     <mat-divider></mat-divider>
+                    <strong id="sub-title">Dishes</strong>
+                    <ng-container *ngFor="let dish of course.dishes_obj">
+                        <div class="container">
+                            <div class="start">
+                              &nbsp;&nbsp;&nbsp;
+                              <strong>Status:</strong> {{dish.status}} <strong>Dish:</strong> {{dish.name}}
+                            </div>
+                            <ng-container *ngIf="dish.logs_status?.start_cooking != undefined">
+                              <div class="end">
+                                <strong>Started by:</strong> {{dish.logs_status?.start_cooking?.actor?.username}}
+                                <strong>at:</strong> {{dish.logs_status?.start_cooking?.timestamp | date: 'dd/MM/yyyy HH:mm'}}
+                              </div>
+                            </ng-container>
+                          
+                            <ng-container *ngIf="dish.logs_status?.start_cooking == undefined">
+                                <div class="end">
+                                    <a  class="normal-dimensions" style="color: blue;" (click)="startCooking(dish._id!)">Start
+                                        Cooking</a>
+                                    </div>
+                            </ng-container>
+                            <br>
+                            <ng-container *ngIf="dish.notes != undefined">
+                                <strong>Notes:</strong> {{dish.notes}}
+                                <br>
+                            </ng-container>
 
-                    <strong id="sub-title">Recipe Details</strong>
-                    <div>
-                        <strong>Item:</strong> {{ord.courses}}
-                        <br>
-                        <strong>Description:</strong> {{ord.capacity}}
-                    </div>
+                        </div>
+                    </ng-container>
                 </mat-expansion-panel>
             </ng-container>
-
-
         </mat-accordion>
     </mat-card-content>
 </mat-card>

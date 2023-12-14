@@ -277,7 +277,7 @@ export class OrderDetailComponent implements OnInit {
         }
         this.api.put("/orders/" + orderToSent._id + "/action/" + eOrderStatus.serving, orderToSent).subscribe({ //push the order in the database
           next: (response) => {
-            this.notifier.showSuccess(response.status, response.message);
+            this.notifier.showSuccess(response.status, response.body.message);
             this.router.navigate(['/core/waiter/orders']);
           },
           error: (err) => {

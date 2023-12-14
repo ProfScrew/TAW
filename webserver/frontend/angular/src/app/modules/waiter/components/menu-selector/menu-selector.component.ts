@@ -43,16 +43,13 @@ export class MenuSelectorComponent {
   constructor(private api: ApiService, private pagedata: PageDataService, private dataReference: DatabaseReferencesService, private notifier: NotifierComponent, private router: Router) {
     this.subscriptionIngredient = this.dataReference.ingredientsReferenceObservable.subscribe((value) => {
       this.ingredientReference = value;
-      this.substituteIngredient();
     });
     this.subscriptionCategory = this.dataReference.categoriesReferenceObservable.subscribe((value) => {
       this.categoryReference = value;
-      this.substituteIngredient();
 
     });
     this.subscriptionRecipe = this.dataReference.recipesReferenceObservable.subscribe((value) => {
       this.recipeReference = value;
-      this.substituteIngredient();
     });
   }
 
@@ -63,18 +60,17 @@ export class MenuSelectorComponent {
         recipe.ingredients.forEach((ingredient, index) => {
           const ingredientReference = this.ingredientReference?.find((ingredientReference) => ingredientReference._id === ingredient);
           if (ingredientReference) {
-            this.displayedRecipe!.forEach((recipe) => {
               recipe.ingredients[index] = ingredientReference.name!;
-            });
           }
         });
       });
     }
   }
-
+  
 
   ngOnInit(): void {
     this.receivedData = { ... this.pagedata.data };
+    this.substituteIngredient();
     console.log("ngInit", this.receivedData);
     if (Object.keys(this.receivedData as object).length === 0) {
       this.router.navigate(['/core/waiter/orders']);

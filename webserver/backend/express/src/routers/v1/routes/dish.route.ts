@@ -58,7 +58,7 @@ dishes.get("/", authorize, async (req, res, next) => {
     const id = req.query.id as string;
     //validate it the id is a single id or an array of ids
     let arrayOfIds: string[] = [];
-    if (id.at(0) === "[") {
+    if ( id !== undefined && id.at(0) === "[") {
         //received an array of ids of order
         let tempParse = JSON.parse(id);
         tempParse.forEach((element: string) => {

@@ -1,0 +1,14 @@
+.normal-dimensions {
+    font-size: inherit; /* Matches the inherited font size of normal text */
+    padding: 1px 1px; /* Adjust padding to match the space around normal text */
+    /* You can add other styles here to further match the appearance of normal text */
+  }
+  
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+  }
+  .end {
+    margin-left: auto;
+  }
