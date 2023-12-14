@@ -1,0 +1,25 @@
+Drinks/Classic Mojito/Rum, mint, lime, sugar, and soda water served over ice./$10/Rum|Mint leaves|Lime|Sugar|Soda water
+Drinks/Strawberry Basil Lemonade/Freshly squeezed lemonade with muddled strawberries and basil./$8/Strawberries|Basil|Lemon|Sugar|Water
+Drinks/Espresso Martini/Vodka, coffee liqueur, espresso, and a splash of simple syrup./$12/Vodka|Coffee liqueur|Espresso|Simple syrup
+Drinks/Cucumber Mint Cooler/Cucumber-infused gin with mint, lime juice, and soda water./$11/Cucumber|Gin|Mint leaves|Lime|Soda water
+Drinks/Berry Blast Smoothie/Blend of mixed berries, yogurt, honey, and a splash of orange juice./$9/Mixed berries|Yogurt|Honey|Orange juice
+Appetizers/Caprese Skewers/Fresh mozzarella, cherry tomatoes, and basil leaves drizzled with balsamic glaze./$8/Mozzarella cheese|Cherry tomatoes|Basil leaves|Balsamic glaze
+Appetizers/Crispy Calamari/Tender calamari rings lightly fried to a golden crispness, served with marinara sauce./$10/Calamari rings|Flour|Cornmeal|Salt|Marinara sauce
+Appetizers/Stuffed Mushrooms/Mushrooms filled with a blend of herbed breadcrumbs, parmesan, and cream cheese./$9/Mushrooms|Breadcrumbs|Parmesan cheese|Cream cheese|Herbs
+Appetizers/Bruschetta Trio/Three varieties of bruschetta - classic tomato, pesto, and roasted red pepper./$11/Baguette slices|Tomatoes|Basil|Garlic|Pesto|Roasted red peppers
+Appetizers/Spinach and Artichoke Dip/Creamy blend of spinach, artichokes, and melted cheese, served with tortilla chips./$12/Spinach|Artichoke hearts|Cream cheese|Mozzarella cheese|Tortilla chips
+First Dishes/Spaghetti Carbonara/Spaghetti tossed in a creamy egg and parmesan sauce with crispy pancetta./$14/Spaghetti|Eggs|Pancetta|Parmesan cheese|Black pepper
+First Dishes/Butternut Squash Ravioli/Homemade ravioli stuffed with roasted butternut squash in a sage butter sauce./$16/Butternut squash|Pasta dough|Ricotta cheese|Sage|Butter
+First Dishes/Tomato Basil Soup/Classic tomato soup infused with basil, served with garlic croutons./$10/Tomatoes|Basil|Onions|Garlic|Vegetable broth|Cream
+First Dishes/Mushroom Risotto/Creamy Arborio rice cooked with mushrooms, parmesan cheese, and white wine./$15/Arborio rice|Mushrooms|Parmesan cheese|White wine|Vegetable broth
+First Dishes/Caesar Salad/Crisp romaine lettuce, parmesan cheese, croutons, and Caesar dressing./$12/Romaine lettuce|Parmesan cheese|Croutons|Caesar dressing
+Second Dishes/Grilled Salmon/Fresh salmon fillet grilled to perfection, served with lemon herb butter./$18/Salmon fillet|Lemon|Herbs|Butter|Olive oil
+Second Dishes/Beef Tenderloin Medallions/Seared beef tenderloin medallions with a red wine reduction sauce./$20/Beef tenderloin|Red wine|Beef broth|Herbs|Butter
+Second Dishes/Chicken Piccata/Tender chicken breasts in a tangy lemon caper sauce./$16/Chicken breasts|Lemon|Capers|Flour|Chicken broth
+Second Dishes/Vegetable Stir-Fry/Assorted fresh vegetables stir-fried in a flavorful sauce, served over rice./$14/Bell peppers|Broccoli|Carrots|Soy sauce|Rice|Garlic|Ginger
+Second Dishes/Eggplant Parmesan/Breaded and fried eggplant slices layered with marinara sauce and melted cheese./$15/Eggplant|Breadcrumbs|Marinara sauce|Mozzarella cheese
+Dessert/Chocolate Lava Cake/Decadent chocolate cake with a gooey molten center, served with vanilla ice cream./$9/Chocolate|Butter|Eggs|Flour|Vanilla ice cream
+Dessert/Tiramisu/Layers of coffee-soaked ladyfingers and mascarpone cheese dusted with cocoa./$10/Ladyfingers|Mascarpone cheese|Coffee|Cocoa powder
+Dessert/Fruit Tart/Shortbread crust filled with pastry cream and topped with assorted fresh fruits./$8/Shortbread crust|Pastry cream|Mixed fruits
+Dessert/Lemon Sorbet/Refreshing lemon sorbet garnished with a mint sprig./$7/Lemon juice|Sugar|Water|Mint
+Dessert/Cheesecake/Creamy New York-style cheesecake topped with a berry compote./$11/Cream cheese|Graham crackers|Berries

@@ -1,0 +1,5 @@
+Drinks/blue/1
+Appetizers/red/2
+First Dishes/green/3
+Second Dishes/yellow/4
+Dessert/purple/5

@@ -1,0 +1,88 @@
+Mozzarella cheese/3/15/dairy
+Cherry tomatoes/2/10/
+Basil leaves/1/8/
+Balsamic glaze/4/12/
+Calamari rings/6/20/seafood
+Flour/1/5/
+Cornmeal/2/7/
+Parmesan cheese/4/18/dairy
+Cream cheese/3/16/dairy
+Mushrooms/3/10/
+Breadcrumbs/2/8/
+Baguette slices/3/10/
+Pesto/5/20/nuts
+Roasted red peppers/4/15/
+Tortilla chips/3/10/
+Eggs/2/8/
+Pancetta/5/18/
+Pasta dough/4/15/
+Ricotta cheese/3/14/dairy
+Sage/2/8/
+Butter/3/16/dairy
+Onions/2/10/
+Garlic/1/5/
+Vegetable broth/4/12/
+Romaine lettuce/3/10/
+Croutons/2/8/
+Salmon fillet/10/25/
+Lemon/1/5/
+Herbs/3/12/
+Beef tenderloin/15/30/
+Red wine/10/25/
+Chicken breasts/8/20/
+Bell peppers/3/10/
+Broccoli/2/8/
+Carrots/2/8/
+Soy sauce/3/12/
+Rice/5/15/
+Ginger/2/8/
+Eggplant/4/15/
+Chocolate/6/20/
+Vanilla ice cream/5/18/dairy
+Ladyfingers/4/15/
+Mascarpone cheese/6/20/dairy
+Cocoa powder/3/10/
+Shortbread crust/4/15/gluten
+Pastry cream/4/14/dairy
+Mixed fruits/6/18/
+Lemon juice/2/8/
+Sugar/2/8/
+Mint/2/8/
+Rum/10/25/
+Lime/3/10/
+Coffee liqueur/8/20/
+Espresso/5/15/
+Simple syrup/3/12/
+Gin/12/30/
+Orange juice/3/10/
+Mixed berries/7/20/
+Yogurt/4/16/dairy
+Honey/5/18/
+Salt/1/5/
+Marinara sauce/4/18/
+Tomatoes/3/15/
+Basil/2/10/
+Spinach/3/15/
+Artichoke hearts/5/20/
+Spaghetti/2/10/
+Black pepper/1/8/
+Butternut squash/4/18/
+Cream/3/15/
+Arborio rice/4/18/
+White wine/5/20/
+Caesar dressing/3/15/
+Olive oil/4/18/
+Beef broth/3/15/
+Capers/2/10/
+Chicken broth/3/15/
+Broccoli/2/10/
+Carrots/2/10/
+Coffee/5/20/
+Water/1/8/
+Graham crackers/2/10/
+Berries/4/18/
+Mint leaves/2/10/
+Soda water/1/8/
+Strawberries/3/15/
+Vodka/8/25/
+Cucumber/3/15/
