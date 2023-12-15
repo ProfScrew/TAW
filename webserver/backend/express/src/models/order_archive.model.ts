@@ -56,6 +56,7 @@ const OrderArchiveSchema = new Schema<iOrderArchive>({
         logs_course:        {
             created_course: {type: UserAction, required: true},
             served_course:  {type: UserAction, required: false},
+            ready_course:   {type: UserAction, required: false},
             deleted_course: {type: UserAction, required: false},
         },
         dishes:         {type: [{

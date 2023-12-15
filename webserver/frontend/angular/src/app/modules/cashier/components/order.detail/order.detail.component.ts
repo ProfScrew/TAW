@@ -77,6 +77,7 @@ export class OrderDetailComponent {
   }
   
   checkOrder() {
+    /*
     const printWindow: Window | null = window.open('', '_blank');
 
     if (printWindow) {
@@ -92,6 +93,15 @@ export class OrderDetailComponent {
         printWindow.print();
         this.router.navigate(['core/cashier/cashout']);
     }
+    */
+    this.api.post('/order_archives/'+ this.receivedOrder?._id,{}).subscribe((response) => {
+      if(response.status == 200){
+        console.log("Order Archived", response);
+        this.notifier.showSuccess(response.status, response.body.message);
+        this.router.navigate(['core/cashier/cashout']);
+      }
+    }
+    );
   }
 
 }

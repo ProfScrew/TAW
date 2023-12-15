@@ -200,6 +200,10 @@ orders.put("/:id/action/:choice", authorize, (req, res, next) => {
                 if tutti i corsi sono serviti
                 allora cambia a delivered
 
+            - delivered
+                cambiare stato e basta 
+                
+
 
     */
 
@@ -225,7 +229,7 @@ orders.put("/:id/action/:choice", authorize, (req, res, next) => {
     }
 
     const choice = req.params.choice as string;
-    if (choice == eOrderStatus.waiting || choice == eOrderStatus.ordering) { // case ordering an waiting (simple status change)
+    if (choice == eOrderStatus.waiting || choice == eOrderStatus.ordering || choice == eOrderStatus.delivered) { // case ordering an waiting (simple status change)
         Order.updateOne({ _id: mongoose.Types.ObjectId(id) }, { status: choice as eOrderStatus }).then((data) => {
             io.emit(eListenChannels.orders, { message: 'Order list updated!' });
             return next(cResponse.genericMessage(eHttpCode.OK));

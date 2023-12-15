@@ -183,8 +183,27 @@ export class OrderDetailComponent implements OnInit {
     this.subscriptionRoom?.unsubscribe();
     this.subscriptionTable?.unsubscribe();
     if (Object.keys(this.receivedData as Object).length !== 0) {
+      
       if (this.menuSelector === false) {
-        if (this.receivedData?.order.courses.length === 0) {
+        let delivered = true;
+        this.receivedData?.order.courses.forEach((course) => {
+          if(course.logs_course?.served_course == undefined) {
+            delivered = false;
+          }
+        });
+        if(delivered) {
+          this.api.put("/orders/" + this.pageData.data.order._id + "/action/" + eOrderStatus.delivered, {}).subscribe({
+            next: (response) => {
+              //this.notifier.showSuccess(response.status, response.message);
+            },
+            error: (err) => {
+              //console.log(err);
+              this.notifier.showError(err.status, err.error.message);
+              this.router.navigate(['/core/waiter/orders']);
+            }
+          });
+
+        }else if (this.receivedData?.order.courses.length === 0) {
           this.api.put("/orders/" + this.pageData.data.order._id + "/action/" + eOrderStatus.waiting, {}).subscribe({
             next: (response) => {
               //this.notifier.showSuccess(response.status, response.message);

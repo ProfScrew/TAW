@@ -60,13 +60,13 @@ export class MenuSelectorComponent {
         recipe.ingredients.forEach((ingredient, index) => {
           const ingredientReference = this.ingredientReference?.find((ingredientReference) => ingredientReference._id === ingredient);
           if (ingredientReference) {
-              recipe.ingredients[index] = ingredientReference.name!;
+            recipe.ingredients[index] = ingredientReference.name!;
           }
         });
       });
     }
   }
-  
+
 
   ngOnInit(): void {
     this.receivedData = { ... this.pagedata.data };
@@ -181,7 +181,25 @@ export class MenuSelectorComponent {
     this.router.navigate(['/core/waiter/orders/detail']);
   }
   changeOrderStatus() {
-    if (this.receivedData?.order.courses.length === 0) {
+    let delivered = true;
+    this.receivedData?.order.courses.forEach((course) => {
+      if (course.logs_course?.served_course == undefined) {
+        delivered = false;
+      }
+    });
+    if (delivered) {
+      this.api.put("/orders/" + this.pagedata.data.order._id + "/action/" + eOrderStatus.delivered, {}).subscribe({
+        next: (response) => {
+          //this.notifier.showSuccess(response.status, response.message);
+        },
+        error: (err) => {
+          //console.log(err);
+          this.notifier.showError(err.status, err.error.message);
+          this.router.navigate(['/core/waiter/orders']);
+        }
+      });
+
+    } else if (this.receivedData?.order.courses.length === 0) {
       this.api.put("/orders/" + this.pagedata.data.order._id + "/action/" + eOrderStatus.waiting, {}).subscribe({
         next: (response) => {
           //this.notifier.showSuccess(response.status, response.message);

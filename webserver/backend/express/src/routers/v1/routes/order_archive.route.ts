@@ -10,6 +10,8 @@ import { Dish, eDishModificationType, iDishModification } from "../../../models/
 import { iIngredient, Ingredient } from "../../../models/ingredient.model";
 import { Table , eTableStatus } from "../../../models/table.model";
 import { RestaurantInformation } from "../../../models/restaurant_information.model";
+import { io } from "../../../app";
+import { eListenChannels } from "../../../models/channels.enum";
 
 const order_archives = Router();
 
@@ -141,11 +143,12 @@ order_archives.post("/:id", authorize, async (req, res, next) => {
 
     // Calculate the charges per person based on the number of guests and the restaurant information charge per person
     let chargesPersonToArchive = 0;
+    let finalPrice = 0;
     const restaurantInformation = await RestaurantInformation.findOne().catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, err));
     });
     chargesPersonToArchive = restaurantInformation?.charge_per_person! * order.guests;
-
+    
     const coursesToArchive = [];
     for (const course of order.courses) {
         if(!course.logs_course?.served_course){
@@ -203,6 +206,7 @@ order_archives.post("/:id", authorize, async (req, res, next) => {
                 } : undefined,
                 modifications: dishModificationToArchive,
             });
+            finalPrice += dish.actual_price;
         }
 
         //Store course information
@@ -210,6 +214,7 @@ order_archives.post("/:id", authorize, async (req, res, next) => {
             logs_course: {
                 created_course: course?.logs_course!.created_course,
                 served_course: course?.logs_course!.served_course,
+                ready_course: course?.logs_course!.ready_course,
                 deleted_course: course?.logs_course!.deleted_course,
             },
             dishes: dishesToArchive,
@@ -224,7 +229,7 @@ order_archives.post("/:id", authorize, async (req, res, next) => {
         logs_order: {
             created_order: order?.logs_order!.created_order,
         },
-        final_price: order.final_price? order.final_price : 0,
+        final_price: finalPrice + chargesPersonToArchive,
         courses: coursesToArchive,
         tables: tablesName,
         charges_persons: chargesPersonToArchive,
@@ -266,6 +271,7 @@ order_archives.post("/:id", authorize, async (req, res, next) => {
     // so push copies to reddis/file that will help recover the data
     // when databse is up again, we can recover the data from reddis/file and save it to database
 
+    io.emit(eListenChannels.orders, { message: 'Order list updated!' });
     return next(cResponse.genericMessage(eHttpCode.OK, orderArchive));
 
 });
