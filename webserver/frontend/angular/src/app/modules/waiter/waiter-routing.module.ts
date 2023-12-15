@@ -4,6 +4,7 @@ import { authGuard, eRole } from 'src/app/core/guards/auth.guard';
 import { OrderDetailComponent } from './components/order-detail/order-detail.component';
 import { OrdersTableComponent } from './components/orders-table/orders-table.component';
 import { MenuSelectorComponent } from './components/menu-selector/menu-selector.component';
+import { ReadyComponent } from './components/ready/ready.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,12 @@ const routes: Routes = [
   {
     path: 'orders/detail/menu',
     component: MenuSelectorComponent,
+    canActivate: [authGuard], 
+    data : { type: eRole.Waiter }
+  },
+  {
+    path: 'ready',
+    component: ReadyComponent,
     canActivate: [authGuard], 
     data : { type: eRole.Waiter }
   },

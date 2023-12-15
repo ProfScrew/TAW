@@ -54,7 +54,7 @@ import { ErrorPageComponent } from './components/error-page/error-page.component
     // Toastr
     ToastrModule.forRoot(
       { 
-        timeOut: 5000,
+        timeOut: 2000,
         progressBar: true,
       }
     ),

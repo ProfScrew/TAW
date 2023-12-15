@@ -8,6 +8,7 @@ export enum eListenChannels {
     restaurantInformation = "backendRestaurantInformation",
     dishes = "backendDishes",
     orders = "backendOrders",
+    orderReady = "backendOrderReady",
     orderArchive = "backendOrderArchive",
 
 

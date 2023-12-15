@@ -22,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { ReadyComponent } from './components/ready/ready.component';
 
 
 
@@ -33,6 +34,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     OrderDetailComponent,
     MenuSelectorComponent,
     OrderFormComponent,
+    ReadyComponent,
   ],
   imports: [
     CommonModule,

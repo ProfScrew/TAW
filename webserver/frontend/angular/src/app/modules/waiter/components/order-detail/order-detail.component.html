@@ -26,7 +26,7 @@
                 <b id="sub-title">Existing Courses:</b>
                 <ng-container *ngFor="let tempCour of displayedOrder?.courses!; let i = index">
                     <br>
-                    <b>Course: {{i+1}}</b> <!--{{tempCour?._id!}} -->
+                    <b style="color:green">Course: {{i+1}}</b> <!--{{tempCour?._id!}} -->
                     <ng-container *ngFor="let tempDish of tempCour?.dishes!">
                         <br>
                         &nbsp;&nbsp;&nbsp;

@@ -47,4 +47,10 @@ export interface iOrder {
 
 
     final_price?: number;
+
+
+    //used by frontend cashier
+    roomName?: string;
+    tablesNames?: string;
+    serviceCharge?: number;
 }

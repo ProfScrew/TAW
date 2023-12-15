@@ -1,0 +1,90 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title id="title">
+            Cashout Order details
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div id="print">
+            <b id="sub-title">General Info of Restaurant:</b>
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>Restaurant:</b> {{restaurantInformations?.name!}}
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>Address:</b> {{restaurantInformations?.address!}}
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>Email:</b> {{restaurantInformations?.email}}
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>Phone:</b> {{restaurantInformations?.phone}}
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>IVA:</b> {{restaurantInformations?.iva}}
+            <mat-divider></mat-divider>
+
+            <b id="sub-title">General Info of Orders:</b>
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>Guests:</b> {{receivedOrder?.guests!}} people
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>Charge per Person:</b> {{restaurantInformations?.charge_per_person}}&euro;
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>Service charge:</b> {{receivedOrder?.serviceCharge!}}&euro;
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>Capacity:</b> {{receivedOrder?.capacity!}} people
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>Tables:</b> {{receivedOrder?.tablesNames!}}
+            <br>
+            &nbsp;&nbsp;&nbsp;
+            <b>Room:</b> {{receivedOrder?.roomName}}
+
+
+
+            <mat-divider></mat-divider>
+
+            <b id="sub-title">Courses:</b>
+            <br>
+            <ng-container *ngFor="let course of receivedOrder?.courses!; let j = index">
+                &nbsp;&nbsp;&nbsp;
+                <b style="color:green">Course number:</b> {{j+1}}
+                <br>
+                <ng-container *ngFor="let dish of course.dishes_obj">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <b>Dish:</b> {{dish.name}}
+                    <b>Price of dish:</b> {{dish.actual_price}}&euro;
+                    <br>
+                    <ng-container *ngIf="dish.modifications != undefined">
+                        <ng-container *ngFor="let mod of dish.modifications">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <b>Modification:</b> {{mod.name}}
+                            <b>Type:</b> {{mod.type}}
+                            {{mod.price}}&euro;
+                            <br>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+
+
+
+
+            </ng-container>
+            <mat-divider></mat-divider>
+            <div class="container-end">
+                <br>
+                <mark><b>Final Price:</b> {{receivedOrder?.final_price}}&euro;</mark>
+                <br>
+            </div>
+        </div>
+        <mat-action-row>
+            <button mat-raised-button color="primary" (click)="checkOrder()">Cashout Order</button>
+        </mat-action-row>
+
+
+    </mat-card-content>
+</mat-card>

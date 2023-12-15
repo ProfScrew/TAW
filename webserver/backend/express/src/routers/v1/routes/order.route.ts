@@ -250,10 +250,12 @@ orders.put("/:id/action/:choice", authorize, (req, res, next) => {
                     if(course.logs_course?.ready_course === undefined){
                         course.logs_course!.ready_course = requesterAction;
                         //emit signal for waiters that the order is ready to serve
-                        io.emit(eListenChannels.orders, { message: 'Order list updated!' });
                         //send notification to waiters
+                        io.emit(eListenChannels.orderReady, { message: 'Added' });
                     }else{
                         course.logs_course!.served_course = requesterAction;
+
+                        io.emit(eListenChannels.orderReady, { message: 'Deleted' });
                     }
                 }
             }

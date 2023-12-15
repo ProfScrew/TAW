@@ -1,0 +1,21 @@
+#title{
+    color:red;
+  }
+
+  #sub-title{
+    color:blue;
+  }
+
+.container-end{
+  text-align: right;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  overflow-x: auto;
+}
+
+.end {
+  margin-left: auto;
+}

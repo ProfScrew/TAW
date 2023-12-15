@@ -47,7 +47,7 @@ export class OrdersTableComponent implements AfterViewInit {
      private router: Router, public references: DatabaseReferencesService, public notifier: NotifierComponent) {
     this.dataSource = new MatTableDataSource();
 
-    Promise.resolve().then(() => this.pageInfo.pageMessage = "🏃‍♀️Orders");
+    Promise.resolve().then(() => this.pageInfo.pageMessage = "📃🏃‍♀️Orders");
 
   }
 

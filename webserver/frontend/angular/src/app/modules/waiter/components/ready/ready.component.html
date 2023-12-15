@@ -1,13 +1,19 @@
 <mat-card>
     <mat-card-header>
         <mat-card-title>
-            Your Queue Categories are: <ng-container *ngFor="let category of myCategories">
-                {{category.name}},
-                </ng-container>
+            Ready to serve courses
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
+        <ng-container *ngIf="courses?.length == 0">
+            <div class="container">
+                <div class="start">
+                    <strong>No courses ready to serve</strong>
+                </div>
+            </div>
+        </ng-container>
         <mat-accordion class="pannel-recipes" multi >
+            
             <ng-container *ngFor="let course of courses!; let i = index">
                 <mat-expansion-panel class="pannel-recipes" [expanded]="i < 3">
                     <mat-expansion-panel-header>
@@ -37,27 +43,10 @@
                                     <strong style="color:purple">Ended by:</strong> {{dish.logs_status?.finish_cooking?.actor?.username}}
                                     <strong style="color:purple">At:</strong> {{dish.logs_status?.finish_cooking?.timestamp | date: 'HH:mm'}}
                                 </ng-container>
-                                <ng-container *ngIf="dish.logs_status?.finish_cooking == undefined">
-                                    <ng-container *ngIf="myUser?.category?.includes(dish?.category!) || myUser?.category?.length! == 0">
-                                        
-                                    <a  class="normal-dimensions" style="color: blue;" (click)="finishCooking(dish._id!)">Finish
-                                        Cooking</a>
-                                    </ng-container>
-                                </ng-container>
-
+                                
 
                               </div>
                             </ng-container>
-                          
-                            <ng-container *ngIf="dish.logs_status?.start_cooking == undefined">
-                                <div class="end">
-                                    <ng-container *ngIf="myUser?.category?.includes(dish?.category!) || myUser?.category?.length! == 0">
-                                    <a  class="normal-dimensions" style="color: blue;" (click)="startCooking(dish._id!)">Start
-                                        Cooking</a>
-                                    </ng-container>
-                                    </div>
-                            </ng-container>
-                            <br>
                             <ng-container *ngIf="dish.notes != undefined">
                                 <strong>Notes:</strong> {{dish.notes}}
                                 <br>
@@ -67,12 +56,12 @@
                     </ng-container>
                     <ng-container *ngIf="course.confirmeButton == true">
                         <mat-action-row style="padding-bottom: 1px; padding-top: 5px;">
-                            <button mat-raised-button color="primary" (click)="confirmCourse(course.orderId!, course._id!)">Confirm
-                                Course</button>
+                            <button mat-raised-button color="primary" (click)="serveCourse(course.orderId!, course._id!)">Serve Course</button>
                         </mat-action-row>
                     </ng-container>
                 </mat-expansion-panel>
             </ng-container>
+
         </mat-accordion>
     </mat-card-content>
 </mat-card>

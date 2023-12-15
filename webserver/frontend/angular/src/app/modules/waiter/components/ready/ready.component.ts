@@ -18,12 +18,13 @@ import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { SocketService } from 'src/app/core/services/socket.service';
 
 @Component({
-  selector: 'app-queue',
-  templateUrl: './queue.component.html',
-  styleUrls: ['./queue.component.css']
+  selector: 'app-ready',
+  templateUrl: './ready.component.html',
+  styleUrls: ['./ready.component.css']
 })
-export class QueueComponent {
+export class ReadyComponent {
 
+  
   orders: iOrder[] = [];
   courses: iCourse[] = [];
   myUser: iUser | undefined;
@@ -41,10 +42,11 @@ export class QueueComponent {
   subscriptionIngredient: Subscription | undefined;
   subscriptionCategory: Subscription | undefined;
 
-  constructor(private api: ApiService, private notifier: NotifierComponent, private router: Router,
-     private socketService: SocketService, private references: DatabaseReferencesService,
+
+  constructor(private api: ApiService, private notifier: NotifierComponent, private router: Router, private socketService: SocketService, private references: DatabaseReferencesService,
     private pageInfo: PageInfoService, private auth: AuthService) {
-    Promise.resolve().then(() => this.pageInfo.pageMessage = "👩‍🍳Queue");
+      
+    Promise.resolve().then(() => this.pageInfo.pageMessage = "🏃‍♀️💨Ready");
 
     this.subscriptionTable = this.references.tablesReferenceObservable.subscribe((value) => {
       this.tableReference = value!;
@@ -62,23 +64,14 @@ export class QueueComponent {
       this.categoriesReference = value!;
     });
 
+    }
 
-    
-    this.api.get('/users' + '?username=' + this.auth.username).subscribe((response) => {
-      this.myUser = response.body.payload[0];
-      
-      for(let cat of this.myUser?.category!){
-        this.myCategories.push(this.categoriesReference.find((category) => category._id === cat)!);
-      }
-    });
-    
-  }
-  
   ngOnInit(): void {
     this.api.get('/orders/').subscribe((response) => {
       this.orders = response.body.payload;
       this.getDishes();
     });
+
   }
 
   ngAfterViewInit(): void {
@@ -88,6 +81,13 @@ export class QueueComponent {
     this.socketService.listen(eListenChannels.dishes).subscribe((data) => {
       this.ngOnInit();
     });
+  }
+  
+  ngOnDestroy(): void {
+    this.subscriptionTable?.unsubscribe();
+    this.subscriptionRoom?.unsubscribe();
+    this.subscriptionRecipe?.unsubscribe();
+    this.subscriptionIngredient?.unsubscribe();
   }
 
   getDishes() {
@@ -120,67 +120,33 @@ export class QueueComponent {
           });
         });
       });
-      this.SortPerCourse();
+      this.extractReadyCourses();
     });
   }
 
-  SortPerCourse() {
-    this.courses = [];
-    let isThereNextCourse: boolean = true;
-    let courseIndex: number = 0;
-    while (isThereNextCourse) {
-      isThereNextCourse = false;
-      this.orders.forEach((order) => {
-        if (courseIndex < order.courses.length) {
-          isThereNextCourse = true;
 
-          this.courses.push(order.courses[courseIndex]);
+  extractReadyCourses() {
+    this.courses = [];
+    this.orders.forEach((order) => {
+      order.courses.forEach((course) => {
+        if(course.logs_course?.ready_course != undefined && course.logs_course.served_course == undefined){
+          this.courses.push(course);
         }
       });
-      courseIndex++;
-    }
-
-    let nCourses = this.courses.length
-
-    for (let i = 0; i < nCourses; i++) {
-      if (this.courses[i].logs_course?.ready_course != undefined) {
-        this.courses.splice(i, 1);
-        nCourses--;
-        i--;
-      }
-    }
-
-
-  }
-
-
-  ngOnDestroy(): void {
-    this.subscriptionTable?.unsubscribe();
-    this.subscriptionRoom?.unsubscribe();
-    this.subscriptionRecipe?.unsubscribe();
-    this.subscriptionIngredient?.unsubscribe();
-  }
-
-
-  startCooking(dishId: string) {
-    this.api.put('/dishes/' + dishId + '/action/' + 'start_cooking', {}).subscribe((response) => {
-      this.notifier.showSuccess(response.body.message, 'OK', 'success');
-      this.ngOnInit();
     });
   }
-  finishCooking(dishId: string) {
-    this.api.put('/dishes/' + dishId + '/action/' + 'finish_cooking', {}).subscribe((response) => {
-      this.notifier.showSuccess(response.body.message, 'OK', 'success');
-      this.ngOnInit();
-    });
-  }
-  confirmCourse(orderId: string, courseId: string) {
+
+  serveCourse(orderId: string,courseId: string) {
+    //order server
     let tempOrder = this.orders.find((order) => order._id === orderId);
-
     this.api.put('/orders/' + orderId + '/action/' + courseId, tempOrder).subscribe((response) => {
-      this.notifier.showSuccess(response.body.message, 'OK', 'success');
-      this.ngOnInit();
+      if (response.status === 200) {
+        this.notifier.showSuccess(200, 'Course served successfully');
+      } else {
+        this.notifier.showError(400, 'Course served failed');
+      }
     });
+
   }
 
 

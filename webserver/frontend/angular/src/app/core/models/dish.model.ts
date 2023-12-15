@@ -21,6 +21,7 @@ export interface iDishModification {
 
     //for frontend display
     name?:      string;
+    price?:     number;
 }
 
 

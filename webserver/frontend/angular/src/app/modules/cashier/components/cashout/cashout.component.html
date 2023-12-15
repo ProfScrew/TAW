@@ -1,1 +1,87 @@
-<p>cashout works!</p>
+<mat-card>
+    <mat-card-header>
+        <mat-card-title id="title">
+            Cashout Orders
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+
+        <mat-accordion multi>
+            <ng-container *ngFor="let ord of ordersToDisplay; let i = index">
+
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Order of {{ord.tablesNames?.replace(',', '')}}
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            Number of courses: {{ord.courses.length}}
+                        </mat-panel-description>
+                        <mat-panel-description>
+                            Number of people: {{ord.guests}}
+                        </mat-panel-description>
+
+                        <mat-panel-description>
+                            Final Charge: {{ord.final_price}}&euro;
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <mat-divider></mat-divider>
+
+                    <b id="sub-title">General Info of Orders:</b>
+                    <br>
+                    <b>Guests:</b> {{ord.guests}} people
+                    <br>
+                    <b>Capacity:</b> {{ord.capacity}} people
+                    <br>
+                    <b>Tables:</b> {{ord.tablesNames}}
+                    <br>
+                    <b>Room:</b> {{ord.roomName}}
+                    <br>
+                    <b>Service charge:</b> {{ord.serviceCharge}}&euro;
+
+
+
+                    <mat-divider></mat-divider>
+
+                    <b id="sub-title">Courses:</b>
+                    <br>
+                    <ng-container *ngFor="let course of ord.courses; let j = index">
+                        &nbsp;&nbsp;&nbsp;
+                        <b style="color:green">Course number:</b> {{j+1}}
+                        <br>
+                        <ng-container *ngFor="let dish of course.dishes_obj">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <b>Dish:</b> {{dish.name}}
+                            <b>Price of dish:</b> {{dish.actual_price}}&euro;
+                            <br>
+                            <ng-container *ngIf="dish.modifications != undefined">
+                                <ng-container *ngFor="let mod of dish.modifications">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <b>Modification:</b> {{mod.name}}
+                                    <b>Type:</b> {{mod.type}}
+                                    {{mod.price}}&euro;
+                                    <br>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+
+
+                    </ng-container>
+                    <mat-divider></mat-divider>
+                    <div class="container-end">
+                        
+                    <br>
+                    <mark><b>Final Price:</b> {{ord.final_price}}&euro;</mark>
+                    </div>
+                    
+                    <mat-action-row>
+                        <button mat-raised-button color="primary" (click)="cashoutOrder(ord._id!)">Cashout Order</button>
+                    </mat-action-row>
+
+                </mat-expansion-panel>
+            </ng-container>
+        </mat-accordion>
+
+
+    </mat-card-content>
+</mat-card>

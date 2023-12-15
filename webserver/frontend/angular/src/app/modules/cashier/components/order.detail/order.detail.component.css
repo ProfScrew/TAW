@@ -1,0 +1,18 @@
+.container-end {
+  margin-left: auto;
+  text-align: right;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    overflow-x: auto;
+  }
+  
+  .end {
+    margin-left: auto;
+  }
+  
+  #title{
+    color:red;
+  }
