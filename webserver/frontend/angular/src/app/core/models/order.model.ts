@@ -12,6 +12,7 @@ export enum eOrderStatus {
 export interface iLogCourse {
     created_course: iUserAction;
     served_course?: iUserAction;
+    ready_course?: iUserAction;
     //🔮future feature (not implemented)
     deleted_course?: iUserAction;
 }
@@ -28,6 +29,8 @@ export interface iCourse {
     //used by frontend production
     dishes_obj?: iDish[];
     tablesNames?: string;
+    confirmeButton?: boolean;
+    orderId?: string;
 }
 export interface iOrder {
     _id?: string;

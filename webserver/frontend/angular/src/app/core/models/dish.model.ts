@@ -37,4 +37,5 @@ export interface iDish {
     
     //for frontend display
     name?:              string;
+    category?:          string;
 }

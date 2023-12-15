@@ -246,10 +246,18 @@ orders.put("/:id/action/:choice", authorize, (req, res, next) => {
                 return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid order ID'));
             }
             for (const course of orderData.courses!) {
-                if (course._id === mongoose.Types.ObjectId(choice)) {
-                    course.logs_course!.served_course = requesterAction;
+                if (course._id.toString() === choice) {
+                    if(course.logs_course?.ready_course === undefined){
+                        course.logs_course!.ready_course = requesterAction;
+                        //emit signal for waiters that the order is ready to serve
+                        io.emit(eListenChannels.orders, { message: 'Order list updated!' });
+                        //send notification to waiters
+                    }else{
+                        course.logs_course!.served_course = requesterAction;
+                    }
                 }
             }
+            
             orderData.status = eOrderStatus.delivered;
             for (const course of orderData.courses!) {
                 if (course.logs_course?.served_course === undefined) {

@@ -1,17 +1,15 @@
 <mat-card>
     <mat-card-header>
         <mat-card-title>
-            Queue for Production. Your Production >:(
         </mat-card-title>
     </mat-card-header>
-
     <mat-card-content>
-        <mat-accordion class="pannel-recipes" multi>
+        <mat-accordion class="pannel-recipes" multi >
             <ng-container *ngFor="let course of courses!; let i = index">
                 <mat-expansion-panel class="pannel-recipes" [expanded]="i < 3">
                     <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            Course of Tables {{course.tablesNames}}
+                        <mat-panel-title id="title">
+                            Course of {{course.tablesNames?.replace(',', '')}}
                         </mat-panel-title>
                         <mat-panel-description>
                             Number of dishes: {{course.dishes?.length}}
@@ -31,15 +29,32 @@
                             </div>
                             <ng-container *ngIf="dish.logs_status?.start_cooking != undefined">
                               <div class="end">
-                                <strong>Started by:</strong> {{dish.logs_status?.start_cooking?.actor?.username}}
-                                <strong>at:</strong> {{dish.logs_status?.start_cooking?.timestamp | date: 'dd/MM/yyyy HH:mm'}}
+                                <strong style="color:green">Started by:</strong> {{dish.logs_status?.start_cooking?.actor?.username}}
+                                <strong style="color:green">At:</strong> {{dish.logs_status?.start_cooking?.timestamp | date: 'HH:mm'}}
+
+
+                                <ng-container *ngIf="dish.logs_status?.finish_cooking != undefined">
+                                    <strong style="color:purple">Ended by:</strong> {{dish.logs_status?.finish_cooking?.actor?.username}}
+                                    <strong style="color:purple">At:</strong> {{dish.logs_status?.finish_cooking?.timestamp | date: 'HH:mm'}}
+                                </ng-container>
+                                <ng-container *ngIf="dish.logs_status?.finish_cooking == undefined">
+                                    <ng-container *ngIf="myUser?.category?.includes(dish?.category!) || myUser?.category == undefined">
+                                        
+                                    <a  class="normal-dimensions" style="color: blue;" (click)="finishCooking(dish._id!)">Finish
+                                        Cooking</a>
+                                    </ng-container>
+                                </ng-container>
+
+
                               </div>
                             </ng-container>
                           
                             <ng-container *ngIf="dish.logs_status?.start_cooking == undefined">
                                 <div class="end">
+                                    <ng-container *ngIf="myUser?.category?.includes(dish?.category!) || myUser?.category == undefined">
                                     <a  class="normal-dimensions" style="color: blue;" (click)="startCooking(dish._id!)">Start
                                         Cooking</a>
+                                    </ng-container>
                                     </div>
                             </ng-container>
                             <br>
@@ -49,6 +64,12 @@
                             </ng-container>
 
                         </div>
+                    </ng-container>
+                    <ng-container *ngIf="course.confirmeButton == true">
+                        <mat-action-row style="padding-bottom: 1px; padding-top: 5px;">
+                            <button mat-raised-button color="primary" (click)="confirmCourse(course.orderId!, course._id!)">Confirm
+                                Course</button>
+                        </mat-action-row>
                     </ng-container>
                 </mat-expansion-panel>
             </ng-container>

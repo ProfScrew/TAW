@@ -1,6 +1,6 @@
 export interface iCategory {
-    _id: String;
-    name: string;
-    color: string;
-    order?: number;
+    _id:        string;
+    name:       string;
+    color:      string;
+    order?:     number;
 }

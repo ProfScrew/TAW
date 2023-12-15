@@ -14,6 +14,7 @@ export enum eOrderStatus {
 export interface iLogCourse {
     created_course: iUserAction;
     served_course?: iUserAction;
+    ready_course?: iUserAction;
     //🔮future feature (not implemented)
     deleted_course?: iUserAction;
 }
@@ -60,6 +61,7 @@ const OrderSchema = new Schema<iOrder>({
             dishes: { type: [Schema.Types.ObjectId], ref: 'Dish', required: true },
             logs_course: {
                 created_course: { type: UserAction, required: true },
+                ready_course: { type: UserAction, required: false },
                 served_course: { type: UserAction, required: false },
                 deleted_course: { type: UserAction, required: false },
                 required: false
