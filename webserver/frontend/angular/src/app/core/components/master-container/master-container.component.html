@@ -6,6 +6,7 @@
   <span class="spacer"></span>
   <span class="message">&nbsp;&nbsp; {{pageInfo.pageMessage}}</span>
   <span class="spacer"></span>
+  <span class="message">{{auth.name}}</span>
   <button mat-icon-button class="icon favorite-icon" aria-label="Delete?" *ngIf="isWaiter()"
     (click)="goToReady()"><mat-icon matBadge={{counterCourses}} matBadgeColor="warn">comment</mat-icon>
   </button>

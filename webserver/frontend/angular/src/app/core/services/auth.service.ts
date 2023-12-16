@@ -84,5 +84,7 @@ export class AuthService {
   get username(): string { return jwt_decode<iTokenData>(this.auth).username; }
   get role(): iRole { return jwt_decode<iTokenData>(this.auth).role; }
   get exp(): number { return jwt_decode<iTokenData>(this.auth).exp; }
+  get room(): [string] { return jwt_decode<iTokenData>(this.auth).room; }
+  get category(): [string] { return jwt_decode<iTokenData>(this.auth).category; }
 
 }

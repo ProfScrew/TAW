@@ -96,7 +96,7 @@ orders.get("/", authorize, async (req, res, next) => {
  */
 orders.post("/", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
-    if (!(requester.role.waiter)) {
+    if (!(requester.role.waiter )) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
 
@@ -208,7 +208,7 @@ orders.put("/:id/action/:choice", authorize, (req, res, next) => {
     */
 
     const requester = (req.user as iTokenData);
-    if (!(requester.role.waiter)) {
+    if (!(requester.role.waiter || requester.role.production)) {
         return next(cResponse.error(eHttpCode.FORBIDDEN, "You don't have permission to access dishes."));
     }
     const id = req.params.id as string;

@@ -63,15 +63,8 @@ export class QueueComponent {
     });
 
 
-    
-    this.api.get('/users' + '?username=' + this.auth.username).subscribe((response) => {
-      this.myUser = response.body.payload[0];
-      
-      for(let cat of this.myUser?.category!){
-        this.myCategories.push(this.categoriesReference.find((category) => category._id === cat)!);
-      }
-    });
-    
+    let categories: string[] = auth.category
+    this.myCategories = this.categoriesReference.filter((category) => categories.includes(category._id));
   }
   
   ngOnInit(): void {

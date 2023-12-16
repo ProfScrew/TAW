@@ -16,8 +16,8 @@ export interface iTokenData {
     surname: string,
     username: string,
     role: iRole,
-    category?: iCategory["_id"],
-    room?: iRoom["_id"],
+    category?: iCategory["_id"][],
+    room?: iRoom["_id"][],
 
     iat?: number,
     exp?: number

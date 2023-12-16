@@ -51,8 +51,8 @@ user.post('/login', passport.authenticate(authenticate, { session: false }), asy
         surname: user.surname,
         username: user.username,
         role: user.role,
-        category: user.category ? user.category[0] : undefined,
-        room: user.room ? user.room[0] : undefined,
+        category: user.category ? user.category : undefined,
+        room: user.room ? user.room : undefined,
     });
 
     return next(cResponse.genericMessage(eHttpCode.OK, signed));

@@ -3,6 +3,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
+import { catchError } from 'rxjs/operators';
+import { NotifierComponent } from '../components/notifier/notifier.component';
+
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +15,7 @@ export class ApiService {
 
   public static readonly API_BACKEND = environment.URL_BACKEND + environment.VERSION;
 
-  constructor(private http: HttpClient, private auth: AuthService) {
+  constructor(private http: HttpClient, private auth: AuthService, private router: Router, public notifier: NotifierComponent) {
 
   }
 
@@ -29,6 +33,10 @@ export class ApiService {
     return this.http.get(ApiService.API_BACKEND + url + (query ? ('?' + query) : ''), { headers: this.headers, observe: 'response' }).pipe(
       tap((data: any) => {
         this.handleResponse(data);  //calls alert but also returns data
+      }),
+      catchError((err) => {
+        this.handleResponse(err);
+        return err;
       })
     );
   }
@@ -37,6 +45,10 @@ export class ApiService {
     return this.http.post(ApiService.API_BACKEND + url + (params ? (params) : ''), data, { headers: this.headers, observe: 'response'  }).pipe(
       tap((data: any) => {
         this.handleResponse(data);  //calls alert but also returns data
+      }),
+      catchError((err) => {
+        this.handleResponse(err);
+        return err;
       })
     );
     
@@ -46,6 +58,10 @@ export class ApiService {
     return this.http.put(ApiService.API_BACKEND + url + (params ? (params) : ''), data, { headers: this.headers, observe: 'response'  }).pipe(
       tap((data: any) => {
         this.handleResponse(data);  //calls alert but also returns data
+      }),
+      catchError((err) => {
+        this.handleResponse(err);
+        return err;
       })
     );
   }
@@ -54,14 +70,24 @@ export class ApiService {
     return this.http.delete(ApiService.API_BACKEND + url + (params ? (params) : ''), { headers: this.headers, observe: 'response'  }).pipe(
       tap((data: any) => {
         this.handleResponse(data);  //calls alert but also returns data
+      }),
+      catchError((err) => {
+        this.handleResponse(err);
+        return err;
       })
     );
   }
 
   handleResponse(response: any) { //alert
     if (response.error) {
+      if(response.status == 401 && response.error.message == "Token is blacklisted"){
+        this.auth.logout();
+        this.notifier.showError(response.status, response.error.message);
+        this.router.navigate(['/login']);
+      }
       return false;
     }
+
     return response;
   }
 

@@ -138,3 +138,5 @@ old
 
 db/mongodb/diagnostic.data
 db/mongodb/journal
+
+scripts/venv

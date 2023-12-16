@@ -1,0 +1,7 @@
+admin/password/admin/admin/3506342301/role:TTTTT
+Joey/password/Joey/Tribbiani/3506342302/role:TTTTT
+Rachel/password/Rachel/Green/3506342303/role:FTFFF
+Phiby/password/Phiby/Buffay/3506342304/role:FFTFF
+Monica/password/Monica/Geller/3506342305/role:FFTFF
+Chandler/password/Chandler/Bing/3506342306/role:FFFTF
+Ross/password/Ross/Geller/3506342307/role:FFFFT

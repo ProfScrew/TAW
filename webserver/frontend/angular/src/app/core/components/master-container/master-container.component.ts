@@ -85,7 +85,7 @@ export class MasterContainerComponent {
 
   constructor(
     private router: Router,
-    private auth: AuthService,
+    protected auth: AuthService,
     private api: ApiService,
     protected pageInfo: PageInfoService,
     private databaseReferences: DatabaseReferencesService,
