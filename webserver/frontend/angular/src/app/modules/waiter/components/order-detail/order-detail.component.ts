@@ -4,7 +4,6 @@ import { eOrderStatus, iOrder } from 'src/app/core/models/order.model';
 import { PageDataService } from 'src/app/core/services/page-data.service';
 import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
 import { SocketService } from 'src/app/core/services/socket.service';
-import { eListenChannels } from 'src/app/core/models/channels.enum';
 import { Subscription } from 'rxjs';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { iRoom } from 'src/app/core/models/room.model';
@@ -15,6 +14,7 @@ import { ApiService } from 'src/app/core/services/api.service';
 import { NotifierComponent } from 'src/app/core/components/notifier/notifier.component';
 import { iIngredient } from 'src/app/core/models/ingredient.model';
 import { iRecipe } from 'src/app/core/models/recipe.model';
+import { Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-order-detail',
@@ -43,9 +43,10 @@ export class OrderDetailComponent implements OnInit {
   subscriptionRecipe: Subscription | undefined;
   categoryReference: any;
   subscriptionCategory: Subscription | undefined;
+  Breakpoints=Breakpoints;
 
   constructor(private router: Router, public pageData: PageDataService, public reference: DatabaseReferencesService,
-    private io: SocketService, private pageInfo: PageInfoService, private api: ApiService,
+    private io: SocketService, public pageInfo: PageInfoService, private api: ApiService,
     private notifier: NotifierComponent) {
     this.receivedData = { ... this.pageData.data };
     if (Object.keys(this.receivedData as Object).length === 0) {

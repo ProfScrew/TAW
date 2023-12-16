@@ -1,8 +1,14 @@
 <mat-card class="responsive-form">
     <mat-card-header>
         <mat-card-title>
-            Order detail of tables: {{displayedOrder?.tables}}
-        </mat-card-title>
+            Order detail of tables:
+            <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Web; else nonHandset">
+              {{ displayedOrder?.tables }}
+            </ng-container>
+            <ng-template #nonHandset>
+                <br>{{ displayedOrder?.tables }}
+            </ng-template>
+          </mat-card-title>          
     </mat-card-header>
     <mat-card-content class="flex-container">
         <section class="section-center">
@@ -74,4 +80,9 @@
     </mat-action-row>
 
 </mat-card>
-<br>
+
+<div class="container" [ngSwitch]="pageInfo.currentBreakpoint">
+    <span class="large" *ngSwitchCase="Breakpoints.Handset"> Handset </span>
+    <span class="medium" *ngSwitchCase="Breakpoints.Web"> Web </span>
+    <span class="small" *ngSwitchCase="Breakpoints.Tablet"> Tablet </span>
+  </div>

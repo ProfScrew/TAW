@@ -16,6 +16,7 @@ import { MatBadgeModule} from '@angular/material/badge';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion'; 
+import { LayoutModule } from '@angular/cdk/layout';
 
 
 
@@ -50,6 +51,7 @@ import { ErrorPageComponent } from './components/error-page/error-page.component
     MatBadgeModule,
     FormsModule,
     MatExpansionModule,
+    LayoutModule,
 
     // Toastr
     ToastrModule.forRoot(

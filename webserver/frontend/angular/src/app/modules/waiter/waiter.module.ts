@@ -23,6 +23,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ReadyComponent } from './components/ready/ready.component';
+import { LayoutModule } from '@angular/cdk/layout';
 
 
 
@@ -56,7 +57,7 @@ import { ReadyComponent } from './components/ready/ready.component';
     MatDividerModule,
     MatTabsModule,
     MatExpansionModule,
-  
+    LayoutModule,
     
 
 
