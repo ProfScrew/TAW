@@ -26,14 +26,15 @@ export class QueueComponent {
 
   orders: iOrder[] = [];
   courses: iCourse[] = [];
-  myUser: iUser | undefined;
   myCategories: iCategory[] = [];
+  stringCategories: string[] = [];
 
   tableReference: iTable[] = [];
   roomReference: iRoom[] = [];
   recipeReference: iRecipe[] = [];
   ingredientReference: iIngredient[] = [];
   categoriesReference: iCategory[] = [];
+  
 
   subscriptionTable: Subscription | undefined;
   subscriptionRoom: Subscription | undefined;
@@ -63,8 +64,11 @@ export class QueueComponent {
     });
 
 
-    let categories: string[] = auth.category
-    this.myCategories = this.categoriesReference.filter((category) => categories.includes(category._id));
+    this.stringCategories = auth.category
+    console.log("catego",this.stringCategories)
+    this.myCategories = this.categoriesReference.filter((category) => this.stringCategories.includes(category._id));
+
+    console.log("myCategories",this.myCategories)
   }
   
   ngOnInit(): void {

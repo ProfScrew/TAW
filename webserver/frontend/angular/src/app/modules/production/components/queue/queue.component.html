@@ -38,7 +38,7 @@
                                     <strong style="color:purple">At:</strong> {{dish.logs_status?.finish_cooking?.timestamp | date: 'HH:mm'}}
                                 </ng-container>
                                 <ng-container *ngIf="dish.logs_status?.finish_cooking == undefined">
-                                    <ng-container *ngIf="myUser?.category?.includes(dish?.category!) || myUser?.category?.length! == 0">
+                                    <ng-container *ngIf="stringCategories?.includes(dish?.category!) || stringCategories?.length! == 0">
                                         
                                     <a  class="normal-dimensions" style="color: blue;" (click)="finishCooking(dish._id!)">Finish
                                         Cooking</a>
@@ -51,7 +51,7 @@
                           
                             <ng-container *ngIf="dish.logs_status?.start_cooking == undefined">
                                 <div class="end">
-                                    <ng-container *ngIf="myUser?.category?.includes(dish?.category!) || myUser?.category?.length! == 0">
+                                    <ng-container *ngIf="stringCategories?.includes(dish?.category!) || stringCategories?.length! == 0">
                                     <a  class="normal-dimensions" style="color: blue;" (click)="startCooking(dish._id!)">Start
                                         Cooking</a>
                                     </ng-container>
