@@ -9,6 +9,9 @@ export interface iDishModificationArchive{
     ingredient: iIngredient['_id'];
     type:       eDishModificationType;
     price:      number;
+
+    //for display only
+    ingredient_obj?: iIngredient;
 }
 
 export interface iDishArchive {
@@ -18,11 +21,15 @@ export interface iDishArchive {
     logs_status?:       {start_cooking: iUserAction, finish_cooking: iUserAction};
     modifications?:     iDishModificationArchive[];
 
+    //for display only
+    recipe_obj?:        iRecipe;
+
 }
 
 export interface iCourseArchive {
     logs_course:       iLogCourse;
     dishes:            iDishArchive[];
+
 }
 
 

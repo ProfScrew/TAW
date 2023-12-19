@@ -12,6 +12,8 @@ import { NotifierComponent } from 'src/app/core/components/notifier/notifier.com
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/core/services/api.service';
 import { eOrderStatus } from 'src/app/core/models/order.model';
+import { PageInfoService } from 'src/app/core/services/page-info.service';
+import { Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-menu-selector',
@@ -32,6 +34,7 @@ export class MenuSelectorComponent {
   subscriptionIngredient: Subscription | undefined;
   recipeReference: iRecipe[] | undefined;
   subscriptionRecipe: Subscription | undefined;
+  Breakpoints=Breakpoints;
 
   displayedRecipe: iRecipe[] | undefined;
 
@@ -40,7 +43,7 @@ export class MenuSelectorComponent {
   modificationsArray = ['add', 'remove', 'more', 'less'];
 
 
-  constructor(private api: ApiService, private pagedata: PageDataService, private dataReference: DatabaseReferencesService, private notifier: NotifierComponent, private router: Router) {
+  constructor(private api: ApiService, private pagedata: PageDataService, private dataReference: DatabaseReferencesService, private notifier: NotifierComponent, private router: Router, public pageInfo: PageInfoService) {
     this.subscriptionIngredient = this.dataReference.ingredientsReferenceObservable.subscribe((value) => {
       this.ingredientReference = value;
     });
@@ -82,6 +85,51 @@ export class MenuSelectorComponent {
     this.subscriptionCategory?.unsubscribe();
     this.subscriptionIngredient?.unsubscribe();
     this.subscriptionRecipe?.unsubscribe();
+    if (Object.keys(this.receivedData as Object).length !== 0) {
+
+      let delivered = true;
+      this.receivedData?.order.courses.forEach((course) => {
+        if (course.logs_course?.served_course == undefined) {
+          delivered = false;
+        }
+      });
+      if (delivered) {
+        this.api.put("/orders/" + this.pagedata.data.order._id + "/action/" + eOrderStatus.delivered, {}).subscribe({
+          next: (response) => {
+            //this.notifier.showSuccess(response.status, response.message);
+          },
+          error: (err) => {
+            //console.log(err);
+            this.notifier.showError(err.status, err.error.message);
+            this.router.navigate(['/core/waiter/orders']);
+          }
+        });
+
+      } else if (this.receivedData?.order.courses.length === 0) {
+        this.api.put("/orders/" + this.pagedata.data.order._id + "/action/" + eOrderStatus.waiting, {}).subscribe({
+          next: (response) => {
+            //this.notifier.showSuccess(response.status, response.message);
+          },
+          error: (err) => {
+            //console.log(err);
+            this.notifier.showError(err.status, err.error.message);
+            this.router.navigate(['/core/waiter/orders']);
+          }
+        });
+      }
+      else {
+        this.api.put("/orders/" + this.pagedata.data.order._id + "/action/" + eOrderStatus.serving, {}).subscribe({
+          next: (response) => {
+            //this.notifier.showSuccess(response.status, response.message);
+          },
+          error: (err) => {
+            //console.log(err);
+            this.notifier.showError(err.status, err.error.message);
+            this.router.navigate(['/core/waiter/orders']);
+          }
+        });
+      }
+    }
   }
   addCourse(recipeAdded: iRecipe) {
     let tempDish: iTempDish = {

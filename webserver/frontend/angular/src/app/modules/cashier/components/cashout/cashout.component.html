@@ -10,7 +10,7 @@
             <ng-container *ngFor="let ord of ordersToDisplay; let i = index">
 
                 <mat-expansion-panel>
-                    <mat-expansion-panel-header>
+                    <mat-expansion-panel-header [ngClass]="{'auto-size': pageInfo.currentBreakpoint == Breakpoints.Handset}">
                         <mat-panel-title>
                             Order of {{ord.tablesNames?.replace(',', '')}}
                         </mat-panel-title>

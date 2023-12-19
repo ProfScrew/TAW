@@ -1,0 +1,124 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Date Range Filter</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <form [formGroup]="dateRange">
+            <mat-form-field appearance="fill">
+                <mat-label>Filter</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate formControlName="dateFrom" placeholder="Start date">
+                    <input matEndDate formControlName="dateTo" placeholder="End Date">
+                </mat-date-range-input>
+                <mat-hint>DD/MM/YYYY - DD/MM/YYYY</mat-hint>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+            &nbsp;
+            <mat-checkbox formControlName="logs">Logs</mat-checkbox>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button mat-raised-button color="primary" (click)="changeDate()">Apply Filter</button>
+
+        </form>
+        
+    </mat-card-content>
+</mat-card>
+
+<br>
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Archive</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+
+
+        <mat-accordion multi>
+            <ng-container *ngFor="let archive of displayElements; let i = index">
+
+                <mat-expansion-panel [expanded]="i < 3">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <mat-icon>archive</mat-icon>
+                            <span>Order:
+                            <ng-container *ngFor="let table of archive.tables">{{table}} </ng-container>
+                            Time and Date: {{datePipe.transform(archive.logs_order.created_order.timestamp, 'HH:mm dd-MM-yyyy')}}</span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <mat-divider></mat-divider>
+
+                    Guests: {{archive.guests}}<br>
+                    Capacity: {{archive.capacity}}<br>
+                    Waiter: {{archive.logs_order.created_order.actor.name}} {{archive.logs_order.created_order.actor.surname}}
+                    Username: {{archive.logs_order.created_order.actor.username}}<br>
+                    Final Price: {{archive.final_price}}&euro;<br>
+                    Charges Persons: {{archive.charges_persons}}&euro;<br>
+                    <mat-divider></mat-divider>
+                    <ng-container *ngFor="let course of archive.courses; let a = index">
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        Course: {{a + 1}}<br>
+                        <ng-container *ngIf="logs">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            Created by: {{course.logs_course.created_course.actor.name}} {{course.logs_course.created_course.actor.surname}}
+                            Username: {{course.logs_course.created_course.actor.username}} 
+                            Created at: {{datePipe.transform(course.logs_course.created_course.timestamp, 'HH:mm dd-MM-yyyy')}}<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Confirmed by: {{course?.logs_course?.ready_course?.actor?.name!}} {{course?.logs_course?.ready_course?.actor?.surname!}}
+                        Username: {{course?.logs_course?.ready_course?.actor?.username!}}
+                        Confirmed at: {{datePipe.transform(course?.logs_course?.ready_course?.timestamp!, 'HH:mm dd-MM-yyyy')}}<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Served by: {{course?.logs_course?.served_course?.actor?.name!}} {{course?.logs_course?.served_course?.actor?.surname!}}
+                        Username: {{course.logs_course.served_course?.actor?.username!}}
+                        Served at: {{datePipe.transform(course.logs_course.served_course?.timestamp, 'HH:mm dd-MM-yyyy')}}<br>
+                        </ng-container>
+                        
+                        <ng-container *ngFor="let dish of course.dishes; let b = index">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            Dish: {{b + 1}}<br>
+
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            Name: {{dish?.recipe_obj?.name!}}<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            Price: {{dish?.actual_price!}}&euro;<br>
+                            <ng-container *ngIf="logs">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                Started Cooking by: {{dish?.logs_status?.start_cooking?.actor?.name!}} {{dish?.logs_status?.start_cooking?.actor?.surname!}}
+                                Username: {{dish?.logs_status?.start_cooking?.actor?.username!}}
+                                Started Cooking at: {{datePipe.transform(dish?.logs_status?.start_cooking?.timestamp!, 'HH:mm dd-MM-yyyy')}}<br>
+                                
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                Finished Cooking by: {{dish?.logs_status?.finish_cooking?.actor?.name!}} {{dish?.logs_status?.finish_cooking?.actor?.surname!}}
+                                Username: {{dish?.logs_status?.finish_cooking?.actor?.username!}}
+                                Finished Cooking at: {{datePipe.transform(dish?.logs_status?.finish_cooking?.timestamp!, 'HH:mm dd-MM-yyyy')}}<br>
+                            </ng-container>
+
+                            <ng-container *ngFor="let mod of dish?.modifications!; let c = index">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                Modification {{c+1}}<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                Ingredient: {{mod?.ingredient_obj?.name!}}<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                Type: {{mod?.type!}}<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                Price: {{mod?.price!}}&euro;<br>
+                            
+                            </ng-container>
+                            
+
+
+                        </ng-container>
+                        
+                    </ng-container>
+
+
+                </mat-expansion-panel>
+            </ng-container>
+
+        </mat-accordion>
+
+
+
+
+    </mat-card-content>
+</mat-card>

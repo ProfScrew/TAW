@@ -17,13 +17,10 @@
                         <ng-container *ngFor="let rec of displayedRecipe">
                             <ng-container *ngIf="rec.category == cat._id">
                                 <mat-expansion-panel class="pannel-recipes">
-                                    <mat-expansion-panel-header>
+                                    <mat-expansion-panel-header [ngClass]="{'auto-size': pageInfo.currentBreakpoint === Breakpoints.Handset}">
                                         <mat-panel-title>
                                             {{rec.name}}
                                         </mat-panel-title>
-                                        <mat-panel-description>
-                                            {{rec.description}}
-                                        </mat-panel-description>
                                         <mat-panel-description>
                                             {{rec.base_price}}&euro;
                                         </mat-panel-description>
@@ -65,13 +62,10 @@
         <mat-accordion class="pannel-recipes">
             <ng-container *ngFor="let dish of tempDishes, let i = index">
                 <mat-expansion-panel class="pannel-recipes">
-                    <mat-expansion-panel-header>
+                    <mat-expansion-panel-header [ngClass]="{'auto-size': pageInfo.currentBreakpoint === Breakpoints.Handset}">
                         <mat-panel-title>
                             {{dish.name}}
                         </mat-panel-title>
-                        <mat-panel-description>
-                            {{dish.description}}
-                        </mat-panel-description>
                         <mat-panel-description>
                             {{dish.actual_price}}&euro;
                         </mat-panel-description>

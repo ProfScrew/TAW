@@ -13,7 +13,7 @@ record = {
     "email": "cook@hub.com",
     "logo": "logo",
     "iva": "3436535634",
-    "charge_per_person": 12
+    "charge_per_person": 3,
 }
 
 # Insert record into the RestaurantInformations collection

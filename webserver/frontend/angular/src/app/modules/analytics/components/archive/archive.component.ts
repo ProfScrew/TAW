@@ -8,31 +8,54 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
 import { PageDataService } from 'src/app/core/services/page-data.service';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
-import { ChartComponent } from '../chart/chart.component';
-import {ChartConfiguration} from 'chart.js/auto';
 
+import { DatePipe } from '@angular/common';
+import { iRecipe } from 'src/app/core/models/recipe.model';
+import { iIngredient } from 'src/app/core/models/ingredient.model';
+import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-statistics',
-  templateUrl: './statistics.component.html',
-  styleUrls: ['./statistics.component.css']
+  selector: 'app-archive',
+  templateUrl: './archive.component.html',
+  styleUrls: ['./archive.component.css'],
+  providers: [DatePipe]
 })
-export class StatisticsComponent {
-  
+export class ArchiveComponent {
+  //archives data
   displayElements: iOrderArchive[] | undefined;
   storedArchives : iOrderArchive[] | undefined;
+  logs: boolean = false;
 
-
+  //date range
   dateRange = new FormGroup({
     dateFrom: new FormControl(),
-    dateTo: new FormControl()
+    dateTo: new FormControl(),
+    //logs boolean checkbox
+    logs: new FormControl()
   });
+
+
+
+
+  recipeReference: iRecipe[] = [];
+  ingredientReference: iIngredient[] = [];
+
+  subscriptionRecipe: Subscription | undefined;
+  subscriptionIngredient: Subscription | undefined;
 
   constructor(private api: ApiService, private notifier: NotifierComponent, private router: Router,
     private references: DatabaseReferencesService, public pageData: PageDataService,
-    public pageInfo: PageInfoService, private auth: AuthService) {
+    public pageInfo: PageInfoService, private auth: AuthService, public datePipe: DatePipe) {
 
-    Promise.resolve().then(() => this.pageInfo.pageMessage = "📊Statistics");
+    Promise.resolve().then(() => this.pageInfo.pageMessage = "📦Archive");
+
+    this.subscriptionRecipe = this.references.recipesReferenceObservable.subscribe((value) => {
+      this.recipeReference = value!;
+    });
+    this.subscriptionIngredient = this.references.ingredientsReferenceObservable.subscribe((value) => {
+      this.ingredientReference = value!;
+    });
+
 
     }
 
@@ -42,10 +65,27 @@ export class StatisticsComponent {
     this.getArchive();
   }
 
+  ngAfterViewInit(): void {
+    console.log(this.storedArchives)
+  }
+
   getArchive(): void {
     this.api.get('/order_archives',undefined).subscribe((response) => {
       this.storedArchives = response.body.payload;
-
+      for(let archive of this.storedArchives!){
+        for(let course of archive.courses){
+          for(let dish of course.dishes){
+            dish.recipe_obj = this.recipeReference.find((recipe) => recipe._id == dish.recipe);
+            if(dish.modifications?.length! > 0){
+              for(let modification of dish.modifications!){
+                modification.ingredient_obj = this.ingredientReference.find((ingredient) => ingredient._id == modification.ingredient);
+              }
+            }
+          }
+        }
+      }
+      
+      console.log(this.storedArchives)
       this.sortByDate();
     });
   }
@@ -79,35 +119,6 @@ export class StatisticsComponent {
   changeDate(): void {
     console.log(this.dateRange.value);
     this.sortByDate()
+    this.logs = this.dateRange.value.logs;
   }
-
-  data = {
-    labels: [
-      'Red',
-      'Blue',
-      'Yellow'
-    ],
-    datasets: [{
-      label: 'My First Dataset',
-      data: [300, 50, 100],
-      backgroundColor: [
-        'rgb(255, 99, 132)',
-        'rgb(54, 162, 235)',
-        'rgb(255, 205, 86)'
-      ],
-      hoverOffset: 4
-    }]
-  };
-  
-  barChartConfig: ChartConfiguration = {
-    type: 'doughnut',
-    data: this.data,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false, // Set this to false to allow the chart to be responsive
-    }
-  };
-
- 
-
 }

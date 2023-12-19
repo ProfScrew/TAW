@@ -17,6 +17,7 @@ import { DatabaseReferencesService } from 'src/app/core/services/database-refere
 import { eDishModificationType, iDish } from 'src/app/core/models/dish.model';
 import { iRestaurantInformation } from 'src/app/core/models/restaurant_information.model';
 import { PageDataService } from 'src/app/core/services/page-data.service';
+import { Breakpoints } from '@angular/cdk/layout';
 
 
 @Component({
@@ -44,11 +45,12 @@ export class CashoutComponent {
   subscriptionRecipe: Subscription | undefined;
   subscriptionIngredient: Subscription | undefined;
   subscriptionCategory: Subscription | undefined;
+  Breakpoints=Breakpoints;
 
 
   constructor(private api: ApiService, private notifier: NotifierComponent, private router: Router, private socketService: SocketService,
     private references: DatabaseReferencesService, public pageData: PageDataService,
-    private pageInfo: PageInfoService, private auth: AuthService) {
+    public pageInfo: PageInfoService, private auth: AuthService) {
 
     Promise.resolve().then(() => this.pageInfo.pageMessage = "💰Cashout");
 

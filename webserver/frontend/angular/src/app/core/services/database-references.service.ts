@@ -15,8 +15,9 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class DatabaseReferencesService {
 
-  private archived = "?archive=false";
-
+  //private archived = "?archive=false";
+  private archived = "";
+  
   private categoriesReference : BehaviorSubject<iCategory[] | undefined> = new BehaviorSubject<iCategory[] | undefined>(undefined);
   public categoriesReferenceObservable = this.categoriesReference.asObservable();
 

@@ -62,8 +62,8 @@ export class MasterContainerComponent {
     },
     {
       name: 'Analytics',
-      subItems: ['Statistics'],
-      subLinks: ['/core/analytics/statistics'],
+      subItems: ['Statistics', 'Archive'],
+      subLinks: ['/core/analytics/statistics', '/core/analytics/archive'],
     },
   ];
 
@@ -73,10 +73,9 @@ export class MasterContainerComponent {
 
   readonly breakpoint$ = this.breakpointObserver
     .observe([
-      Breakpoints.Large,
-      Breakpoints.Medium,
-      Breakpoints.Small,
-      '(min-width: 500px)',
+      Breakpoints.Handset,
+      Breakpoints.Tablet,
+      Breakpoints.Web,
     ])
     .pipe(
       tap((value) => console.log(value)),

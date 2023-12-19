@@ -37,4 +37,8 @@
   #sub-title{
     color:blue;
   }
+
+  .auto-size{
+    height: auto;
+  }
   

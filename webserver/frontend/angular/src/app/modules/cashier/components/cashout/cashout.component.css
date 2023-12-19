@@ -19,3 +19,7 @@
 .end {
   margin-left: auto;
 }
+
+.auto-size{
+  height: auto;
+}

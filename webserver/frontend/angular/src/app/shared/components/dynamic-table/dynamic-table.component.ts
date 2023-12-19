@@ -38,7 +38,7 @@ export class DynamicTableComponent {
   //this will cause some performance issues ? maybe ?
   selectedRowCheck: iRowCheck[] = []; // [ {name: "name", value: true}, {name: "surname", value: false}]  
   currentRow: string = ""; //check what row is selected so no need to check all the rows
-  
+
   //used to pass the data to the form
   selectedRow: any | undefined;
 
@@ -68,8 +68,6 @@ export class DynamicTableComponent {
       }
 
       this.dataSource = new MatTableDataSource(data.body.payload);
-      this.dataSource.paginator = this.paginator!;
-      this.dataSource.sort = this.sort!;
 
       //in the part below we create a dictionary that will be used to convert the id to the name
       //this is done becouse the user doesn't want to see the id but the name of the element
@@ -93,6 +91,9 @@ export class DynamicTableComponent {
               //structure of the dictionary
               //dictionary = [{name: "dictionaryname", dictionary: [{id: "id: name: "name"}]}]
             });
+
+            this.dataSource.paginator = this.paginator!;
+            this.dataSource.sort = this.sort!;
           });
         }
       }
@@ -112,9 +113,15 @@ export class DynamicTableComponent {
               }
               element[multiple.name] = temp;
             });
+
+            this.dataSource.paginator = this.paginator!;
+            this.dataSource.sort = this.sort!;
           });
         }
       }
+      
+      this.dataSource.paginator = this.paginator!;
+      this.dataSource.sort = this.sort!;
     });
   }
 
@@ -126,6 +133,7 @@ export class DynamicTableComponent {
     } else {
       this.getTableData();
       this.buildTable();
+      this.dataSource.sort = this.sort!;
     }
 
   }
@@ -139,6 +147,8 @@ export class DynamicTableComponent {
 
   ngAfterViewInit() {// setting up the socket listener
     //console.log("table listener", this.model?.tableListener)
+    this.dataSource.paginator = this.paginator!;
+    this.dataSource.sort = this.sort!;
     this.socketService.listen(this.model?.tableListener!).subscribe((data) => {
       //console.log('User list updated:', data);
       // Update your UI as needed
@@ -153,6 +163,8 @@ export class DynamicTableComponent {
       }, 300);
       this.getTableData();
     });
+
+
   }
 
   applyFilter(event: Event) {//filter the table (search bar)
@@ -166,7 +178,7 @@ export class DynamicTableComponent {
   }
 
   selectRow(rowData: any) { //function called when a row is clicked
-    
+
     if (this.currentRow == rowData._id) {//click the same row so we close it 
       setTimeout(() => {
         this.currentRow = "";
@@ -205,7 +217,7 @@ export class DynamicTableComponent {
       this.selectedRow.routeDelete = this.model?.route! + rowData.username;
     }
 
-    for (let element of this.selectedRow.textFields!) { 
+    for (let element of this.selectedRow.textFields!) {
       element.value = rowData[element.name];
     }
     if (this.selectedRow.checkBoxes != undefined) {
@@ -213,7 +225,7 @@ export class DynamicTableComponent {
         element.value = rowData[this.selectedRow?.checkBoxes!.name][element.name];
       }
     }
-    
+
     if (this.selectedRow.arrayTextFields != undefined) {
       this.selectedRow.arrayTextFields!.value = rowData[this.selectedRow.arrayTextFields!.name];
     }
