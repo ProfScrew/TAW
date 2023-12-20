@@ -27,12 +27,14 @@ build_cordova() {
 
   cordova create ./CookHub it.unive.CookHub CookHub
   cd CookHub
+  cp ../../multi_platform_generate/cordova/logo.png www/img/logo.png
   cordova platform add android
   cd ../angular
   ng build
 
   cp -r dist/angular/* ../CookHub/www/
   cd ../CookHub
+  cp ../../multi_platform_generate/cordova/config.xml config.xml
 
   # Set Android SDK path
   export ANDROID_HOME=/home/stefano/Android/Sdk
@@ -65,11 +67,11 @@ build_electron() {
   #npm run electron
 
   # Build Electron app for windows
-  npm run package-win
+  #npm run package-win --icon=../../multi_platform_generate/electron/logo.ico
   # Build Electron app for linux
-  npm run package-linux
+  npm run package-linux --icon=../../multi_platform_generate/electron/logo.ico
   # Build Electron app for mac
-  npm run package-mac
+  #npm run package-mac --icon=../../multi_platform_generate/electron/logo.ico
 }
 
 # Parse command line options

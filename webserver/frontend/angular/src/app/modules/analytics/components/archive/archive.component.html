@@ -61,16 +61,16 @@
                         <strong class="course">Course:</strong> {{a + 1}}<br>
                         <ng-container *ngIf="logs">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <ins>Created by:</ins> {{course.logs_course.created_course.actor.name}} {{course.logs_course.created_course.actor.surname}}
-                            <ins>Username:</ins> {{course.logs_course.created_course.actor.username}} 
+                            <ins>Created by:</ins> {{course.logs_course.created_course.actor.username}}
+                            <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</ng-container>
                             <ins>Created at:</ins> {{datePipe.transform(course.logs_course.created_course.timestamp, 'HH:mm dd-MM-yyyy')}}<br>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <ins>Confirmed by:</ins> {{course?.logs_course?.ready_course?.actor?.name!}} {{course?.logs_course?.ready_course?.actor?.surname!}}
-                        <ins>Username:</ins> {{course?.logs_course?.ready_course?.actor?.username!}}
+                        <ins>Confirmed by:</ins> {{course?.logs_course?.ready_course?.actor?.username!}}
+                        <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</ng-container>
                         <ins>Confirmed at:</ins> {{datePipe.transform(course?.logs_course?.ready_course?.timestamp!, 'HH:mm dd-MM-yyyy')}}<br>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <ins>Served by:</ins> {{course?.logs_course?.served_course?.actor?.name!}} {{course?.logs_course?.served_course?.actor?.surname!}}
-                        <ins>Username:</ins> {{course.logs_course.served_course?.actor?.username!}}
+                        <ins>Served by:</ins> {{course.logs_course.served_course?.actor?.username!}}
+                        <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</ng-container>
                         <ins>Served at:</ins> {{datePipe.transform(course.logs_course.served_course?.timestamp, 'HH:mm dd-MM-yyyy')}}<br>
                         </ng-container>
                         
@@ -84,13 +84,11 @@
                             <strong>Price:</strong> {{dish?.actual_price!}}&euro;<br>
                             <ng-container *ngIf="logs">
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <ins>Started Cooking by:</ins> {{dish?.logs_status?.start_cooking?.actor?.name!}} {{dish?.logs_status?.start_cooking?.actor?.surname!}}
-                                <ins>Username:</ins> {{dish?.logs_status?.start_cooking?.actor?.username!}}
+                                <ins>Started Cooking by:</ins> {{dish?.logs_status?.start_cooking?.actor?.username!}}
                                 <ins>Started Cooking at:</ins> {{datePipe.transform(dish?.logs_status?.start_cooking?.timestamp!, 'HH:mm dd-MM-yyyy')}}<br>
                                 
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <ins>Finished Cooking by:</ins> {{dish?.logs_status?.finish_cooking?.actor?.name!}} {{dish?.logs_status?.finish_cooking?.actor?.surname!}}
-                                <ins>Username:</ins> {{dish?.logs_status?.finish_cooking?.actor?.username!}}
+                                <ins>Finished Cooking by:</ins> {{dish?.logs_status?.finish_cooking?.actor?.username!}}
                                 <ins>Finished Cooking at:</ins> {{datePipe.transform(dish?.logs_status?.finish_cooking?.timestamp!, 'HH:mm dd-MM-yyyy')}}<br>
                             </ng-container>
 
