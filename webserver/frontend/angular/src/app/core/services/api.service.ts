@@ -85,6 +85,12 @@ export class ApiService {
         this.notifier.showError(response.status, response.error.message);
         this.router.navigate(['/login']);
       }
+
+      if(response.status == 0){
+        this.auth.logout();
+        this.notifier.showError(response.status, "Server is not responding");
+        this.router.navigate(['/login']);
+      }
       return false;
     }
 

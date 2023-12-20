@@ -1,9 +1,10 @@
 <mat-card>
     <mat-card-header>
         <mat-card-title>
-            Your Queue Categories are: <ng-container *ngFor="let category of myCategories">
-                {{category.name}},
-                </ng-container>
+            Your Queue Categories are: <ng-container *ngFor="let category of myCategories; let last = last">
+        {{ category.name }}
+        <ng-container *ngIf="!last">,</ng-container>
+    </ng-container>
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
@@ -12,7 +13,7 @@
                 <mat-expansion-panel class="pannel-recipes" [expanded]="i < 3">
                     <mat-expansion-panel-header>
                         <mat-panel-title id="title">
-                            Course of {{course.tablesNames?.replace(',', '')}}
+                            Course of {{course.tablesNames}}
                         </mat-panel-title>
                         <mat-panel-description>
                             Number of dishes: {{course.dishes?.length}}

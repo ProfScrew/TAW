@@ -15,5 +15,13 @@ body {
     display: none;
 }
 
+.ngx-toastr {
+    width: auto;
+  
+    @media (max-width: 768px) {
+      width: 150px !important;
+    }
+  }
+
 
 

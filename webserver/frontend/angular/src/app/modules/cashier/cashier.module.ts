@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CashierRoutingModule } from './cashier-routing.module';
 import { CashoutComponent } from './components/cashout/cashout.component';
 import { OrderDetailComponent } from './components/order.detail/order.detail.component';
+import { TablesComponent } from './components/tables/tables.component';
 
 
 
@@ -25,10 +26,12 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
 
 
+
 @NgModule({
   declarations: [
     CashoutComponent,
-    OrderDetailComponent
+    OrderDetailComponent,
+    TablesComponent
   ],
   imports: [
     CommonModule,

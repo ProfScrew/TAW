@@ -18,6 +18,7 @@ import { eDishModificationType, iDish } from 'src/app/core/models/dish.model';
 import { iRestaurantInformation } from 'src/app/core/models/restaurant_information.model';
 import { PageDataService } from 'src/app/core/services/page-data.service';
 import { Breakpoints } from '@angular/cdk/layout';
+import { eListenChannels } from 'src/app/core/models/channels.enum';
 
 
 @Component({
@@ -27,8 +28,8 @@ import { Breakpoints } from '@angular/cdk/layout';
 })
 export class CashoutComponent {
 
+  opened: boolean[] = [];
   orders: iOrder[] = [];
-  ordersToDisplay: iOrder[] = [];
   myUser: iUser | undefined;
   myCategories: iCategory[] = [];
 
@@ -45,7 +46,7 @@ export class CashoutComponent {
   subscriptionRecipe: Subscription | undefined;
   subscriptionIngredient: Subscription | undefined;
   subscriptionCategory: Subscription | undefined;
-  Breakpoints=Breakpoints;
+  Breakpoints = Breakpoints;
 
 
   constructor(private api: ApiService, private notifier: NotifierComponent, private router: Router, private socketService: SocketService,
@@ -76,6 +77,10 @@ export class CashoutComponent {
       console.log("RESTAURANT INFORMATIONS", this.restaurantInformations);
     });
 
+    this.socketService.listen(eListenChannels.orders).subscribe((data) => {
+      this.ngOnInit();
+    });
+
   }
 
   ngOnInit(): void {
@@ -96,10 +101,22 @@ export class CashoutComponent {
         dish.name = tempRecipe?.name;
         dish.category = tempRecipe?.category;
       });
+      let countOpen = 0;
       this.orders.forEach((order) => {
+        if (!(countOpen < this.opened.length)) {
+          this.opened.push(false);
+        }
+        countOpen++;
         order.tablesNames = '';
-        order.tables.forEach((table) => {
-          order.tablesNames += this.tableReference.find((tempTable) => tempTable._id === table)?.name + ', ';
+        order.tables.forEach((table, index) => {
+          const tempTable = this.tableReference.find((tempTable) => tempTable._id === table);
+
+          if (tempTable) {
+            order.tablesNames += tempTable.name;
+            if (index < order.tables.length - 1) {
+              order.tablesNames += ', ';
+            }
+          }
         });
         order.roomName = this.roomReference.find((tempRoom) => tempRoom._id === order.room)?.name;
 
@@ -151,28 +168,33 @@ export class CashoutComponent {
       order.courses.forEach((course) => {
         if (course.logs_course?.served_course == undefined) {
           checkOrder = false;
-          
-        }else{
+
+        } else {
           course.dishes_obj?.forEach((dish) => {
             final_price += dish.actual_price!;
           });
         }
       });
 
+      final_price = final_price + (this.restaurantInformations?.charge_per_person! * order.guests);
+      order.serviceCharge = (this.restaurantInformations?.charge_per_person! * order.guests)
+      order.final_price = final_price;
       if (checkOrder) {
-        final_price = final_price + (this.restaurantInformations?.charge_per_person! * order.guests);
-        order.serviceCharge = (this.restaurantInformations?.charge_per_person! * order.guests)
-        order.final_price = final_price;
-        this.ordersToDisplay.push(order);
+        order.ready = true;
+      } else {
+        order.ready = false;
       }
     });
-    console.log("ORDERS TO DISPLAY",this.ordersToDisplay);
+    //console.log("ORDERS TO DISPLAY",this.ordersToDisplay);
   }
 
   cashoutOrder(orderId: string) {
-      this.pageData.data = this.ordersToDisplay.find((order) => order._id === orderId);
-      this.router.navigate(['core/cashier/cashout/detail']);
+    this.pageData.data = this.orders.find((order) => order._id === orderId);
+    this.router.navigate(['core/cashier/cashout/detail']);
   }
-    
 
+
+  recordOpen(index: number) {
+    this.opened[index] = !this.opened[index];
+  }
 }

@@ -57,8 +57,8 @@ export class MasterContainerComponent {
     },
     {
       name: 'Cashier',
-      subItems: ['Cashout'],
-      subLinks: ['/core/cashier/cashout'],
+      subItems: ['Cashout', 'Tables'],
+      subLinks: ['/core/cashier/cashout', '/core/cashier/tables'],
     },
     {
       name: 'Analytics',

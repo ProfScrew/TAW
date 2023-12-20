@@ -1,8 +1,7 @@
-
 import { Component, Input, OnInit, ElementRef } from '@angular/core';
 import { Chart, ChartConfiguration } from 'chart.js/auto';
-import { Subscription } from 'rxjs';
-import { UpdateService } from '../../services/update.service';
+import { PageInfoService } from 'src/app/core/services/page-info.service';
+import { Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-chart',
@@ -12,16 +11,11 @@ import { UpdateService } from '../../services/update.service';
 
 export class ChartComponent implements OnInit {
   @Input() config: ChartConfiguration | undefined;
-  chart: Chart | undefined;
+  private chart: Chart | undefined;
+  Breakpoints=Breakpoints;
 
-  private updateSubscription: Subscription | undefined;
 
-  constructor(private el: ElementRef, private updateService: UpdateService) {
-    this.updateSubscription = this.updateService.booleanValue$.subscribe((value:any) => {
-      console.log(value)
-      this.update();
-    });
-  }
+  constructor(private el: ElementRef,public pageInfo: PageInfoService) {}
 
   ngOnInit() {
     const ctx = (this.el.nativeElement as HTMLElement).querySelector('canvas') as HTMLCanvasElement;
@@ -30,8 +24,13 @@ export class ChartComponent implements OnInit {
 
   }
 
-  update(){
+  update(data: any){
+    this.chart!.data=data;
     this.chart!.update();
+  }
+
+  resize(){
+    this.chart?.resize();
   }
 
 

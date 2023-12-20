@@ -53,4 +53,7 @@ export interface iOrder {
     roomName?: string;
     tablesNames?: string;
     serviceCharge?: number;
+
+    ready?: boolean;
+
 }

@@ -1,14 +1,23 @@
 .chart-container {
-
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-}
-
-.chart-item {
-    flex: 1;
-}
-
-.responsive-form {
-    display: flex;
-    flex-flow: row wrap;
-}
+  }
+  
+  .chart-item {
+    width: 100%; /* By default, charts take full width */
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
+  }
+  
+  @media screen and (min-width: 600px) {
+    .chart-item {
+      width: 48%; /* Two charts side by side on screens wider than 600px */
+    }
+  }
+  
+  @media screen and (min-width: 900px) {
+    .chart-item {
+      width: 48%; /* Two charts side by side on screens wider than 900px */
+    }
+  }
+  

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NotifierComponent } from 'src/app/core/components/notifier/notifier.component';
@@ -10,10 +10,9 @@ import { PageDataService } from 'src/app/core/services/page-data.service';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { ChartComponent } from '../chart/chart.component';
 import { ChartConfiguration, ChartData } from 'chart.js/auto';
-import { iEarnings } from '../../models/statistics.model';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
-import { COLORS, CHART_COLORS, transparentize } from '../../models/utils.model';
-import { UpdateService } from '../../services/update.service';
+import { COLORS, CHART_COLORS, transparentize, labels } from '../../models/utils.model';
 
 
 @Component({
@@ -26,6 +25,21 @@ export class StatisticsComponent {
   dataForStatistics: iOrderArchive[] | undefined;
   storedArchives: iOrderArchive[] | undefined;
 
+  @ViewChild('earningsChart') private earningChart: ChartComponent | undefined;
+  @ViewChild('waiterServingChart') private waiterChart: ChartComponent | undefined;
+  @ViewChild('productionChart') private productionChart: ChartComponent | undefined;
+  @ViewChild('customersChart') private customersChart: ChartComponent | undefined;
+
+  //raw data
+  waiter: any | undefined;
+  production: any | undefined;
+  earnings: any | undefined;
+  //data for charts
+  productionCooking: any = undefined;
+  earningsData: any = undefined;
+  customersData: any = undefined;
+  waiterServing: any = undefined;
+  waiterData: any | undefined;
 
   dateRange = new FormGroup({
     dateFrom: new FormControl(),
@@ -37,10 +51,9 @@ export class StatisticsComponent {
   numberDays: number = 0;
 
 
-  constructor(private api: ApiService, private notifier: NotifierComponent, private router: Router,
-    private references: DatabaseReferencesService, public pageData: PageDataService,
-    public pageInfo: PageInfoService, private auth: AuthService,
-    public updateService: UpdateService) {
+  constructor(private api: ApiService,
+    public pageData: PageDataService,
+    public pageInfo: PageInfoService, private breakpointObserver: BreakpointObserver) {
 
     Promise.resolve().then(() => this.pageInfo.pageMessage = "📊Statistics");
 
@@ -50,10 +63,23 @@ export class StatisticsComponent {
     this.setDefaultDates();
 
     this.getArchive();
+
+    this.breakpointObserver.observe([
+      Breakpoints.Handset,
+      Breakpoints.Tablet,
+      Breakpoints.Web
+    ]).subscribe(result => {
+      if (result.matches) {
+        this.earningChart?.resize();
+        this.waiterChart?.resize();
+        this.productionChart?.resize();
+        this.customersChart?.resize();
+      }
+    });
   }
 
   getArchive(): void {
-    this.api.get('/order_archives', undefined).subscribe((response) => {
+    this.api.get('/order_archives', '').subscribe((response) => {
       this.storedArchives = response.body.payload;
 
       this.sortByDate();
@@ -69,7 +95,9 @@ export class StatisticsComponent {
         return date >= dateFrom && date <= dateTo;
       });
     }
-    this.numberDays = this.dateRange.value.dateTo.getDate() - this.dateRange.value.dateFrom.getDate();
+    this.numberDays = this.dateRange.value.dateTo.getTime() - this.dateRange.value.dateFrom.getTime();
+    this.numberDays = this.numberDays / (1000 * 3600 * 24) + 1;
+    console.log(this.numberDays);
     this.calculateStatistics();
   }
 
@@ -87,30 +115,97 @@ export class StatisticsComponent {
       dateTo: endDate
     });
 
-    this.numberDays = this.dateRange.value.dateTo.getDate() - this.dateRange.value.dateFrom.getDate();
+    this.numberDays = this.dateRange.value.dateTo.getTime() - this.dateRange.value.dateFrom.getTime();
+    this.numberDays = this.numberDays / (1000 * 3600 * 24);
 
   }
 
   changeDate(): void {
-    console.log(this.dateRange.value);
     this.sortByDate();
-    this.calculateArgEarningPerDay();
+    this.calculateStatistics();
   }
-
-
   calculateStatistics(): void {
     console.log("Calculating statistics");
-    
+
     //Calculate average earning per day
     this.calculateArgEarningPerDay();
-    //array of days
+    this.calculateWaiterEfficiency();
+    this.calculateProductionEfficiency();
 
-
+    this.initGraphs();
   }
 
+  calculateWaiterEfficiency(): void {
+    console.log("Calculating waiter efficiency");
+    let labels: string[] = [];
+    let servings: number[] = [];
+    let orders: number[] = [];
+    let total = 0;
 
-  earnings: iEarnings | undefined;
+    if (this.dataForStatistics) {
+      this.dataForStatistics.forEach((archive) => {
+        archive.courses.forEach((course) => {
+          if (!labels.includes(course.logs_course.created_course.actor.username)) {
+            labels.push(course.logs_course.created_course.actor.username);
+            servings.push(0);
+            orders.push(1);
+          } else {
+            let index = labels.indexOf(course.logs_course.created_course.actor.username);
+            orders[index]++;
 
+          }
+          if (!labels.includes(course.logs_course.served_course?.actor.username!)) {
+            labels.push(course.logs_course.served_course?.actor.username!);
+            servings.push(1);
+            orders.push(0);
+          } else {
+            let index = labels.indexOf(course.logs_course.served_course?.actor.username!);
+            servings[index]++;
+
+
+          }
+          total++;
+        });
+      });
+      this.waiter = {
+        labels: labels,
+        servings: servings,
+        orders: orders,
+        total: total
+      };
+      console.log(labels);
+      console.log(servings);
+      console.log(orders);
+
+    }
+
+  }
+  calculateProductionEfficiency(): void {
+    console.log("Calculating production efficiency");
+    let labels: string[] = [];
+    let cookings: number[] = [];
+
+    if (this.dataForStatistics) {
+      this.dataForStatistics.forEach((archive) => {
+        archive.courses.forEach((course) => {
+          course.dishes.forEach((dish) => {
+            if (!labels.includes(dish.logs_status?.finish_cooking.actor.username!)) {
+              labels.push(dish.logs_status?.finish_cooking.actor.username!);
+              cookings.push(1);
+            } else {
+              let index = labels.indexOf(dish.logs_status?.finish_cooking.actor.username!);
+              cookings[index]++;
+            }
+          });
+        });
+      });
+      this.production = {
+        labels: labels,
+        cookings: cookings
+      };
+      console.log("production", this.production);
+    }
+  }
   calculateArgEarningPerDay(): void {
     console.log("Calculating average earning per day");
     let labels: string[] = [];
@@ -118,6 +213,7 @@ export class StatisticsComponent {
     let earningsPerPerson: number[] = [];
     let earningsPerDish: number[] = [];
     let earningsPerCourse: number[] = [];
+    let customers: number[] = [];
 
     if (this.dataForStatistics) {
 
@@ -129,7 +225,9 @@ export class StatisticsComponent {
         let dayArchive: iOrderArchive[] = [];
         this.dataForStatistics.forEach((archive) => {
 
-          if (new Date(archive.logs_order.created_order.timestamp).getDate() == temporaryDay.getDate()) {
+          if (new Date(archive.logs_order.created_order.timestamp).getFullYear() === temporaryDay.getFullYear() &&
+            new Date(archive.logs_order.created_order.timestamp).getMonth() === temporaryDay.getMonth() &&
+            new Date(archive.logs_order.created_order.timestamp).getDate() == temporaryDay.getDate()) {
             dayArchive.push(archive);
           }
         });
@@ -138,6 +236,8 @@ export class StatisticsComponent {
           let totalEarningPerPerson = 0;
           let totalEarningPerDish = 0;
 
+          let customersPerDay = 0;
+
           let numberOfDishes = 0;
           let numberOfCourses = 0;
 
@@ -145,6 +245,7 @@ export class StatisticsComponent {
           dayArchive.forEach((archive) => {
             totalEarningPerDay += archive.final_price;
             totalEarningPerPerson += archive.charges_persons;
+            customersPerDay += archive.guests;
             archive.courses.forEach((course) => {
               course.dishes.forEach((dish) => {
                 totalEarningPerDish += dish.actual_price;
@@ -158,6 +259,7 @@ export class StatisticsComponent {
           earningsPerPerson.push(parseFloat((totalEarningPerPerson / dayArchive.length).toFixed(2)));
           earningsPerDish.push(parseFloat((totalEarningPerDish / numberOfDishes).toFixed(2)));
           earningsPerCourse.push(parseFloat((totalEarningPerDish / numberOfCourses).toFixed(2)));
+          customers.push(customersPerDay);
         }
         else {
           labels.push(temporaryDay.getDate().toString());
@@ -165,7 +267,8 @@ export class StatisticsComponent {
           earningsPerPerson.push(0);
           earningsPerDish.push(0);
           earningsPerCourse.push(0);
-          
+          customers.push(0);
+
         }
 
 
@@ -179,9 +282,37 @@ export class StatisticsComponent {
       chargesPerPerson: earningsPerPerson,
       chargesPerDish: earningsPerDish,
       chargesPerCourse: earningsPerCourse,
+      customers: customers
     }
 
     console.log(this.earnings);
+
+
+  }
+
+  formatDayAndMonth(date : Date) {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    return `${day}/${month}`;
+  }
+
+  initGraphs(): void {
+
+    this.waiterData = {
+      labels: this.waiter.labels,
+      datasets: [{
+        label: 'Servings',
+        data: this.waiter.servings,
+        backgroundColor: Object.values(CHART_COLORS),
+      },
+      {
+        label: 'Orders',
+        data: this.waiter.orders,
+        backgroundColor: Object.values(CHART_COLORS),
+      }
+      ]
+    }
+    this.waiterChart!.update(this.waiterData);
 
     this.earningsData = {
       labels: this.earnings?.label!,
@@ -213,74 +344,76 @@ export class StatisticsComponent {
       ]
     };
 
-    this.earningsConfig.data = this.earningsData;
+    this.earningChart!.update(this.earningsData);
 
-    this.updateService.updateBooleanValue(true);
-    
+
+    this.productionCooking = {
+      labels: this.production.labels,
+      datasets: [{
+        label: 'Cookings dishes per person',
+        data: this.production.cookings,
+        backgroundColor: Object.values(CHART_COLORS),
+      }
+      ]
+    }
+    this.productionChart!.update(this.productionCooking);
+
+    this.customersData = {
+      labels: this.earnings?.label!,
+      datasets: [
+        {
+          label: 'Customers per day',
+          data: this.earnings?.customers!,
+          borderColor: CHART_COLORS.red,
+          backgroundColor: transparentize(CHART_COLORS.red, 0.5),
+        }
+      ]
+    };
+    this.customersChart!.update(this.customersData);
   }
-  
 
-  earningsData :any = undefined;
-
-
-  earningsConfig: ChartConfiguration= {
+  //chart configs---------------------------------------------
+  //line chart
+  earningsConfig: ChartConfiguration = {
     type: 'line',
     data: this.earningsData,
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
           position: 'top',
         },
         title: {
           display: true,
-          text: 'Chart.js Line Chart'
+          text: 'Earnings Chart',
+          color: 'red'
         }
       }
     },
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // Doughnut
-  data_doughnut = {
-    labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
-    datasets: [
-      {
-        label: 'Dataset 1',
-        data: [11, 16, 7, 3, 14],
-        backgroundColor: [
-          'rgb(255, 99, 132)',
-          'rgb(255, 159, 64)',
-          'rgb(255, 205, 86)',
-          'rgb(75, 192, 192)',
-          'rgb(54, 162, 235)'
-        ]
+  customersConfig: ChartConfiguration = {
+    type: 'line',
+    data: this.customersData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'Customers per day Chart',
+          color: 'red'
+        }
       }
-    ]
+    },
   };
-
-  doughnutChartConfig: ChartConfiguration = {
-    type: 'doughnut',
-    data: this.data_doughnut,
+  //pie chart
+  waiterConfig: ChartConfiguration = {
+    type: 'pie',
+    data: this.waiterServing,
     options: {
       responsive: true,
       plugins: {
@@ -289,7 +422,25 @@ export class StatisticsComponent {
         },
         title: {
           display: true,
-          text: 'Doughnut Chart'
+          text: 'Waiters Working Chart',
+          color: 'red'
+        }
+      }
+    },
+  };
+  productionConfig: ChartConfiguration = {
+    type: 'pie',
+    data: this.productionCooking,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'Cooking Chart',
+          color: 'red'
         }
       }
     },

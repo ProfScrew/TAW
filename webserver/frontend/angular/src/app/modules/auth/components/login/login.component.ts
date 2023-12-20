@@ -58,7 +58,11 @@ export class LoginComponent implements OnInit {
         error: (err) => {
           console.log(err);
           //use notifier component
-          this.notifier.showError(err.status, err.error.message);
+          if(err.status==0){
+            this.notifier.showError(404,"Error: Server is down");
+          }else{
+            this.notifier.showError(err.status, err.error.message);
+          }
           // this.errorMessage.openFromComponent(MessageAlertComponent, {
           //   data: { message: "Error: Login Failed" },
           //   duration: 10000, // Adjust the duration as needed

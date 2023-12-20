@@ -16,4 +16,7 @@ export interface iTable {
     room:       iRoom['_id'];
 
     status?:    eTableStatus;
+
+    //used by frontend cashier
+    roomName?:  string;
 }

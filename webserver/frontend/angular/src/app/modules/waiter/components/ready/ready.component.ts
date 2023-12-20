@@ -107,8 +107,15 @@ export class ReadyComponent {
           course.tablesNames = '';
           course.orderId = order._id;
           course.confirmeButton = true;
-          order.tables.forEach((table) => {
-            course.tablesNames += this.tableReference.find((tempTable) => tempTable._id === table)?.name + ', ';
+          order.tables.forEach((table, index) => {
+            const tempTable = this.tableReference.find((tempTable) => tempTable._id === table);
+          
+            if (tempTable) {
+              course.tablesNames += tempTable.name;
+              if (index < order.tables.length - 1) {
+                course.tablesNames += ', ';
+              }
+            }
           });
           course.dishes_obj = [];
           course.dishes!.forEach((dish) => {

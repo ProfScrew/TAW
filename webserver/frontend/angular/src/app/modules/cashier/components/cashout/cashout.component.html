@@ -7,12 +7,12 @@
     <mat-card-content>
 
         <mat-accordion multi>
-            <ng-container *ngFor="let ord of ordersToDisplay; let i = index">
+            <ng-container *ngFor="let ord of orders; let i = index">
 
-                <mat-expansion-panel>
+                <mat-expansion-panel [expanded]="opened[i]" (click)="recordOpen(i)">
                     <mat-expansion-panel-header [ngClass]="{'auto-size': pageInfo.currentBreakpoint == Breakpoints.Handset}">
                         <mat-panel-title>
-                            Order of {{ord.tablesNames?.replace(',', '')}}
+                            Order of {{ord.tablesNames}}
                         </mat-panel-title>
                         <mat-panel-description>
                             Number of courses: {{ord.courses.length}}
@@ -47,7 +47,17 @@
                     <br>
                     <ng-container *ngFor="let course of ord.courses; let j = index">
                         &nbsp;&nbsp;&nbsp;
-                        <b style="color:green">Course number:</b> {{j+1}}
+                        <ng-container *ngIf="course.logs_course?.served_course != undefined">
+                            <b style="color:green">Course served by:</b> {{course.logs_course?.served_course?.actor?.username}}
+                            <b style="color:green">At:</b> {{course.logs_course?.served_course?.timestamp | date: 'HH:mm'}}
+                            <br>
+                        </ng-container>
+                        <ng-container *ngIf="course.logs_course?.served_course == undefined">
+                            <b style="color:red">Course not served yet</b>
+                            <br>
+                        </ng-container>
+                        &nbsp;&nbsp;&nbsp;
+                        <b style="color:oran">Course number:</b> {{j+1}}
                         <br>
                         <ng-container *ngFor="let dish of course.dishes_obj">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -73,10 +83,11 @@
                     <br>
                     <mark><b>Final Price:</b> {{ord.final_price}}&euro;</mark>
                     </div>
-                    
-                    <mat-action-row>
-                        <button mat-raised-button color="primary" (click)="cashoutOrder(ord._id!)">Cashout Order</button>
-                    </mat-action-row>
+                    <ng-container *ngIf="ord.ready! == true && ord.courses.length != 0">
+                        <mat-action-row>
+                            <button mat-raised-button color="primary" (click)="cashoutOrder(ord._id!)">Cashout Order</button>
+                        </mat-action-row>
+                    </ng-container>
 
                 </mat-expansion-panel>
             </ng-container>

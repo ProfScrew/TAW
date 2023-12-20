@@ -18,7 +18,7 @@
                 <mat-expansion-panel class="pannel-recipes" [expanded]="i < 3">
                     <mat-expansion-panel-header [ngClass]="{'auto-size': pageInfo.currentBreakpoint === Breakpoints.Handset}">
                         <mat-panel-title id="title">
-                            Course of {{course.tablesNames?.replace(',', '')}}
+                            Course of {{course.tablesNames}}
                         </mat-panel-title>
                         <mat-panel-description>
                             Number of dishes: {{course.dishes?.length}}

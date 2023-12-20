@@ -31,25 +31,17 @@
     <mat-card-content>
         <ng-container *ngIf="earningsConfig != undefined">
             <div class="chart-container">
-                <app-chart class="chart-item" [config]="earningsConfig"></app-chart>
-                <app-chart class="chart-item" [config]="earningsConfig"></app-chart>
+                <app-chart class="chart-item" #earningsChart [config]="earningsConfig"></app-chart>
+                <app-chart class="chart-item" #customersChart [config]="customersConfig"></app-chart>
+                
             </div>
             <br>
             <div class="chart-container">
-                <app-chart class="chart-item" [config]="earningsConfig"></app-chart>
-                <app-chart class="chart-item" [config]="earningsConfig"></app-chart>
+                <app-chart class="chart-item" #productionChart [config]="productionConfig"></app-chart>
+                <app-chart class="chart-item" #waiterServingChart [config]="waiterConfig"></app-chart>
             </div>
         </ng-container>
 
 
     </mat-card-content>
-    <!--
-
-        <mat-grid-list cols="2" rowHeight="2:1">
-            <mat-grid-tile><app-chart [config]="barChartConfig"></app-chart></mat-grid-tile>
-            <mat-grid-tile>2</mat-grid-tile>
-            <mat-grid-tile>3</mat-grid-tile>
-            <mat-grid-tile>4</mat-grid-tile>
-        </mat-grid-list>
-    -->
 </mat-card>
