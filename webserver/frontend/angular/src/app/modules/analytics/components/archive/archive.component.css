@@ -1,0 +1,21 @@
+.course{
+    color: red;
+}
+
+.dish{
+    color: blue;
+}
+
+.modification{
+    color: orange;
+}
+
+.responsive-form {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.auto-size{
+    width: auto;
+    height: auto;
+}

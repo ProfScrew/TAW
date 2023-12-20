@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
 import { PageDataService } from 'src/app/core/services/page-data.service';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
+import { Breakpoints } from '@angular/cdk/layout';
 
 import { DatePipe } from '@angular/common';
 import { iRecipe } from 'src/app/core/models/recipe.model';
@@ -42,6 +43,7 @@ export class ArchiveComponent {
 
   subscriptionRecipe: Subscription | undefined;
   subscriptionIngredient: Subscription | undefined;
+  Breakpoints=Breakpoints;
 
   constructor(private api: ApiService, private notifier: NotifierComponent, private router: Router,
     private references: DatabaseReferencesService, public pageData: PageDataService,
@@ -66,7 +68,6 @@ export class ArchiveComponent {
   }
 
   ngAfterViewInit(): void {
-    console.log(this.storedArchives)
   }
 
   getArchive(): void {
@@ -85,7 +86,6 @@ export class ArchiveComponent {
         }
       }
       
-      console.log(this.storedArchives)
       this.sortByDate();
     });
   }
@@ -117,7 +117,6 @@ export class ArchiveComponent {
   }
 
   changeDate(): void {
-    console.log(this.dateRange.value);
     this.sortByDate()
     this.logs = this.dateRange.value.logs;
   }

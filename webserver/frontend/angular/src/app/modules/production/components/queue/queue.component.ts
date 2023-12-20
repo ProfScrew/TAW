@@ -16,6 +16,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { SocketService } from 'src/app/core/services/socket.service';
+import { Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-queue',
@@ -41,10 +42,11 @@ export class QueueComponent {
   subscriptionRecipe: Subscription | undefined;
   subscriptionIngredient: Subscription | undefined;
   subscriptionCategory: Subscription | undefined;
+  Breakpoints=Breakpoints;
 
   constructor(private api: ApiService, private notifier: NotifierComponent, private router: Router,
      private socketService: SocketService, private references: DatabaseReferencesService,
-    private pageInfo: PageInfoService, private auth: AuthService) {
+    public pageInfo: PageInfoService, private auth: AuthService) {
     Promise.resolve().then(() => this.pageInfo.pageMessage = "👩‍🍳Queue");
 
     this.subscriptionTable = this.references.tablesReferenceObservable.subscribe((value) => {
@@ -63,16 +65,13 @@ export class QueueComponent {
       this.categoriesReference = value!;
     });
 
-
-    this.stringCategories = auth.category
-    console.log("catego",this.stringCategories)
-    this.myCategories = this.categoriesReference.filter((category) => this.stringCategories.includes(category._id));
-
-    console.log("myCategories",this.myCategories)
+    this.stringCategories = auth.category;
   }
   
   ngOnInit(): void {
     this.api.get('/orders/').subscribe((response) => {
+      
+      this.myCategories = this.categoriesReference.filter((category) => this.stringCategories.includes(category._id));
       this.orders = response.body.payload;
       this.getDishes();
     });

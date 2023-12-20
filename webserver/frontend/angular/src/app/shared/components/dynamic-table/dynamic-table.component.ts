@@ -127,7 +127,7 @@ export class DynamicTableComponent {
 
   ngOnInit() {
 
-    console.log(this.model)
+    //console.log(this.model)
     if (this.model == undefined) {
       //console.log("model is undefined");
     } else {

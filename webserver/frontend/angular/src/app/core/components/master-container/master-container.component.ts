@@ -119,7 +119,7 @@ export class MasterContainerComponent {
       this.currentBreakpoint = Breakpoints.Web;
     } else if (this.breakpointObserver.isMatched(Breakpoints.Tablet)) {
       this.currentBreakpoint = Breakpoints.Tablet;
-    } else if (this.breakpointObserver.isMatched(Breakpoints.Small)) {
+    } else if (this.breakpointObserver.isMatched(Breakpoints.Handset)) {
       this.currentBreakpoint = Breakpoints.Handset;
     }
 

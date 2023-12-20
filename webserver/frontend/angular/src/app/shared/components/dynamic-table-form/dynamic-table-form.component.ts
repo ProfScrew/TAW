@@ -143,7 +143,7 @@ export class DynamicTableFormComponent {
     })
   }
   onSubmit() {
-    console.log(this.dynamicFormGroup.value);
+    //console.log(this.dynamicFormGroup.value);
     this.api.put(this.model?.routeModify!, this.dynamicFormGroup.value).subscribe({
       next: (response) => {
         this.notifier.showSuccess(response.status, response.body.message);

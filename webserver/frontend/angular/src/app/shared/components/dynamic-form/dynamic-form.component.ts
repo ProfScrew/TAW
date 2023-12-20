@@ -26,7 +26,7 @@ export class DynamicFormComponent {
 
   ngOnInit(): void {
     if (this.model == undefined) {
-      console.log("model is undefined");
+      //console.log("model is undefined");
     } else {//build form
 
       this.buildForm();

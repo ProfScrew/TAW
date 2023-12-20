@@ -16,7 +16,7 @@
             
             <ng-container *ngFor="let course of courses!; let i = index">
                 <mat-expansion-panel class="pannel-recipes" [expanded]="i < 3">
-                    <mat-expansion-panel-header>
+                    <mat-expansion-panel-header [ngClass]="{'auto-size': pageInfo.currentBreakpoint === Breakpoints.Handset}">
                         <mat-panel-title id="title">
                             Course of {{course.tablesNames?.replace(',', '')}}
                         </mat-panel-title>
@@ -31,16 +31,18 @@
                         <div class="container">
                             <div class="start">
                               &nbsp;&nbsp;&nbsp;
-                              <strong>Status:</strong> {{dish.status}} <strong>Dish:</strong> {{dish.name}}
+                              <strong>Status:</strong> {{dish.status}}  <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;</ng-container><strong>Dish:</strong> {{dish.name}}
                             </div>
                             <ng-container *ngIf="dish.logs_status?.start_cooking != undefined">
                               <div class="end">
                                 <strong style="color:green">Started by:</strong> {{dish.logs_status?.start_cooking?.actor?.username}}
+                                <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br></ng-container>
                                 <strong style="color:green">At:</strong> {{dish.logs_status?.start_cooking?.timestamp | date: 'HH:mm'}}
-
+                                <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br></ng-container>
 
                                 <ng-container *ngIf="dish.logs_status?.finish_cooking != undefined">
                                     <strong style="color:purple">Ended by:</strong> {{dish.logs_status?.finish_cooking?.actor?.username}}
+                                    <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br></ng-container>
                                     <strong style="color:purple">At:</strong> {{dish.logs_status?.finish_cooking?.timestamp | date: 'HH:mm'}}
                                 </ng-container>
                                 

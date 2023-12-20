@@ -3,7 +3,7 @@
         <mat-card-title>Date Range Filter</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <form [formGroup]="dateRange">
+        <form [formGroup]="dateRange" class="responsive-form">
             <mat-form-field appearance="fill">
                 <mat-label>Filter</mat-label>
                 <mat-date-range-input [rangePicker]="picker">
@@ -19,7 +19,7 @@
             <button mat-raised-button color="primary" (click)="changeDate()">Apply Filter</button>
 
         </form>
-        
+
     </mat-card-content>
 </mat-card>
 <br>
@@ -27,12 +27,29 @@
 <mat-card>
     <mat-card-header>
         <mat-card-title>Statistics</mat-card-title>
-    </mat-card-header>    
-    <mat-grid-tile><app-chart [config]="barChartConfig"></app-chart></mat-grid-tile>
-    <mat-grid-list cols="2" rowHeight="2:1">
-        <mat-grid-tile><app-chart [config]="barChartConfig"></app-chart></mat-grid-tile>
-        <mat-grid-tile>2</mat-grid-tile>
-        <mat-grid-tile>3</mat-grid-tile>
-        <mat-grid-tile>4</mat-grid-tile>
-    </mat-grid-list>
+    </mat-card-header>
+    <mat-card-content>
+        <ng-container *ngIf="earningsConfig != undefined">
+            <div class="chart-container">
+                <app-chart class="chart-item" [config]="earningsConfig"></app-chart>
+                <app-chart class="chart-item" [config]="earningsConfig"></app-chart>
+            </div>
+            <br>
+            <div class="chart-container">
+                <app-chart class="chart-item" [config]="earningsConfig"></app-chart>
+                <app-chart class="chart-item" [config]="earningsConfig"></app-chart>
+            </div>
+        </ng-container>
+
+
+    </mat-card-content>
+    <!--
+
+        <mat-grid-list cols="2" rowHeight="2:1">
+            <mat-grid-tile><app-chart [config]="barChartConfig"></app-chart></mat-grid-tile>
+            <mat-grid-tile>2</mat-grid-tile>
+            <mat-grid-tile>3</mat-grid-tile>
+            <mat-grid-tile>4</mat-grid-tile>
+        </mat-grid-list>
+    -->
 </mat-card>

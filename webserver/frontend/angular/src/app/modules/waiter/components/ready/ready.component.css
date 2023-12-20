@@ -15,10 +15,6 @@
     margin-left: auto;
   }
 
-  .mat-expansion-panel-header {
-    min-height: 100px;
-    overflow: auto;
-  }
 
   #sub-title{
     color:blue;
@@ -26,5 +22,9 @@
 
   #title{
     color:red;
+  }
+
+  .auto-size{
+    height: auto;
   }
   

@@ -16,6 +16,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { SocketService } from 'src/app/core/services/socket.service';
+import { Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-ready',
@@ -42,9 +43,11 @@ export class ReadyComponent {
   subscriptionIngredient: Subscription | undefined;
   subscriptionCategory: Subscription | undefined;
 
+  Breakpoints=Breakpoints;
+
 
   constructor(private api: ApiService, private notifier: NotifierComponent, private router: Router, private socketService: SocketService, private references: DatabaseReferencesService,
-    private pageInfo: PageInfoService, private auth: AuthService) {
+    public pageInfo: PageInfoService, private auth: AuthService) {
       
     Promise.resolve().then(() => this.pageInfo.pageMessage = "🏃‍♀️💨Ready");
 
