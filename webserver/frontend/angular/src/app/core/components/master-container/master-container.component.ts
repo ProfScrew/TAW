@@ -102,7 +102,7 @@ export class MasterContainerComponent {
         .subscribe((data) => {
           if (data.message == 'Added') {
             this.counterCourses++;
-            this.notifier.showWarning(200, 'New Course Ready to be served');
+            this.notifier.showInfo(200, 'New Course Ready to be served','Message for Waiters',{timeOut: 5000});
           } else {
             this.counterCourses--;
           }
@@ -139,9 +139,9 @@ export class MasterContainerComponent {
         });
       });
       if (this.counterCourses > 0) {
-        this.notifier.showWarning(
+        this.notifier.showInfo(
           200,
-          'There are ' + this.counterCourses + ' courses ready to be served'
+          'There are ' + this.counterCourses + ' courses ready to be served','Message for Waiters',{timeOut: 5000}
         );
       }
     });

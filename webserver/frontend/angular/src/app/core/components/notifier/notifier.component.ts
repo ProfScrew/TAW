@@ -14,18 +14,22 @@ export class NotifierComponent {
   }
 
   showSuccess(statuscode: number, message : string, title?: string, options?: any) {
-    this.toastr.success(statuscode+": "+message, title, options);
+    const toastTitle = title || 'Success Message';
+    this.toastr.success(statuscode+": "+message, toastTitle, options);
   }
 
   showError(statuscode: number, message : string, title?: string, options?: any) {
-    this.toastr.error(statuscode+": "+message, title, options);
+    const toastTitle = title || 'Error Message';
+    this.toastr.error(statuscode+": "+message, toastTitle, options);
   }
 
   showInfo(statuscode: number, message : string, title?: string, options?: any) {
-    this.toastr.info(statuscode+": "+message, title, options);
+    const toastTitle = title || 'Info Message';
+    this.toastr.info(statuscode+": "+message, toastTitle, options);
   }
 
   showWarning(statuscode: number, message : string, title?: string, options?: any) {
-    this.toastr.warning(statuscode+": "+message, title, options);
+    const toastTitle = title || 'Warning Message';
+    this.toastr.warning(statuscode+": "+message, toastTitle,options);
   }
 }

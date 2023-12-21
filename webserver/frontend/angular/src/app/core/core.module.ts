@@ -58,6 +58,7 @@ import { ErrorPageComponent } from './components/error-page/error-page.component
       { 
         timeOut: 2000,
         progressBar: true,
+        titleClass: 'toast-title',
       }
     ),
 
