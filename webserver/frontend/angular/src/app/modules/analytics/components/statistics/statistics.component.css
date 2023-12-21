@@ -1,3 +1,7 @@
+form{
+  display: flex;
+}
+
 .chart-container {
     display: flex;
     flex-wrap: wrap;
@@ -20,4 +24,3 @@
       width: 48%; /* Two charts side by side on screens wider than 900px */
     }
   }
-  

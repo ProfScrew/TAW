@@ -416,6 +416,7 @@ export class StatisticsComponent {
     data: this.waiterServing,
     options: {
       responsive: true,
+      maintainAspectRatio: false, 
       plugins: {
         legend: {
           position: 'top',
@@ -433,6 +434,7 @@ export class StatisticsComponent {
     data: this.productionCooking,
     options: {
       responsive: true,
+      maintainAspectRatio: false, 
       plugins: {
         legend: {
           position: 'top',

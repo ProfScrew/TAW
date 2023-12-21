@@ -62,6 +62,7 @@
                         <ng-container *ngFor="let dish of course.dishes_obj">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <b>Dish:</b> {{dish.name}}
+                            <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</ng-container>
                             <b>Price of dish:</b> {{dish.actual_price}}&euro;
                             <br>
                             <ng-container *ngIf="dish.modifications != undefined">
