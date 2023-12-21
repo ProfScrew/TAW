@@ -10,8 +10,8 @@ import { PageInfoService } from 'src/app/core/services/page-info.service';
 
 export class ErrorPageComponent implements OnInit{
   errorCode: number = 404;
-  errorMessage: string = 'Page not found';
-  image:string='cat.jpg';
+  errorMessage: string = 'Page Not Found';
+  image:string='404.jpg';
 
   constructor(private route: ActivatedRoute,protected pageInfo: PageInfoService) {
   }

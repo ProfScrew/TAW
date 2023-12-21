@@ -48,7 +48,7 @@ const routes: Routes = [
       {
         path: 'forbidden',
         component: ErrorPageComponent,
-        data: { errorCode: 403 , errorMessage: 'Forbidden',image: 'gheko.jpg'}
+        data: { errorCode: 403 , errorMessage: 'Forbidden!',image: '403.jpg'}
       },
       {
         path: '',
@@ -59,7 +59,7 @@ const routes: Routes = [
         path: '**',
         pathMatch: 'full',  
         component: ErrorPageComponent,
-        data: { errorCode: 404, errorMessage: 'Page not found',image: 'cat.jpg'}
+        data: { errorCode: 404, errorMessage: 'Page Not Found!',image: '404.jpg'}
       }, 
 
     ]
