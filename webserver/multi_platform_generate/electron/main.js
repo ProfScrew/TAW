@@ -12,7 +12,7 @@ const createWindow = () => {
 
 
 mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, '/dist/angular/index.html'),
+    pathname: path.join(__dirname, '/app/angular/index.html'),
     protocol: 'file:',
     slashes: true
 }))

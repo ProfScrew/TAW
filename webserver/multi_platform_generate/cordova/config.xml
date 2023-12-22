@@ -4,7 +4,7 @@
     <icon src="www/img/logo.png"/>
     <description>App for the administration of a Restaurant</description>
     <author>
-        Masiero Stefano, Maxim Novitskiy
+        Stefano Masiero, Maksym Novytskyy
     </author>
 
     <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/img/logo.png" />

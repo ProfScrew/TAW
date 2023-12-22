@@ -70,10 +70,10 @@ build_electron() {
   npm run package-win
 
   # Build Electron app for Linux
-  npm run package-linux
+  #npm run package-linux
 
   # Build Electron app for Mac
-  npm run package-mac
+  #npm run package-mac
 }
 
 # Parse command line options
