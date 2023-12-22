@@ -66,12 +66,14 @@ build_electron() {
   #Run Electron app for development
   #npm run electron
 
-  # Build Electron app for windows
-  #npm run package-win --icon=../../multi_platform_generate/electron/logo.ico
-  # Build Electron app for linux
-  npm run package-linux --icon=../../multi_platform_generate/electron/logo.ico
-  # Build Electron app for mac
-  #npm run package-mac --icon=../../multi_platform_generate/electron/logo.ico
+  # Build Electron app for Windows
+  npm run package-win
+
+  # Build Electron app for Linux
+  npm run package-linux
+
+  # Build Electron app for Mac
+  npm run package-mac
 }
 
 # Parse command line options
