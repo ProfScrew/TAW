@@ -14,7 +14,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { OrderFormComponent } from './components/order-form/order-form.component';
 import { MatOptionModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -50,7 +49,6 @@ import { LayoutModule } from '@angular/cdk/layout';
     MatInputModule,
     MatButtonModule,
     MatDialogModule,
-    SharedModule,
     MatOptionModule,
     ReactiveFormsModule,
     MatSelectModule,

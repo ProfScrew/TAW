@@ -79,13 +79,15 @@ def insert_users_into_db(users):
         user_data["category"] = []
         user_data["room"] = []
         insert_result = collection.insert_one(user_data)
-        if insert_result.inserted_id:
-            print("User inserted successfully with ID:", insert_result.inserted_id, " name:", user_data["name"])
-        else:
-            print("Failed to insert user.")
+        #if insert_result.inserted_id:
+            #print("User inserted successfully with ID:", insert_result.inserted_id, " name:", user_data["name"])
+            #do nothing
+        #else:
+        #    print("Failed to insert user.")
 
 
 if __name__ == "__main__":
     file_name = "users.txt"
     users_info = read_users_from_file(file_name)
     insert_users_into_db(users_info)
+    print("Users inserted successfully.")

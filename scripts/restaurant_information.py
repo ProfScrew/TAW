@@ -18,4 +18,4 @@ record = {
 
 # Insert record into the RestaurantInformations collection
 result = collection.insert_one(record)
-print(f"Record inserted with ObjectId: {result.inserted_id}")
+print("Restaurant information inserted with id: " + str(result.inserted_id))

@@ -17,7 +17,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { MatOptionModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
@@ -46,7 +45,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatInputModule,
     MatButtonModule,
     MatDialogModule,
-    SharedModule,
     MatOptionModule,
     ReactiveFormsModule,
     MatSelectModule,

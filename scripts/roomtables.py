@@ -17,7 +17,7 @@ for i in range(1, num_rooms + 1):
     }
     # Insert room into the Rooms collection
     result = rooms_collection.insert_one(room_doc)
-    print(f"Room {i} inserted with ObjectId: {result.inserted_id}")
+    #print(f"Room {i} inserted with ObjectId: {result.inserted_id}")
 
 # Insert tables and assign them to rooms
 for i in range(1, num_rooms + 1):
@@ -29,6 +29,6 @@ for i in range(1, num_rooms + 1):
         }
         # Insert table into the Tables collection
         result = tables_collection.insert_one(table_doc)
-        print(f"Table {i}{j} inserted with ObjectId: {result.inserted_id}")
+        #print(f"Table {i}{j} inserted with ObjectId: {result.inserted_id}")
 
 print("Rooms and tables inserted successfully.")

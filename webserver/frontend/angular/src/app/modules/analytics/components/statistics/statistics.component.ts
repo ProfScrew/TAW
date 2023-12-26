@@ -81,7 +81,7 @@ export class StatisticsComponent {
   getArchive(): void {
     this.api.get('/order_archives', '').subscribe((response) => {
       this.storedArchives = response.body.payload;
-
+      console.log(this.storedArchives);
       this.sortByDate();
     });
   }
@@ -96,7 +96,7 @@ export class StatisticsComponent {
       });
     }
     this.numberDays = this.dateRange.value.dateTo.getTime() - this.dateRange.value.dateFrom.getTime();
-    this.numberDays = this.numberDays / (1000 * 3600 * 24) + 1;
+    this.numberDays = this.numberDays / (1000 * 3600 * 24);
     console.log(this.numberDays);
     this.calculateStatistics();
   }
