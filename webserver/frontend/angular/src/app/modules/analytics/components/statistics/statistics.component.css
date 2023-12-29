@@ -6,21 +6,21 @@ form{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-  }
-  
+}
+
+.chart-item {
+  width: 100%; 
+  box-sizing: border-box; 
+}
+
+@media screen and (min-width: 600px) {
   .chart-item {
-    width: 100%; /* By default, charts take full width */
-    box-sizing: border-box; /* Ensure padding and border are included in the width */
+    width: 48%; 
   }
-  
-  @media screen and (min-width: 600px) {
-    .chart-item {
-      width: 48%; /* Two charts side by side on screens wider than 600px */
-    }
+}
+
+@media screen and (min-width: 900px) {
+  .chart-item {
+    width: 48%;
   }
-  
-  @media screen and (min-width: 900px) {
-    .chart-item {
-      width: 48%; /* Two charts side by side on screens wider than 900px */
-    }
-  }
+}

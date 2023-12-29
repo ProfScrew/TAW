@@ -45,9 +45,9 @@ export class ArchiveComponent {
   subscriptionIngredient: Subscription | undefined;
   Breakpoints=Breakpoints;
 
-  constructor(private api: ApiService, private notifier: NotifierComponent, private router: Router,
+  constructor(private api: ApiService,
     private references: DatabaseReferencesService, public pageData: PageDataService,
-    public pageInfo: PageInfoService, private auth: AuthService, public datePipe: DatePipe) {
+    public pageInfo: PageInfoService,  public datePipe: DatePipe) {
 
     Promise.resolve().then(() => this.pageInfo.pageMessage = "📦Archive");
 

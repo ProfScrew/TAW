@@ -2,7 +2,7 @@ import pymongo
 import execjs
 
 # MongoDB connection setup
-client = pymongo.MongoClient("mongodb://localhost:27017/")  # Replace with your MongoDB connection string
+client = pymongo.MongoClient("mongodb://localhost:27017/")  
 db = client["CookHub"]
 collection = db["Users"]
 

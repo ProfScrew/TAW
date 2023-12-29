@@ -54,4 +54,4 @@ import { MatExpansionModule } from '@angular/material/expansion';
 
   ]
 })
-export class CashierModule { }
+export class CashierModule {}

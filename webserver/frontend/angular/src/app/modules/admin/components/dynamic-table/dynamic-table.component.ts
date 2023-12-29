@@ -70,9 +70,8 @@ export class DynamicTableComponent {
       this.dataSource = new MatTableDataSource(data.body.payload);
 
       //in the part below we create a dictionary that will be used to convert the id to the name
-      //this is done becouse the user doesn't want to see the id but the name of the element
+      //this is done because the user doesn't want to see the id but the name of the element
 
-      //console.log("table data", this.dataSource)
       if (this.model?.subModelInput?.elementsFromDatabaseSingleChoice != undefined) { //substitutes the id with the name
         for (let single of this.model?.subModelInput?.elementsFromDatabaseSingleChoice!) {
           this.api.get(single.route).subscribe((data: any) => {
@@ -84,7 +83,6 @@ export class DynamicTableComponent {
               for (let b of this.singleChoiceReference[this.singleChoiceReference.length - 1].dictionary) {
                 if (b.id == element[single.name]) {
                   element[single.name] = b.name;
-                  //console.log("element found adn changesd", element)
                   break; //ignore this part ;-;
                 }
               }
@@ -92,8 +90,6 @@ export class DynamicTableComponent {
               //dictionary = [{name: "dictionaryname", dictionary: [{id: "id: name: "name"}]}]
             });
 
-            this.dataSource.paginator = this.paginator!;
-            this.dataSource.sort = this.sort!;
           });
         }
       }
@@ -114,8 +110,6 @@ export class DynamicTableComponent {
               element[multiple.name] = temp;
             });
 
-            this.dataSource.paginator = this.paginator!;
-            this.dataSource.sort = this.sort!;
           });
         }
       }
@@ -126,10 +120,7 @@ export class DynamicTableComponent {
   }
 
   ngOnInit() {
-
-    //console.log(this.model)
     if (this.model == undefined) {
-      //console.log("model is undefined");
     } else {
       this.getTableData();
       this.buildTable();
@@ -142,17 +133,13 @@ export class DynamicTableComponent {
     for (const column of this.model?.columns!) {
       this.displayedColumns.push(column.name);
     }
-
   }
 
   ngAfterViewInit() {// setting up the socket listener
-    //console.log("table listener", this.model?.tableListener)
     this.dataSource.paginator = this.paginator!;
     this.dataSource.sort = this.sort!;
     this.socketService.listen(this.model?.tableListener!).subscribe((data) => {
-      //console.log('User list updated:', data);
       // Update your UI as needed
-      //TODO UPDATE TABLE SO THAT I DON'T HAVE DUPLICATES
       this.selectedRowCheck = [];
       this.dataSource = new MatTableDataSource();
       setTimeout(() => {// wait for the animation to finish
@@ -178,7 +165,7 @@ export class DynamicTableComponent {
   }
 
   selectRow(rowData: any) { //function called when a row is clicked
-
+    //this if is used for the animation reasons... ¯\_(ツ)_/¯
     if (this.currentRow == rowData._id) {//click the same row so we close it 
       setTimeout(() => {
         this.currentRow = "";
@@ -199,7 +186,6 @@ export class DynamicTableComponent {
       }
       this.setSelectedRowData(rowData); //set the data for the form
     }
-    //console.log('Row Data Passed from table', rowData); // Example: Log the clicked row data
   }
 
   setSelectedRowData(rowData: any) {
@@ -243,7 +229,6 @@ export class DynamicTableComponent {
         if (this.selectedRow.elementsFromDatabaseSingleChoice[element]) {
           this.selectedRow.elementsFromDatabaseSingleChoice[element].value = value;
         }
-        //console.log("value updated", value);
       }
     }
     //converting name to id for multiple choice
@@ -264,59 +249,3 @@ export class DynamicTableComponent {
     }
   }
 }
-
-
-/*
-
-  valueReferenceSingle: [(iTable[] | iCategory[] | iRoom[] | iIngredient[]), string][] = [];
-  valueReferenceMultiple: [(iTable[] | iCategory[] | iRoom[] | iIngredient[]), string][] = [];
-  subscriptionsSingle: [Subscription, string][] = [];
-  subscriptionsMultiple: [Subscription, string][] = [];
-
-  buildSubscriptions() {
-
-    // Single select ✅
-    if (this.model?.elementsFromDatabaseSingleChoice != undefined) {
-      for (const element of this.model?.elementsFromDatabaseSingleChoice!) {
-        if (element.name == eSubscriptionElements.room) {
-          this.createSubscription(this.subscriptionsSingle, this.valueReferenceSingle, this.references.roomsReferenceObservable, eSubscriptionElements.room);
-        }
-        if (element.name == eSubscriptionElements.category) {
-          this.createSubscription(this.subscriptionsSingle, this.valueReferenceSingle, this.references.categoriesReferenceObservable, eSubscriptionElements.category);
-        }
-        if (element.name == eSubscriptionElements.ingredients) {
-          this.createSubscription(this.subscriptionsSingle, this.valueReferenceSingle, this.references.ingredientsReferenceObservable, eSubscriptionElements.ingredients);
-        }
-      }
-    }
-    if (this.model?.elementsFromDatabaseMultipleChoice != undefined){
-      // Multiple select ✅
-      for (const element of this.model?.elementsFromDatabaseMultipleChoice!) {
-        if (element.name == eSubscriptionElements.room) {
-          this.createSubscription(this.subscriptionsMultiple, this.valueReferenceMultiple, this.references.roomsReferenceObservable, eSubscriptionElements.room);
-        }
-        if (element.name == eSubscriptionElements.category) {
-          this.createSubscription(this.subscriptionsMultiple, this.valueReferenceMultiple, this.references.categoriesReferenceObservable, eSubscriptionElements.category);
-        }
-        if (element.name == eSubscriptionElements.ingredients) {
-          this.createSubscription(this.subscriptionsMultiple, this.valueReferenceMultiple, this.references.ingredientsReferenceObservable, eSubscriptionElements.ingredients);
-        }
-      }
-    }
-  }
-
-
-  createSubscription(subscription: [Subscription, string][], valueReference: [(iTable[] | iCategory[] | iRoom[] | iIngredient[]), string][] | undefined, observable: Observable<any>, subscriptionElement: eSubscriptionElements) {
-
-    subscription.push([observable.subscribe((value) => {
-      if (valueReference?.length == 0) {
-        valueReference.push([value!, subscriptionElement]);
-      } else if (valueReference!.find((element) => element[1] == subscriptionElement)) {
-        valueReference!.find((element) => element[1] == subscriptionElement)![0] = value!;
-      } else {
-        valueReference!.push([value!, subscriptionElement]);
-      }
-    }), subscriptionElement]);
-    console.log("valueReference", valueReference)
-  }
-  */

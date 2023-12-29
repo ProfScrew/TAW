@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
-
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { PageInfoService } from '../../services/page-info.service';
@@ -94,7 +93,7 @@ export class MasterContainerComponent {
   ) {
 
     databaseReferences.initializeAllReferences();
-
+    //listen to new orders for serving
     if (this.isWaiter()) {
       this.initCounterCourses();
       this.socketServcie
@@ -166,10 +165,9 @@ export class MasterContainerComponent {
   exitApp() {
     this.auth.logout();
     this.router.navigate(['/login']);
-    //add losing session here
   }
 
-  goToReady() {
+  goToReady() {//shortcut for waiters serving
     this.router.navigate(['/core/waiter/ready']);
   }
 }

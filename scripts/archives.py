@@ -78,7 +78,7 @@ def init_order_archives():
     for i in range(days):
         date = dateBegin + datetime.timedelta(days=i)
         #random number of orders
-        numbersOfOrders = random.randint(2, 12)
+        numbersOfOrders = random.randint(1, 5)
         for j in range(numbersOfOrders):
             finalPrice = 0
             #random waiter

@@ -2,7 +2,6 @@ import { inject } from '@angular/core';
 import { CanActivateFn,Router } from '@angular/router';
 
 import { AuthService } from '../services/auth.service';
-import { HttpClient } from '@angular/common/http';
 
 export enum eRole {
   Waiter = 'waiter',

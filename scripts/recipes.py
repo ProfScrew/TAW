@@ -18,7 +18,7 @@ with open("recipes.txt", "r") as file:
         if category:
             category_id = category["_id"]
         else:
-            # Handle category not found (You may choose to create it if not found)
+            # Handle category not found 
             print(f"Category '{category_name}' not found.")
             continue
 
@@ -30,7 +30,7 @@ with open("recipes.txt", "r") as file:
             if ingredient:
                 ingredient_ids.append(ingredient["_id"])
             else:
-                # Handle ingredient not found (You may choose to create it if not found)
+                # Handle ingredient not found 
                 print(f"Ingredient '{ingredient_name}' not found.")
         
         # Create the recipe document

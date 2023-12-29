@@ -53,7 +53,7 @@ import { ErrorPageComponent } from './components/error-page/error-page.component
     MatExpansionModule,
     LayoutModule,
 
-    // Toastr
+    // Toastr for notifications
     ToastrModule.forRoot(
       { 
         timeOut: 2000,

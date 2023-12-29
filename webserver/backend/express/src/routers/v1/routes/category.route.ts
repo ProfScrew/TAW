@@ -57,6 +57,7 @@ categories.get("/", authorize, async (req, res, next) => {
     if (id && !isValidObjectId(id)) {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Invalid id'));
     }
+    
     if (!name) {
         const cachedData = await Redis.get<iCategory[]>("Category:" + JSON.stringify(query), true);
         if (cachedData !== null) {
@@ -183,9 +184,8 @@ categories.put("/:id", authorize, async (req, res, next) => {
         io.emit(eListenChannels.categories, { message: 'Categories list updated!' });
         return next(cResponse.genericMessage(eHttpCode.OK, data));
     }).catch((err) => {
-        console.log(err)
         //order camp should be unique 
-        if(err.code === 11000){
+        if (err.code === 11000) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, "Category already exists or order is already taken"));
         }
         return next(cResponse.genericMessage(eHttpCode.INTERNAL_SERVER_ERROR, 'DB error: ' + err.errmsg));
@@ -231,8 +231,6 @@ categories.delete("/:id", authorize, async (req, res, next) => {
     if (id === undefined || typeof id !== 'string') {
         return next(cResponse.error(eHttpCode.BAD_REQUEST, 'Bad request'));
     }
-
-
     Category.deleteOne({ _id: mongoose.Types.ObjectId(id) }).then((data) => {
         Redis.delete("Category:" + JSON.stringify({}));
         Redis.delete("Category:" + JSON.stringify({ _id: id }));

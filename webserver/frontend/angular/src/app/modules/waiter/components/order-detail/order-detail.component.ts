@@ -43,10 +43,10 @@ export class OrderDetailComponent implements OnInit {
   subscriptionRecipe: Subscription | undefined;
   categoryReference: any;
   subscriptionCategory: Subscription | undefined;
-  Breakpoints=Breakpoints;
+  Breakpoints = Breakpoints;
 
   constructor(private router: Router, public pageData: PageDataService, public reference: DatabaseReferencesService,
-    private io: SocketService, public pageInfo: PageInfoService, private api: ApiService,
+    public pageInfo: PageInfoService, private api: ApiService,
     private notifier: NotifierComponent) {
     this.receivedData = { ... this.pageData.data };
     if (Object.keys(this.receivedData as Object).length === 0) {
@@ -122,14 +122,8 @@ export class OrderDetailComponent implements OnInit {
                 });
               });
             });
-
-
-
-            //remember to remove this notifier
-            //this.notifier.showSuccess(response.status, "Got Dishes");
           },
           error: (err) => {
-            //console.log(err);
             this.notifier.showError(err.status, err.error.message);
             return;
           }
@@ -140,7 +134,7 @@ export class OrderDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.receivedData = { ... this.pageData.data };
-    if (Object.keys(this.receivedData as Object).length !== 0) {
+    if (Object.keys(this.receivedData as Object).length !== 0) {//if service does not contain data, redirect to orders
 
       this.api.put("/orders/" + this.pageData.data.order._id + "/action/" + eOrderStatus.ordering, []).subscribe({
         next: (response) => {
@@ -184,33 +178,30 @@ export class OrderDetailComponent implements OnInit {
     this.subscriptionRoom?.unsubscribe();
     this.subscriptionTable?.unsubscribe();
     if (Object.keys(this.receivedData as Object).length !== 0) {
-      
+
       if (this.menuSelector === false) {
         let delivered = true;
         this.receivedData?.order.courses.forEach((course) => {
-          if(course.logs_course?.served_course == undefined) {
+          if (course.logs_course?.served_course == undefined) {
             delivered = false;
           }
         });
-        if(delivered) {
+        if (delivered) { // when exiting set the appropriate status
           this.api.put("/orders/" + this.pageData.data.order._id + "/action/" + eOrderStatus.delivered, {}).subscribe({
             next: (response) => {
-              //this.notifier.showSuccess(response.status, response.message);
+
             },
             error: (err) => {
-              //console.log(err);
               this.notifier.showError(err.status, err.error.message);
               this.router.navigate(['/core/waiter/orders']);
             }
           });
 
-        }else if (this.receivedData?.order.courses.length === 0) {
+        } else if (this.receivedData?.order.courses.length === 0) {
           this.api.put("/orders/" + this.pageData.data.order._id + "/action/" + eOrderStatus.waiting, {}).subscribe({
             next: (response) => {
-              //this.notifier.showSuccess(response.status, response.message);
             },
             error: (err) => {
-              //console.log(err);
               this.notifier.showError(err.status, err.error.message);
               this.router.navigate(['/core/waiter/orders']);
             }
@@ -220,10 +211,8 @@ export class OrderDetailComponent implements OnInit {
         else {
           this.api.put("/orders/" + this.pageData.data.order._id + "/action/" + eOrderStatus.serving, {}).subscribe({
             next: (response) => {
-              //this.notifier.showSuccess(response.status, response.message);
             },
             error: (err) => {
-              //console.log(err);
               this.notifier.showError(err.status, err.error.message);
               this.router.navigate(['/core/waiter/orders']);
             }
@@ -245,6 +234,9 @@ export class OrderDetailComponent implements OnInit {
   }
 
   submitOrder() {
+    //receive from post the ids of the dishes and push them in the orderToSent
+    //push ordertosent in the database
+
     let orderToSent: iOrder = { ...this.receivedData?.order! };
     let dishestoSent: iDish[] = [];
     let arrayEachCourseLength: number[] = [];
@@ -301,24 +293,17 @@ export class OrderDetailComponent implements OnInit {
             this.router.navigate(['/core/waiter/orders']);
           },
           error: (err) => {
-            //console.log(err);
             this.notifier.showError(err.status, err.error.message);
             return;
           }
         });
       },
       error: (err) => {
-        //console.log(err);
         this.notifier.showError(err.status, err.error.message);
         return;
       }
     });
 
-
-    //receive from post the ids of the dishes and push them in the orderToSent
-
-
-    //push ordertosent in the database
 
   }
 }

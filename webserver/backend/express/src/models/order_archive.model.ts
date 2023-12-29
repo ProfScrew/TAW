@@ -1,5 +1,4 @@
-import {Schema, model, Types} from 'mongoose';
-import mongoose from 'mongoose';
+import {Schema, model} from 'mongoose';
 import { iUserAction, UserAction } from './user_action.object';
 import { iRecipe } from './recipe.model';
 import { iIngredient } from './ingredient.model';

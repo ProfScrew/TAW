@@ -57,13 +57,11 @@ export class OrderFormComponent {
   
   ngAfterViewInit(): void {
   }
+  
   onSubmit() {
-    console.log(this.OrderFormGroup.value);
     let value = this.OrderFormGroup.value;
     let capacity = 0;
     for (let table of value.tables) {
-      console.log(table);
-
       capacity += this.tableReference.find((tableRef: any) => tableRef._id === table).capacity;
 
     }
@@ -73,14 +71,12 @@ export class OrderFormComponent {
       return;
     }else{
       this.api.post('/orders', value).subscribe((res: any) => {
-        console.log(res);
         this.notifier.showSuccess(res.status,res.body.message)
         this.OrderFormGroup.reset();
         
         this.RoomTablesList = []
         
       }, (err: any) => {
-        console.log(err);
         this.OrderFormGroup.reset();
         this.notifier.showError(err.status, err.error.message)
       })

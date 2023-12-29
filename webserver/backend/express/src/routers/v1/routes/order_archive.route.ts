@@ -63,11 +63,11 @@ order_archives.get("/", authorize, async (req, res, next) => {
 
     const query: any = id ? { _id: id } : {};
 
-    OrderArchive.find(query).then((order_archives) => {
+    OrderArchive.find(query).lean().then((order_archives) => {
         return next(cResponse.genericMessage(eHttpCode.OK, order_archives));
     }).catch((err) => {
         return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, err));
-    });
+    });    
 
 });
 

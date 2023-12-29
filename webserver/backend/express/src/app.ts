@@ -56,7 +56,7 @@ httpServer.listen(PORT_BACKEND, () => {
 
     console.log(`🤼 ✅\tConnection established`);
     console.log(`👂 ✨\tServer listening on port ${PORT_BACKEND}`)
-
+    
     Redis.getInstance().init();
 
 });

@@ -84,13 +84,18 @@ export class ApiService {
         this.auth.logout();
         this.notifier.showError(response.status, response.error.message);
         this.router.navigate(['/login']);
-      }
-
-      if(response.status == 0){
+      }else if(response.status == 500 && response.error.message == "Redis is down"){
+        this.notifier.showError(response.status, response.error.message,"",{maxOpened: 1, preventDuplicates: true, autoDismiss: true});
+      }else if(response.status == 0){
         this.auth.logout();
         this.notifier.showError(response.status, "Server is not responding");
         this.router.navigate(['/login']);
+      }else{
+        this.notifier.showError(response.status, response.error.message);
       }
+
+      
+
       return false;
     }
 

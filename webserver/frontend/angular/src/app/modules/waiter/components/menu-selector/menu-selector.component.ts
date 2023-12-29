@@ -74,11 +74,9 @@ export class MenuSelectorComponent {
   ngOnInit(): void {
     this.receivedData = { ... this.pagedata.data };
     this.substituteIngredient();
-    console.log("ngInit", this.receivedData);
     if (Object.keys(this.receivedData as object).length === 0) {
       this.router.navigate(['/core/waiter/orders']);
     }
-    console.log("ngInit", this.receivedData);
   }
 
   ngOnDestroy(): void {
@@ -149,7 +147,6 @@ export class MenuSelectorComponent {
     tempDish.formIngredients?.addControl('ingredients', new FormControl({}));
     tempDish.formIngredients?.addControl('type', new FormControl({}));
     this.tempDishes.push(tempDish);
-    console.log(this.tempDishes);
   }
   onAddNote(index: number) {
     this.tempDishes[index].notes = this.tempDishes[index].formNotes?.value.notes;
@@ -157,7 +154,6 @@ export class MenuSelectorComponent {
   }
 
   onAddIngredient(index: number) {
-    console.log(index)
     let tempName = this.ingredientReference?.find((ingredient) => ingredient._id === this.tempDishes[index].formIngredients?.value.ingredients)?.name!;
     let tempPrice = 0;
     //calculate modification price through ingredient price
@@ -224,7 +220,6 @@ export class MenuSelectorComponent {
     this.receivedData!.courses!.push({
       dishes: this.tempDishes,
     });
-    console.log("sendData in MenuSelector", this.receivedData);
     this.pagedata.data = { ... this.receivedData };
     this.router.navigate(['/core/waiter/orders/detail']);
   }
@@ -238,7 +233,6 @@ export class MenuSelectorComponent {
     if (delivered) {
       this.api.put("/orders/" + this.pagedata.data.order._id + "/action/" + eOrderStatus.delivered, {}).subscribe({
         next: (response) => {
-          //this.notifier.showSuccess(response.status, response.message);
         },
         error: (err) => {
           //console.log(err);
@@ -250,7 +244,6 @@ export class MenuSelectorComponent {
     } else if (this.receivedData?.order.courses.length === 0) {
       this.api.put("/orders/" + this.pagedata.data.order._id + "/action/" + eOrderStatus.waiting, {}).subscribe({
         next: (response) => {
-          //this.notifier.showSuccess(response.status, response.message);
         },
         error: (err) => {
           //console.log(err);
@@ -263,7 +256,6 @@ export class MenuSelectorComponent {
     else {
       this.api.put("/orders/" + this.pagedata.data.order._id + "/action/" + eOrderStatus.serving, {}).subscribe({
         next: (response) => {
-          //this.notifier.showSuccess(response.status, response.message);
         },
         error: (err) => {
           //console.log(err);

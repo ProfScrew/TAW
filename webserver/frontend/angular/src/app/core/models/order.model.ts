@@ -18,8 +18,6 @@ export interface iLogCourse {
 }
 export interface iLogOrder {
     created_order: iUserAction;
-    //not used
-    //taken_order?: iUserAction;
 }
 
 export interface iCourse {

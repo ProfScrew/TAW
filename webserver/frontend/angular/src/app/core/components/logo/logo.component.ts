@@ -10,7 +10,6 @@ export class LogoComponent {
 
   constructor(private pageInfo: PageInfoService) { 
     Promise.resolve().then(() => pageInfo.setPageMessage("Welcome!"));
-    
   }
 
 }

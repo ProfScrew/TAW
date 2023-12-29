@@ -11,15 +11,4 @@ export enum eListenChannels {
     orderReady = "backendOrderReady",
     orderArchive = "backendOrderArchive",
 
-
-
 }
-/*
-export enum eSocketRooms {
-    admin = "admin",
-    waiter = "waiter",
-    production = "production",
-    cashier = "cashier",
-    analytics = "analytics",
-}
-*/

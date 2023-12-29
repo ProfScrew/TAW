@@ -134,11 +134,8 @@ export class DynamicTableFormComponent {
 
   onDelete(){
     this.api.delete(this.model?.routeDelete!).subscribe({
-      next: (response) => {
+      next: (response : any) => {
         this.notifier.showSuccess(response.status, response.body.message);
-      },
-      error: (error) => {
-        this.notifier.showError(error.status, error.error.message);
       }
     })
   }
@@ -147,8 +144,6 @@ export class DynamicTableFormComponent {
     this.api.put(this.model?.routeModify!, this.dynamicFormGroup.value).subscribe({
       next: (response) => {
         this.notifier.showSuccess(response.status, response.body.message);
-      }, error: (error) => {
-        this.notifier.showError(error.status, error.error.message);
       }
     });
   }

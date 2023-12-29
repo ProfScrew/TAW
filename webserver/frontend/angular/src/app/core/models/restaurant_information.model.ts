@@ -4,7 +4,7 @@ export interface iRestaurantInformation {
     address: string;
     phone: string;
     email: string;
-    logo?: string; //TODO: reverse proxy static folder 
+    logo?: string; 
     iva: string;
 
     //chages per person(improvised solution simple ... i know 😢 )

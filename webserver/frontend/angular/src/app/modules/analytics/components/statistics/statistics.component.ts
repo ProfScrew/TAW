@@ -1,15 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { NotifierComponent } from 'src/app/core/components/notifier/notifier.component';
 import { iOrderArchive } from 'src/app/core/models/order_archive.model';
 import { ApiService } from 'src/app/core/services/api.service';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
 import { PageDataService } from 'src/app/core/services/page-data.service';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { ChartComponent } from '../chart/chart.component';
-import { ChartConfiguration, ChartData } from 'chart.js/auto';
+import { ChartConfiguration } from 'chart.js/auto';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 import { COLORS, CHART_COLORS, transparentize, labels } from '../../models/utils.model';
@@ -79,9 +75,9 @@ export class StatisticsComponent {
   }
 
   getArchive(): void {
+    //get time now
     this.api.get('/order_archives', '').subscribe((response) => {
       this.storedArchives = response.body.payload;
-      console.log(this.storedArchives);
       this.sortByDate();
     });
   }
@@ -97,7 +93,6 @@ export class StatisticsComponent {
     }
     this.numberDays = this.dateRange.value.dateTo.getTime() - this.dateRange.value.dateFrom.getTime();
     this.numberDays = this.numberDays / (1000 * 3600 * 24);
-    console.log(this.numberDays);
     this.calculateStatistics();
   }
 
@@ -173,9 +168,6 @@ export class StatisticsComponent {
         orders: orders,
         total: total
       };
-      console.log(labels);
-      console.log(servings);
-      console.log(orders);
 
     }
 
@@ -203,7 +195,6 @@ export class StatisticsComponent {
         labels: labels,
         cookings: cookings
       };
-      console.log("production", this.production);
     }
   }
   calculateArgEarningPerDay(): void {
@@ -285,7 +276,6 @@ export class StatisticsComponent {
       customers: customers
     }
 
-    console.log(this.earnings);
 
 
   }

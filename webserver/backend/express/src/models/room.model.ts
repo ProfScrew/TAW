@@ -1,5 +1,4 @@
-import {Schema, model, Types} from 'mongoose';
-import mongoose from 'mongoose';
+import {Schema, model} from 'mongoose';
 
 export interface iRoom{
     _id: Schema.Types.ObjectId;

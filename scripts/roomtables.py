@@ -15,19 +15,17 @@ for i in range(1, num_rooms + 1):
     room_doc = {
         "name": str(i)
     }
-    # Insert room into the Rooms collection
     result = rooms_collection.insert_one(room_doc)
     #print(f"Room {i} inserted with ObjectId: {result.inserted_id}")
 
 # Insert tables and assign them to rooms
 for i in range(1, num_rooms + 1):
-    for j in range(1, 6):  # Assuming 5 tables per room
+    for j in range(1, 6): 
         table_doc = {
-            "name": f"Table {i}{j}",  # Unique name for each table
+            "name": f"Table {i}{j}", 
             "capacity": 10,
             "room": rooms_collection.find_one({"name": str(i)})["_id"]
         }
-        # Insert table into the Tables collection
         result = tables_collection.insert_one(table_doc)
         #print(f"Table {i}{j} inserted with ObjectId: {result.inserted_id}")
 

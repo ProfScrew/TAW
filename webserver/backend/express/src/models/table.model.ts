@@ -1,5 +1,4 @@
-import {Schema, model, Types} from 'mongoose';
-import mongoose from 'mongoose';
+import {Schema, model} from 'mongoose';
 import { iRoom } from './room.model';
 
 export enum eTableStatus {

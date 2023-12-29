@@ -1,5 +1,4 @@
-import {Schema, model, Types} from 'mongoose';
-import mongoose from 'mongoose';
+import {Schema, model} from 'mongoose';
 
 export interface iRestaurantInformation {
     _id: Schema.Types.ObjectId;
@@ -7,10 +6,8 @@ export interface iRestaurantInformation {
     address: string;
     phone: string;
     email: string;
-    logo?: string; //TODO: reverse proxy static folder 
+    logo?: string; 
     iva: string;
-
-    //chages per person(improvised solution simple ... i know 😢 )
     charge_per_person: number;
 }
 

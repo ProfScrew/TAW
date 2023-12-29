@@ -1,10 +1,8 @@
 
 import { Component, Input } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { TitleStrategy } from '@angular/router';
 import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
 import { ApiService } from 'src/app/core/services/api.service';
-import { MatFormFieldControl } from '@angular/material/form-field';
 import { NotifierComponent } from 'src/app/core/components/notifier/notifier.component';
 
 @Component({
@@ -135,10 +133,6 @@ export class DynamicFormComponent {
       this.api.post(this.model.route, formData).subscribe({
         next: (response) => {
           this.notifier.showSuccess(response.status, response.body.message);
-        },
-        error: (err) => {
-          //console.log(err);
-          this.notifier.showError(err.status, err.error.message);
         }
       });
     } else {

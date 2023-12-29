@@ -5,30 +5,30 @@
 
 
 .flex-grow {
-  flex-grow: 1; /* Allows the textarea to grow and take available space */
+  flex-grow: 1; 
 }
 
 .full-width {
-  width: 100%; /* Makes the textarea fill the entire available width */
+  width: 100%; 
 }
 
 .ml-2 {
-  margin-left: 8px; /* Adjust as needed to create spacing between textarea and button */
+  margin-left: 8px; 
 }
 
 
 .mod-container {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between; /* Aligns items at the start and end of the flex container */
+    justify-content: space-between; 
   }
   
   .mod-details {
-    flex-grow: 1; /* Allows the details to take up available space */
+    flex-grow: 1; 
   }
   
   .mod-button {
-    margin-left: 8px; /* Adjust margin as needed for space between details and button */
+    margin-left: 8px; 
   }
 
   mat-card-title{

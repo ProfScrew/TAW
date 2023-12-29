@@ -1,10 +1,8 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { eListenChannels } from 'src/app/core/models/channels.enum';
-import { iDynamicForm } from 'src/app/core/models/dynamic_form.model';
 import { eOrderStatus, iOrder } from 'src/app/core/models/order.model';
 import { ApiService } from 'src/app/core/services/api.service';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
@@ -107,7 +105,6 @@ export class OrdersTableComponent implements AfterViewInit {
       this.dataSource.paginator = this.paginator!;
       this.dataSource.sort = this.sort!;
 
-      console.log("!", this.orders);
     });
   }
 

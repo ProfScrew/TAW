@@ -1,8 +1,8 @@
 import e, { Router } from "express";
-import { Order, eOrderStatus, iCourse, iOrder, verifyOrderData, verifyPartialOrderData } from "../../../models/order.model";
+import { Order, eOrderStatus, iOrder, verifyOrderData, verifyPartialOrderData } from "../../../models/order.model";
 import { authorize, iTokenData, } from "../../../middlewares/auth.middleware";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
-import mongoose, { Schema, isValidObjectId } from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import { iUserAction } from "../../../models/user_action.object";
 import { Table, eTableStatus } from "../../../models/table.model";
 import { io } from "../../../app";

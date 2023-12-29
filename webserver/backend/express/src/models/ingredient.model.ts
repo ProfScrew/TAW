@@ -1,5 +1,4 @@
-import {Schema, model, Types} from 'mongoose';
-import mongoose from 'mongoose';
+import {Schema, model} from 'mongoose';
 import { iUserAction, UserAction } from './user_action.object';
 
 export interface iIngredient {
@@ -25,7 +24,6 @@ export const IngredientSchema = new Schema<iIngredient>({
 });
 
 
-//📝review this function, different name or review concept
 export function verifyIngredientData(ing: iIngredient): boolean {
     if (!ing.name || ing.name === '')                                   return false;
     if (!ing.modification_price || ing.modification_price < 0)          return false;

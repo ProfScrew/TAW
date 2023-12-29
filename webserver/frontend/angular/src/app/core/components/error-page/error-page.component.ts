@@ -13,18 +13,15 @@ export class ErrorPageComponent implements OnInit{
   errorMessage: string = 'Page Not Found';
   image:string='404.jpg';
 
-  constructor(private route: ActivatedRoute,protected pageInfo: PageInfoService) {
-  }
-    ngOnInit(): void {
-      this.route.data.subscribe((data) => {
-        Promise.resolve().then(() => this.pageInfo.pageMessage = "⚠️Error " +data['errorCode']+"⚠️");
-        this.errorCode = data['errorCode'];
-        this.errorMessage = data['errorMessage'];
-        this.image=data['image'];
-      });
-    }
+  constructor(private route: ActivatedRoute,protected pageInfo: PageInfoService) {}
 
-  
-  
+  ngOnInit(): void {
+    this.route.data.subscribe((data) => {
+      Promise.resolve().then(() => this.pageInfo.pageMessage = "⚠️Error " +data['errorCode']+"⚠️");
+      this.errorCode = data['errorCode'];
+      this.errorMessage = data['errorMessage'];
+      this.image=data['image'];
+    });
+  }
 
 }

@@ -63,7 +63,6 @@ export class OrderDetailComponent {
 
     this.api.get('/restaurant_informations/').subscribe((response) => {
       this.restaurantInformations = response.body.payload[0];
-      console.log("RESTAURANT INFORMATIONS", this.restaurantInformations);
     });
 
 

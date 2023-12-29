@@ -5,7 +5,6 @@ client = pymongo.MongoClient("localhost", 27017)
 db = client["CookHub"]
 collection = db["RestaurantInformations"]
 
-# Record to insert
 record = {
     "name": "CookHub",
     "address": "Galileo",

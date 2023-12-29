@@ -271,7 +271,6 @@ user.put("/:username", authorize, async (req, res, next) => {
  *         description: An error occurred while deleting the user in DB.
  */
 user.delete("/:username", authorize, async (req, res, next) => {
-
     const requester = (req.user as iTokenData);
     const username = req.params.username;
 

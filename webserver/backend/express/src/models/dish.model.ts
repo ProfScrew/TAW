@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose';
 import { iRecipe } from './recipe.model';
-import { iUser } from './user.model';
 import { iIngredient } from './ingredient.model';
 import { UserAction, iUserAction } from './user_action.object';
 

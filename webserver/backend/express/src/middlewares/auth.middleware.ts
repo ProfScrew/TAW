@@ -59,6 +59,12 @@ export const authenticate = new BasicStrategy(function(username: string, passwor
 
 
 export function authorize(req: Request, res: Response, next: NextFunction) {
+
+    //check if redis is up
+    if (!Redis.getStatus()) {
+        return next(cResponse.error(eHttpCode.INTERNAL_SERVER_ERROR, 'Redis is down'));
+    }
+
     const header = req.headers.authorization!;
     if (!header) { return next(cResponse.error(eHttpCode.UNAUTHORIZED,'No header provided')); }
     if (!header.startsWith('Bearer ')) return next(cResponse.error(eHttpCode.UNAUTHORIZED,'Invalid header'));

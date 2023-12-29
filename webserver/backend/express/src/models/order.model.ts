@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { Dish, iDish } from "./dish.model";
-import { iUser } from "./user.model";
+import { iDish } from "./dish.model";
 import { UserAction, iUserAction } from './user_action.object';
 import { iRoom } from './room.model';
 import { iTable } from './table.model';
