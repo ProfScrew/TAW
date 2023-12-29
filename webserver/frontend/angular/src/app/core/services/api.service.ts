@@ -14,6 +14,7 @@ import { NotifierComponent } from '../components/notifier/notifier.component';
 export class ApiService {
 
   public static readonly API_BACKEND = environment.URL_BACKEND + environment.VERSION;
+  private errorNotificationShown: boolean = false;
 
   constructor(private http: HttpClient, private auth: AuthService, private router: Router, public notifier: NotifierComponent) {
 
@@ -79,13 +80,15 @@ export class ApiService {
   }
 
   handleResponse(response: any) { //alert
-    if (response.error) {
+    
+
+    if (response.error && this.errorNotificationShown == false) {
       if(response.status == 401 && response.error.message == "Token is blacklisted"){
         this.auth.logout();
         this.notifier.showError(response.status, response.error.message);
         this.router.navigate(['/login']);
       }else if(response.status == 500 && response.error.message == "Redis is down"){
-        this.notifier.showError(response.status, response.error.message,"",{maxOpened: 1, preventDuplicates: true, autoDismiss: true});
+        this.notifier.showError(response.status, response.error.message);
       }else if(response.status == 0){
         this.auth.logout();
         this.notifier.showError(response.status, "Server is not responding");
@@ -93,13 +96,15 @@ export class ApiService {
       }else{
         this.notifier.showError(response.status, response.error.message);
       }
-
-      
-
+      this.errorNotificationShown = true;
       return false;
     }
 
     return response;
+  }
+
+  setNotificationShown(notificationShown: boolean) {
+    this.errorNotificationShown = notificationShown;
   }
 
 

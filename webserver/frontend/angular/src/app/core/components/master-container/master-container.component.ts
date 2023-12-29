@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router,ActivatedRoute, NavigationEnd  } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
@@ -83,6 +84,7 @@ export class MasterContainerComponent {
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     protected auth: AuthService,
     private api: ApiService,
     protected pageInfo: PageInfoService,
@@ -111,6 +113,14 @@ export class MasterContainerComponent {
 
   ngOnInit(): void {
     this.breakpoint$.subscribe(() => this.breakpointChanged());
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        // Access the current route's data or any other information you need
+        const currentRouteData = this.activatedRoute.snapshot.data;
+
+        this.api.setNotificationShown(false);
+      });
   }
 
   private breakpointChanged() {
