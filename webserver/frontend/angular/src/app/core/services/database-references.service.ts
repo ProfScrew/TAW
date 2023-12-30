@@ -10,13 +10,18 @@ import { io } from 'socket.io-client';
 import { eListenChannels } from '../models/channels.enum';
 import { BehaviorSubject } from 'rxjs';
 
+export enum eArchivedStatus{
+  archived = "?archive=true",
+  notArchived = "?archive=false",
+  all = ""
+}
 @Injectable({
   providedIn: 'root'
 })
 export class DatabaseReferencesService {
 
   //private archived = "?archive=false";
-  private archived = "";
+  private archived = eArchivedStatus.all;
   
   private categoriesReference : BehaviorSubject<iCategory[] | undefined> = new BehaviorSubject<iCategory[] | undefined>(undefined);
   public categoriesReferenceObservable = this.categoriesReference.asObservable();
@@ -46,6 +51,11 @@ export class DatabaseReferencesService {
     this.getTablesReference();
 
     this.initializeListeners();
+  }
+  changeArchivedStatus(status: eArchivedStatus){
+    this.archived = status;
+    this.getIngredientsReference();
+    this.getRecipesReference();
   }
 
   initializeListeners() {
@@ -94,12 +104,5 @@ export class DatabaseReferencesService {
       this.tablesReference.next(response.body.payload);
     });
   }
-
-
-
-
-
-
-
 
 }

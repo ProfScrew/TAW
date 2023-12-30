@@ -77,7 +77,7 @@ export class StatisticsComponent {
   getArchive(): void {
     //get time now
     this.api.get('/order_archives', '').subscribe((response) => {
-      this.storedArchives = response.body.payload;
+      this.storedArchives = response.body.payload.docs;
       this.sortByDate();
     });
   }

@@ -1,11 +1,10 @@
 import { Router } from "express";
 
-import { iUserAction, UserAction } from "../../../models/user_action.object";
 import { authorize, iTokenData } from "../../../middlewares/auth.middleware";
 import mongoose, { isValidObjectId, Query } from "mongoose";
 import { cResponse, eHttpCode } from "../../../middlewares/response.middleware";
-import { iCourseArchive, iDishArchive, iDishModificationArchive, iOrderArchive, OrderArchive } from "../../../models/order_archive.model";
-import { iCourse, iOrder, Order } from "../../../models/order.model";
+import {  iOrderArchive, OrderArchive } from "../../../models/order_archive.model";
+import {  Order } from "../../../models/order.model";
 import { Dish, eDishModificationType, iDishModification } from "../../../models/dish.model";
 import { iIngredient, Ingredient } from "../../../models/ingredient.model";
 import { Table , eTableStatus } from "../../../models/table.model";
@@ -14,6 +13,13 @@ import { io } from "../../../app";
 import { eListenChannels } from "../../../models/channels.enum";
 
 const order_archives = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Order Archives
+ *   description: Order Archives management
+ */
 
 /**
  * @swagger
@@ -37,7 +43,27 @@ const order_archives = Router();
  *         name: id
  *         schema:
  *           type: string
- *         description: The ID of the specific archived order to retrieve (optional).
+ *         description: Optional. The ID of the specific archived order to retrieve.
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Optional. The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Optional. The number of items per page.
+ *       - in: query
+ *         name: dateFrom
+ *         schema:
+ *           type: string
+ *         description: Optional. Start date for filtering the orders based on the created timestamp.
+ *       - in: query
+ *         name: dateTo
+ *         schema:
+ *           type: string
+ *         description: Optional. End date for filtering the orders based on the created timestamp.
  *     responses:
  *       200:
  *         description: Successfully retrieved the list of archived orders or a specific archived order.
@@ -53,23 +79,61 @@ const order_archives = Router();
  *         description: Internal Server Error. There was an error accessing the database.
  */
 order_archives.get("/", authorize, async (req, res, next) => {
-    const requester = (req.user as iTokenData);
+    try {
+        const requester = req.user as iTokenData;
+        
+        if (!requester.role.analytics) {
+          return next(cResponse.error(eHttpCode.FORBIDDEN, "You are not allowed to access this resource"));
+        }
+      
+        const id = req.query.id as string;
+        const page = parseInt(req.query.page as string);
+        const limit = parseInt(req.query.limit as string);
+        const skip = (page - 1) * limit;
+      
+        // Date range
+        const dateFrom = req.query.dateFrom as string;
+        const dateTo = req.query.dateTo as string;
+      
+        const query: any = id ? { _id: id } : {};
+      
+        // Add date range to the query if provided
+        if (dateFrom && dateTo) {
+          query['logs_order.created_order.timestamp'] = {
+            $gte: new Date(dateFrom),
+            $lte: new Date(dateTo),
+          };
+        }
+  
+        const totalItems = await OrderArchive.countDocuments(query);
+  
+        // sort by date descending
+        const sort = { 'logs_order.created_order.timestamp': -1 };
+        
+        let items: any;
+        if(isNaN(page) || isNaN(limit)){
+          items = await OrderArchive.find(query).sort(sort);
+        }else{
+          items = await OrderArchive.find(query).sort(sort).skip(skip).limit(limit);
+        }
+     
+  
+        const result={
+          docs: items,
+          total: totalItems,
+          limit: limit,
+          page: page,
+          pages: Math.ceil(totalItems / limit),
+        };
 
-    if (!(requester.role.analytics)) {
-        return next(cResponse.error(eHttpCode.FORBIDDEN, "You are not allowed to access this resource"));
+        return next(cResponse.genericMessage(eHttpCode.OK, result));
+    } catch (error: any ) {
+        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, error.message));
     }
+  });
+  
+  
 
-    const id = req.query.id as string;
-
-    const query: any = id ? { _id: id } : {};
-
-    OrderArchive.find(query).lean().then((order_archives) => {
-        return next(cResponse.genericMessage(eHttpCode.OK, order_archives));
-    }).catch((err) => {
-        return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, err));
-    });    
-
-});
 
 /**
  * @swagger

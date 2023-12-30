@@ -59,9 +59,9 @@
                         (click)="deleteCourse(i)">Delete</button>
                     <br>
                     <ng-container *ngFor="let tempDish of tempCour.dishes; let j = index">
-                        &nbsp;&nbsp;
-                        <b>Dish:</b><em>{{tempDish.name}}</em> {{tempDish.description}} <b>Price:</b>
-                        {{tempDish.actual_price}}&euro; <b>Notes:</b> {{tempDish.notes}}
+                        
+                        <b>Dish:</b><em>{{tempDish.name}}</em> {{tempDish.description}} <br><b>Price:</b>
+                        {{tempDish.actual_price}}&euro; <br><b>Notes:</b> {{tempDish.notes}}
                         <br>
 
                     </ng-container>

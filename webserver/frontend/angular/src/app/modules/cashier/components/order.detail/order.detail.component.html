@@ -56,7 +56,7 @@
                 <br>
                 <ng-container *ngFor="let dish of course.dishes_obj">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <b>Dish:</b> {{dish.name}}
+                    <b>Dish:</b> {{dish.name}}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <b>Price of dish:</b> {{dish.actual_price}}&euro;
                     <br>
                     <ng-container *ngIf="dish.modifications != undefined">

@@ -5,6 +5,13 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
+        <ng-container *ngIf="orders.length==0">
+            <div class="container">
+                <div class="start">
+                    <strong>There are no orders</strong>
+                </div>
+            </div>
+        </ng-container>
 
         <mat-accordion multi>
             <ng-container *ngFor="let ord of orders; let i = index">

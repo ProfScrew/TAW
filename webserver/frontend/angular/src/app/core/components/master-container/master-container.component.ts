@@ -62,8 +62,8 @@ export class MasterContainerComponent {
     },
     {
       name: 'Analytics',
-      subItems: ['Statistics', 'Archive'],
-      subLinks: ['/core/analytics/statistics', '/core/analytics/archive'],
+      subItems: ['Archive','Statistics'],
+      subLinks: ['/core/analytics/archive','/core/analytics/statistics'],
     },
   ];
 

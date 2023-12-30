@@ -12,7 +12,7 @@ import { PageDataService } from 'src/app/core/services/page-data.service';
 import { iOrderData, iTempOrder } from '../../models/order.model';
 import { iRoom } from 'src/app/core/models/room.model';
 import { iTable } from 'src/app/core/models/table.model';
-import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
+import { DatabaseReferencesService, eArchivedStatus } from 'src/app/core/services/database-references.service';
 import { Subscription } from 'rxjs';
 import { NotifierComponent } from 'src/app/core/components/notifier/notifier.component';
 
@@ -44,6 +44,7 @@ export class OrdersTableComponent implements AfterViewInit {
   constructor(private api: ApiService, private sockerService: SocketService, private pageInfo: PageInfoService, private pageData: PageDataService,
      private router: Router, public references: DatabaseReferencesService, public notifier: NotifierComponent) {
     this.dataSource = new MatTableDataSource();
+    references.changeArchivedStatus(eArchivedStatus.notArchived);
 
     Promise.resolve().then(() => this.pageInfo.pageMessage = "📃🏃‍♀️Orders");
 

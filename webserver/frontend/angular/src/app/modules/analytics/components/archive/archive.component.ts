@@ -1,78 +1,97 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { NotifierComponent } from 'src/app/core/components/notifier/notifier.component';
-import { iOrderArchive } from 'src/app/core/models/order_archive.model';
+import { MatPaginator } from '@angular/material/paginator';
 import { ApiService } from 'src/app/core/services/api.service';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { DatabaseReferencesService } from 'src/app/core/services/database-references.service';
 import { PageDataService } from 'src/app/core/services/page-data.service';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
-import { Breakpoints } from '@angular/cdk/layout';
-
+import { DatabaseReferencesService, eArchivedStatus } from 'src/app/core/services/database-references.service';
 import { DatePipe } from '@angular/common';
+import { Breakpoints } from '@angular/cdk/layout';
+import { iOrderArchive } from 'src/app/core/models/order_archive.model';
+import { Subscription } from 'rxjs';
 import { iRecipe } from 'src/app/core/models/recipe.model';
 import { iIngredient } from 'src/app/core/models/ingredient.model';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-archive',
   templateUrl: './archive.component.html',
   styleUrls: ['./archive.component.css'],
-  providers: [DatePipe]
+  providers: [DatePipe],
 })
 export class ArchiveComponent {
-  //archives data
-  displayElements: iOrderArchive[] | undefined;
-  storedArchives : iOrderArchive[] | undefined;
+  storedArchives: iOrderArchive[] | undefined;
+  pageSizeOptions: number[] = [5, 10, 25, 50];
+  pageSize: number = 10;
+  page: number = 1;
   logs: boolean = false;
-
-  //date range
-  dateRange = new FormGroup({
-    dateFrom: new FormControl(),
-    dateTo: new FormControl(),
-    //logs boolean checkbox
-    logs: new FormControl()
-  });
-
-
-
-
   recipeReference: iRecipe[] = [];
   ingredientReference: iIngredient[] = [];
 
   subscriptionRecipe: Subscription | undefined;
   subscriptionIngredient: Subscription | undefined;
-  Breakpoints=Breakpoints;
+  Breakpoints = Breakpoints;
 
-  constructor(private api: ApiService,
-    private references: DatabaseReferencesService, public pageData: PageDataService,
-    public pageInfo: PageInfoService,  public datePipe: DatePipe) {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-    Promise.resolve().then(() => this.pageInfo.pageMessage = "📦Archive");
+  dateRange = new FormGroup({
+    dateFrom: new FormControl(),
+    dateTo: new FormControl(),
+    logs: new FormControl(),
+  });
 
+  constructor(
+    private api: ApiService,
+    public pageData: PageDataService,
+    public pageInfo: PageInfoService,
+    public datePipe: DatePipe,
+    private references: DatabaseReferencesService
+  ) {
+    references.changeArchivedStatus(eArchivedStatus.notArchived);
+    Promise.resolve().then(() => (this.pageInfo.pageMessage = '📦Archive'));
     this.subscriptionRecipe = this.references.recipesReferenceObservable.subscribe((value) => {
       this.recipeReference = value!;
     });
     this.subscriptionIngredient = this.references.ingredientsReferenceObservable.subscribe((value) => {
       this.ingredientReference = value!;
     });
-
-
-    }
+  }
 
   ngOnInit(): void {
-    this.setDefaultDates();
-
-    this.getArchive();
+    this.loadData();
   }
 
-  ngAfterViewInit(): void {
+  changeDate(): void {
+    const dateFrom = this.dateRange.get('dateFrom')?.value;
+    const dateTo = this.dateRange.get('dateTo')?.value;
+    const logs = this.dateRange.get('logs')?.value;
+
+    this.loadData();
   }
 
-  getArchive(): void {
-    this.api.get('/order_archives',undefined).subscribe((response) => {
-      this.storedArchives = response.body.payload;
+  loadData(): void {
+    const url = '/order_archives';
+    let query = `page=${this.page}&limit=${this.pageSize}`;
+
+    if (this.dateRange.get('dateFrom')?.value) {
+      query += `&dateFrom=${this.datePipe.transform(
+        this.dateRange.get('dateFrom')?.value,
+        'yyyy-MM-dd'
+      )}`;
+    }
+
+    if (this.dateRange.get('dateTo')?.value) {
+      query += `&dateTo=${this.datePipe.transform(
+        this.dateRange.get('dateTo')?.value,
+        'yyyy-MM-dd'
+      )}`;
+    }
+
+    if (this.dateRange.get('logs')) {
+      this.logs = this.dateRange.get('logs')?.value;
+    }
+
+    this.api.get(url, query).subscribe((data: any) => {
+      this.storedArchives = data.body.payload.docs;
       for(let archive of this.storedArchives!){
         for(let course of archive.courses){
           for(let dish of course.dishes){
@@ -85,39 +104,14 @@ export class ArchiveComponent {
           }
         }
       }
-      
-      this.sortByDate();
-    });
-  }
-  sortByDate(): void {
-    const dateFrom = this.dateRange.value.dateFrom;
-    const dateTo = this.dateRange.value.dateTo;
-
-    if (dateFrom && dateTo) {
-      this.displayElements = this.storedArchives?.filter((archive) => {
-        const date = new Date(archive.logs_order.created_order.timestamp);
-        return date >= dateFrom && date <= dateTo;
-      });
-    }
-  }
-
-  setDefaultDates(): void {
-    const today = new Date();
-    const month = today.getMonth();
-    const year = today.getFullYear();
-
-    // Set default dates to the current month's range
-    const startDate = new Date(year, month, 1);
-    const endDate = new Date(year, month + 1, 0);
-
-    this.dateRange.patchValue({
-      dateFrom: startDate,
-      dateTo: endDate
+      this.paginator.length = data.body.payload.total;
     });
   }
 
-  changeDate(): void {
-    this.sortByDate()
-    this.logs = this.dateRange.value.logs;
+  onPageChange(event: any): void {
+    this.page = event.pageIndex + 1;
+    this.pageSize = event.pageSize;
+    this.loadData();
   }
 }
+

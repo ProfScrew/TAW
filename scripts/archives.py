@@ -78,7 +78,7 @@ def init_order_archives():
     for i in range(days):
         date = dateBegin + datetime.timedelta(days=i)
         #random number of orders
-        numbersOfOrders = random.randint(1, 5)
+        numbersOfOrders = random.randint(1, 4)
         for j in range(numbersOfOrders):
             finalPrice = 0
             #random waiter
@@ -199,7 +199,7 @@ def init_order_archives():
                     }
                 },
                 "courses": courses,
-                "charge_per_person": charge_per_person,
+                "charges_persons": charge_per_person*numberOfPeople,
                 "final_price": finalPrice
 
             }

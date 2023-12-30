@@ -1,41 +1,37 @@
 <mat-card>
-    <mat-card-header>
-        <mat-card-title>Date Range Filter</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-        <form [formGroup]="dateRange" class="responsive-form">
-            <mat-form-field appearance="fill">
-                <mat-label>Filter</mat-label>
-                <mat-date-range-input [rangePicker]="picker">
-                    <input matStartDate formControlName="dateFrom" placeholder="Start date">
-                    <input matEndDate formControlName="dateTo" placeholder="End Date">
-                </mat-date-range-input>
-                <mat-hint>DD/MM/YYYY - DD/MM/YYYY</mat-hint>
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-date-range-picker #picker></mat-date-range-picker>
-            </mat-form-field>
-            &nbsp;
-            <mat-checkbox formControlName="logs">Logs</mat-checkbox>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <button mat-raised-button color="primary" (click)="changeDate()">Apply Filter</button>
-
-        </form>
-        
-    </mat-card-content>
-</mat-card>
-
-<br>
-
-<mat-card>
-    <mat-card-header>
-        <mat-card-title>Archive</mat-card-title>
-    </mat-card-header>
-
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Date Range Filter</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="dateRange" class="responsive-form">
+                <mat-form-field appearance="fill">
+                    <mat-label>Filter</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                        <input matStartDate formControlName="dateFrom" placeholder="Start date">
+                        <input matEndDate formControlName="dateTo" placeholder="End Date">
+                    </mat-date-range-input>
+                    <mat-hint>DD/MM/YYYY - DD/MM/YYYY</mat-hint>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+                &nbsp;
+                <mat-checkbox formControlName="logs">Logs</mat-checkbox>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button mat-raised-button color="primary" (click)="changeDate()">Apply Filter</button>
+    
+            </form>
+            
+        </mat-card-content>
+    </mat-card>
+    
+    <br>
+    <mat-card>
     <mat-card-content>
 
 
         <mat-accordion multi>
-            <ng-container *ngFor="let archive of displayElements; let i = index">
+            <ng-container *ngFor="let archive of storedArchives; let i = index">
 
                 <mat-expansion-panel> <!--[expanded]="i < 3"-->
                     <mat-expansion-panel-header [ngClass]="{'auto-size': pageInfo.currentBreakpoint === Breakpoints.Handset}">
@@ -52,9 +48,10 @@
                     <strong>Guests:</strong> {{archive.guests}}<br>
                     <strong>Capacity:</strong> {{archive.capacity}}<br>
                     <strong>Waiter:</strong> {{archive.logs_order.created_order.actor.name}} {{archive.logs_order.created_order.actor.surname}}
+                    <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br></ng-container>
                     <strong>Username:</strong> {{archive.logs_order.created_order.actor.username}}<br>
                     <strong>Final Price:</strong> {{archive.final_price}}&euro;<br>
-                    <strong>Charges Persons:</strong> {{archive.charges_persons}}&euro;<br>
+                    <strong>Charges People:</strong> {{archive.charges_persons}}&euro;<br>
                     <mat-divider></mat-divider>
                     <ng-container *ngFor="let course of archive.courses; let a = index">
                         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -84,12 +81,17 @@
                             <strong>Price:</strong> {{dish?.actual_price!}}&euro;<br>
                             <ng-container *ngIf="logs">
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <ins>Started Cooking by:</ins> {{dish?.logs_status?.start_cooking?.actor?.username!}}
-                                <ins>Started Cooking at:</ins> {{datePipe.transform(dish?.logs_status?.start_cooking?.timestamp!, 'HH:mm dd-MM-yyyy')}}<br>
+                                <ins>Started Cooking by:</ins><ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</ng-container>
+                                {{dish?.logs_status?.start_cooking?.actor?.username!}}
+                                <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</ng-container>
+                                <ins>Started Cooking at:</ins><ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</ng-container>
+                                {{datePipe.transform(dish?.logs_status?.start_cooking?.timestamp!, 'HH:mm dd-MM-yyyy')}}<br>
                                 
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <ins>Finished Cooking by:</ins> {{dish?.logs_status?.finish_cooking?.actor?.username!}}
-                                <ins>Finished Cooking at:</ins> {{datePipe.transform(dish?.logs_status?.finish_cooking?.timestamp!, 'HH:mm dd-MM-yyyy')}}<br>
+                                <ins>Finished Cooking by:</ins><ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</ng-container>
+                                {{dish?.logs_status?.finish_cooking?.actor?.username!}} <ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</ng-container>
+                                <ins>Finished Cooking at:</ins><ng-container *ngIf="pageInfo.currentBreakpoint === Breakpoints.Handset"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</ng-container>
+                                {{datePipe.transform(dish?.logs_status?.finish_cooking?.timestamp!, 'HH:mm dd-MM-yyyy')}}<br>
                             </ng-container>
 
                             <ng-container *ngFor="let mod of dish?.modifications!; let c = index">
@@ -115,7 +117,13 @@
             </ng-container>
 
         </mat-accordion>
-
+        <mat-paginator
+        #paginator
+        [length]="paginator.length"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        ></mat-paginator>
 
 
 
