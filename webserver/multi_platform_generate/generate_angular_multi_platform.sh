@@ -67,10 +67,10 @@ build_electron() {
   #npm run electron
 
   # Build Electron app for Windows
-  npm run package-win
+  #npm run package-win
 
   # Build Electron app for Linux
-  #npm run package-linux
+  npm run package-linux
 
   # Build Electron app for Mac
   #npm run package-mac

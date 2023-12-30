@@ -10,7 +10,7 @@ export class SocketService {
   private socket: any;
 
   constructor() {
-    this.socket = io("https://ominous-space-rotary-phone-q4x9r9gjjwvf95j4-80.app.github.dev/",{ path: '/socket/'});
+    this.socket = io("https://sturdy-capybara-5r9464pjprpf4g7v-80.app.github.dev/",{ path: '/socket/'});
   }
 
   listen(event: string): Observable<any> {
