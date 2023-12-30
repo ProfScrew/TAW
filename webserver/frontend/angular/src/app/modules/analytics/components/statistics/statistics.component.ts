@@ -6,6 +6,7 @@ import { PageDataService } from 'src/app/core/services/page-data.service';
 import { PageInfoService } from 'src/app/core/services/page-info.service';
 import { ChartComponent } from '../chart/chart.component';
 import { ChartConfiguration } from 'chart.js/auto';
+import { DatePipe } from '@angular/common';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 import { COLORS, CHART_COLORS, transparentize, labels } from '../../models/utils.model';
@@ -14,12 +15,12 @@ import { COLORS, CHART_COLORS, transparentize, labels } from '../../models/utils
 @Component({
   selector: 'app-statistics',
   templateUrl: './statistics.component.html',
-  styleUrls: ['./statistics.component.css']
+  styleUrls: ['./statistics.component.css'],
+  providers: [DatePipe]
 })
 export class StatisticsComponent {
 
   dataForStatistics: iOrderArchive[] | undefined;
-  storedArchives: iOrderArchive[] | undefined;
 
   @ViewChild('earningsChart') private earningChart: ChartComponent | undefined;
   @ViewChild('waiterServingChart') private waiterChart: ChartComponent | undefined;
@@ -49,7 +50,7 @@ export class StatisticsComponent {
 
   constructor(private api: ApiService,
     public pageData: PageDataService,
-    public pageInfo: PageInfoService, private breakpointObserver: BreakpointObserver) {
+    public pageInfo: PageInfoService, private breakpointObserver: BreakpointObserver,public datePipe: DatePipe,) {
 
     Promise.resolve().then(() => this.pageInfo.pageMessage = "📊Statistics");
 
@@ -75,50 +76,57 @@ export class StatisticsComponent {
   }
 
   getArchive(): void {
-    //get time now
-    this.api.get('/order_archives', '').subscribe((response) => {
-      this.storedArchives = response.body.payload.docs;
-      this.sortByDate();
+
+    const url = '/order_archives';
+    let query = '';
+
+    if (this.dateRange.get('dateFrom')?.value) {
+      query += `&dateFrom=${this.datePipe.transform(
+        this.dateRange.get('dateFrom')?.value,
+        'yyyy-MM-dd'
+      )}`;
+    }
+
+    if (this.dateRange.get('dateTo')?.value) {
+      query += `&dateTo=${this.datePipe.transform(
+        this.dateRange.get('dateTo')?.value,
+        'yyyy-MM-dd'
+      )}`;
+    }
+
+
+    this.api.get(url, query).subscribe((data: any) => {
+      this.dataForStatistics = data.body.payload.docs;
+      this.calculateStatistics();
     });
   }
-  sortByDate(): void {
-    const dateFrom = this.dateRange.value.dateFrom;
-    const dateTo = this.dateRange.value.dateTo;
 
-    if (dateFrom && dateTo) {
-      this.dataForStatistics = this.storedArchives?.filter((archive) => {
-        const date = new Date(archive.logs_order.created_order.timestamp);
-        return date >= dateFrom && date <= dateTo;
-      });
-    }
-    this.numberDays = this.dateRange.value.dateTo.getTime() - this.dateRange.value.dateFrom.getTime();
-    this.numberDays = this.numberDays / (1000 * 3600 * 24);
-    this.calculateStatistics();
-  }
 
   setDefaultDates(): void {
     const today = new Date();
-    const month = today.getMonth();
+    const month = today.toLocaleString('default', { month: 'long' }); // Get the full month name
     const year = today.getFullYear();
-
+  
     // Set default dates to the current month's range
-    const startDate = new Date(year, month, 1);
-    const endDate = new Date(year, month + 1, 0);
-
+    const startDate = new Date(year, today.getMonth(), 1);
+    const endDate = new Date(year, today.getMonth() + 1, 0);
+  
     this.dateRange.patchValue({
       dateFrom: startDate,
       dateTo: endDate
     });
-
-    this.numberDays = this.dateRange.value.dateTo.getTime() - this.dateRange.value.dateFrom.getTime();
+  
+    this.numberDays = this.dateRange.value.dateTo.getTime() - this.dateRange.value.dateFrom.getTime() + 1;
     this.numberDays = this.numberDays / (1000 * 3600 * 24);
 
   }
 
   changeDate(): void {
-    this.sortByDate();
-    this.calculateStatistics();
+    this.numberDays = this.dateRange.value.dateTo.getTime() - this.dateRange.value.dateFrom.getTime()+1;
+    this.numberDays = this.numberDays / (1000 * 3600 * 24);
+    this.getArchive();
   }
+
   calculateStatistics(): void {
     console.log("Calculating statistics");
 
@@ -205,38 +213,37 @@ export class StatisticsComponent {
     let earningsPerDish: number[] = [];
     let earningsPerCourse: number[] = [];
     let customers: number[] = [];
-
+  
     if (this.dataForStatistics) {
-
       let temporaryDay = new Date(this.dateRange.value.dateFrom);
       for (let i = 0; i < this.numberDays; i++) {
-
-
-
+        const dayAndMonth = this.formatDayAndMonth(temporaryDay);
+        labels.push(dayAndMonth);
+  
         let dayArchive: iOrderArchive[] = [];
         this.dataForStatistics.forEach((archive) => {
-
-          if (new Date(archive.logs_order.created_order.timestamp).getFullYear() === temporaryDay.getFullYear() &&
+          if (
+            new Date(archive.logs_order.created_order.timestamp).getFullYear() === temporaryDay.getFullYear() &&
             new Date(archive.logs_order.created_order.timestamp).getMonth() === temporaryDay.getMonth() &&
-            new Date(archive.logs_order.created_order.timestamp).getDate() == temporaryDay.getDate()) {
+            new Date(archive.logs_order.created_order.timestamp).getDate() == temporaryDay.getDate()
+          ) {
             dayArchive.push(archive);
           }
         });
+  
         if (dayArchive.length > 0) {
           let totalEarningPerDay = 0;
           let totalEarningPerPerson = 0;
           let totalEarningPerDish = 0;
-
           let customersPerDay = 0;
-
           let numberOfDishes = 0;
           let numberOfCourses = 0;
-
-
+  
           dayArchive.forEach((archive) => {
             totalEarningPerDay += archive.final_price;
             totalEarningPerPerson += archive.charges_persons;
             customersPerDay += archive.guests;
+  
             archive.courses.forEach((course) => {
               course.dishes.forEach((dish) => {
                 totalEarningPerDish += dish.actual_price;
@@ -245,28 +252,25 @@ export class StatisticsComponent {
               numberOfCourses++;
             });
           });
-          labels.push(temporaryDay.getDate().toString());
+  
           earningsPerDay.push(parseFloat((totalEarningPerDay / dayArchive.length).toFixed(2)));
           earningsPerPerson.push(parseFloat((totalEarningPerPerson / dayArchive.length).toFixed(2)));
           earningsPerDish.push(parseFloat((totalEarningPerDish / numberOfDishes).toFixed(2)));
           earningsPerCourse.push(parseFloat((totalEarningPerDish / numberOfCourses).toFixed(2)));
           customers.push(customersPerDay);
-        }
-        else {
-          labels.push(temporaryDay.getDate().toString());
+        } else {
+          // If no data for the day, set values to 0
           earningsPerDay.push(0);
           earningsPerPerson.push(0);
           earningsPerDish.push(0);
           earningsPerCourse.push(0);
           customers.push(0);
-
         }
-
-
+  
         temporaryDay.setDate(temporaryDay.getDate() + 1);
       }
     }
-
+  
     this.earnings = {
       label: labels,
       chargesPerOrder: earningsPerDay,
@@ -274,16 +278,14 @@ export class StatisticsComponent {
       chargesPerDish: earningsPerDish,
       chargesPerCourse: earningsPerCourse,
       customers: customers
-    }
-
-
-
+    };
   }
+  
 
-  formatDayAndMonth(date : Date) {
+  formatDayAndMonth(date: Date) {
     const day = date.getDate();
-    const month = date.getMonth() + 1;
-    return `${day}/${month}`;
+    const month = date.toLocaleString('default', { month: 'long' }); // Get the full month name
+    return `${day} ${month}`;
   }
 
   initGraphs(): void {

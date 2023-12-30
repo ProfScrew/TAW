@@ -96,12 +96,17 @@ order_archives.get("/", authorize, async (req, res, next) => {
         const dateTo = req.query.dateTo as string;
       
         const query: any = id ? { _id: id } : {};
-      
+
+        let dateTocorrect = new Date(dateTo); // Replace this line with your actual Date object
+
+        // Add one day to the date
+        dateTocorrect.setDate(dateTocorrect.getDate() + 1);
+
         // Add date range to the query if provided
         if (dateFrom && dateTo) {
           query['logs_order.created_order.timestamp'] = {
             $gte: new Date(dateFrom),
-            $lte: new Date(dateTo),
+            $lte: dateTocorrect,
           };
         }
   
