@@ -103,7 +103,7 @@ export class MasterContainerComponent {
         .subscribe((data) => {
           if (data.message == 'Added') {
             this.counterCourses++;
-            this.notifier.showInfo(200, 'New Course Ready to be served','Message for Waiters',{timeOut: 5000});
+            this.notifier.showInfo(200, 'New Course Ready to be served','Message for Waiters',{timeOut: 5000,preventDuplicates:true});
           } else {
             this.counterCourses--;
           }
