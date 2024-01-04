@@ -13,5 +13,5 @@ export const UserAction = {
         name:  {type: String, required: true},
         surname:  {type: String, required: true},
     },
-    timestamp: {type: Date, required: true}
+    timestamp: {type: Date, required: true,index: true}
 }

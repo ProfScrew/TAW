@@ -39,6 +39,7 @@ build_cordova() {
   # Set Android SDK path
   export ANDROID_HOME=/home/stefano/Android/Sdk
   export ANDROID_SDK_ROOT=/home/stefano/Android/Sdk
+  
   cordova build
 }
 
@@ -63,9 +64,10 @@ build_electron() {
   cd $destination_electron
   npm install
 
-  #Run Electron app for development
+  #Uncomment for run Electron app in development mode
   #npm run electron
 
+  # Uncomment the following lines to build Electron app for production for the platform you want
   # Build Electron app for Windows
   #npm run package-win
 

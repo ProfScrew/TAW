@@ -13,6 +13,7 @@ scripts = [
     "roomtables.py",
     "restaurant_information.py",
     "users.py",
+    "archives.py",
 ]
 
 # Get the current directory

@@ -40,6 +40,7 @@ services:
          - ./db/mongodb:/data/db
         networks:
             - Internal
+            - External
     redis:
         container_name: redis
         image: redis:7.2.0-alpine
