@@ -50,6 +50,8 @@ Here is the table of the users generate by the script(you can also find them in 
 
 Note: that if you want to use all the features in one account you can use the 'admin' account
 
+Security-Note: If you want to limit the number of the open ports you can edit the docker-compose file and remove from backend, frontend and mongodb container the External Network, in this way you can only access to these container from the reverse-proxy (IMPORTANT: The first time you run docker-compose up you must hold external network because the container need to download their dependency after that you can remove)
+
 # Generate Cordova and Electron Application
 For build and generate starting from angular app the cordova and electron app you have to see the README.md in the folder multi_platform_generate
 
