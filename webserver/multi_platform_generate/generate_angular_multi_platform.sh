@@ -69,13 +69,13 @@ build_electron() {
 
   # Uncomment the following lines to build Electron app for production for the platform you want
   # Build Electron app for Windows
-  #npm run package-win
+  npm run package-win
 
   # Build Electron app for Linux
   npm run package-linux
 
   # Build Electron app for Mac
-  #npm run package-mac
+  npm run package-mac
 }
 
 # Parse command line options
