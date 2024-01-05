@@ -13,7 +13,7 @@ Note: START THE SCRIPTS AFTER THE CONTAINERS ARE ALL UP
 
 To start the scripts you will have to navigate to the script folder
 
-``` cd script```
+``` cd scripts```
 
 Create a virtual environment for the python scripts:
 
