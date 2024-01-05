@@ -15,6 +15,11 @@ To start the scripts you will have to navigate to the script folder
 
 ``` cd script```
 
+Create a virtual environment for the python scripts:
+
+``` python3 -m venv venv ```
+``` source venv/bin/activate ```
+
 Pay attention to the requirements of the python script:
 
 ``` pip3 install -r requirements.txt ```

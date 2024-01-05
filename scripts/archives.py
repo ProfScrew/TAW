@@ -31,8 +31,8 @@ productionSurnames = []
 charge_per_person = 3
 
 
-dateBegin = datetime.datetime(2023, 1, 1, 0, 0, 0)
-dateEnd = datetime.datetime(2023, 12, 31, 23, 59, 59)
+dateBegin = datetime.datetime(2024, 1, 1, 0, 0, 0)
+dateEnd = datetime.datetime(2024, 12, 31, 23, 59, 59)
 
 
 
