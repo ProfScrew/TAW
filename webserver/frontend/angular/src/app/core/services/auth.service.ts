@@ -61,6 +61,10 @@ export class AuthService {
       tap((response: any) => {
         const token = response.body.payload as string;
         this.set_token(token, remember);
+      }),
+      catchError((error: any) => {
+        //console.error('Error in login request:', error);
+        return throwError(error);
       })
     );
   }
