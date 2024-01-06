@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
         },
         error: (err) => {
           //console.log(err);
-          if(err.status==0|| err.status==404 && err.error.message=="Server is down"){
+          if(err.status==0|| err.status==404 && err.error.message=="Server is down"||err.status==400){
             this.notifier.showError(404,"Error: Server is down");
           }else{
             this.notifier.showError(err.status, err.error.message);
