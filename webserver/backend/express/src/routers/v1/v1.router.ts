@@ -15,6 +15,7 @@ import restaurant_information from "./routes/restaurant_information.route";
 import orders from "./routes/order.route";
 import dishes from "./routes/dish.route";
 import order_archives from "./routes/order_archive.route";
+import utility from "./routes/utility.route";
 
 const v1 = Router();
 colors.enable();
@@ -30,6 +31,7 @@ v1.use('/tables', tables);
 v1.use('/restaurant_informations', restaurant_information);
 v1.use('/dishes', dishes);
 v1.use('/order_archives', order_archives);
+v1.use('/utility', utility);
 
 //Swagger Docs 📚
 v1.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
