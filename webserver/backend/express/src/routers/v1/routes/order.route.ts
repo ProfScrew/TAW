@@ -218,7 +218,6 @@ orders.put("/:id/action/:choice", authorize, (req, res, next) => {
     }
 
     var orderData = req.body as Partial<iOrder>;
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAA", orderData)
     const requesterAction: iUserAction = {
         actor: {
             username: requester.username,

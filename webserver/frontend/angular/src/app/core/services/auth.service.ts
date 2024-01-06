@@ -56,7 +56,7 @@ export class AuthService {
       }),
       observe: 'response' as 'response',
     };
-    console.log(options);
+    //console.log(options);
     return this.http.post(environment.URL_BACKEND + environment.VERSION + '/users/login/', {}, options).pipe(
       tap((response: any) => {
         const token = response.body.payload as string;

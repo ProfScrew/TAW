@@ -128,7 +128,7 @@ export class StatisticsComponent {
   }
 
   calculateStatistics(): void {
-    console.log("Calculating statistics");
+    //console.log("Calculating statistics");
 
     //Calculate average earning per day
     this.calculateArgEarningPerDay();
@@ -139,7 +139,7 @@ export class StatisticsComponent {
   }
 
   calculateWaiterEfficiency(): void {
-    console.log("Calculating waiter efficiency");
+    //console.log("Calculating waiter efficiency");
     let labels: string[] = [];
     let servings: number[] = [];
     let orders: number[] = [];
@@ -181,7 +181,7 @@ export class StatisticsComponent {
 
   }
   calculateProductionEfficiency(): void {
-    console.log("Calculating production efficiency");
+    //console.log("Calculating production efficiency");
     let labels: string[] = [];
     let cookings: number[] = [];
 
@@ -206,7 +206,7 @@ export class StatisticsComponent {
     }
   }
   calculateArgEarningPerDay(): void {
-    console.log("Calculating average earning per day");
+    //console.log("Calculating average earning per day");
     let labels: string[] = [];
     let earningsPerDay: number[] = [];
     let earningsPerPerson: number[] = [];

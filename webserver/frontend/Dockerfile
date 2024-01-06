@@ -1,4 +1,3 @@
-FROM node:latest as build
+FROM node:latest AS frontend
 WORKDIR /app/frontend
-CMD ["yarn", "setup-dev"]
-EXPOSE 4200
+CMD ["yarn", "setup-prod"]

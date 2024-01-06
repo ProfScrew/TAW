@@ -31,7 +31,7 @@ export const TableSchema = new Schema<iTable>({
 
 export function verifyTableData(table: iTable): boolean {
     if(! table.name||  table.name==='') return false;
-    console.log( table.capacity)
+    //console.log( table.capacity)
     if( table.capacity===undefined ||  table.capacity < 0) return false;
     if(! table.room) return false;
     

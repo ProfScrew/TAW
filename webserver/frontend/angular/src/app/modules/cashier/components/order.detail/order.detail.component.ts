@@ -95,7 +95,7 @@ export class OrderDetailComponent {
     */
     this.api.post('/order_archives/'+ this.receivedOrder?._id,{}).subscribe((response) => {
       if(response.status == 200){
-        console.log("Order Archived", response);
+        //console.log("Order Archived", response);
         this.notifier.showSuccess(response.status, response.body.message);
         this.router.navigate(['core/cashier/cashout']);
       }

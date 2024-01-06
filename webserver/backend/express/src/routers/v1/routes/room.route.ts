@@ -108,7 +108,7 @@ rooms.post("/", authorize, async (req, res, next) => {
         io.emit(eListenChannels.rooms, { message: 'Rooms list updated!' });
         return next(cResponse.genericMessage(eHttpCode.CREATED, data));
     }).catch((err) => {
-        console.log(err.message);
+        //console.log(err.message);
         if (err.code === 11000) {
             return next(cResponse.error(eHttpCode.BAD_REQUEST, "Room already exists"));
         }
@@ -156,7 +156,6 @@ rooms.post("/", authorize, async (req, res, next) => {
 rooms.put("/:id", authorize, async (req, res, next) => {
     const requester = (req.user as iTokenData);
     const id = req.params.id as string;
-    console.log(id);
     if (!requester.role.admin) {
         return next(cResponse.genericMessage(eHttpCode.UNAUTHORIZED));
     }

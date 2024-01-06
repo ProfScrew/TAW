@@ -3,6 +3,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import cors from 'cors'
 import { PORT_BACKEND, URL_DATABASE, PORT_DATABASE, NAME_DATABASE } from './configs/app.config'
+import helmet from "helmet";
 
 import v1 from './routers/v1/v1.router'
 
@@ -20,6 +21,7 @@ export const io = new IoServer(httpServer, {
 });
 
 server.use(cors());
+server.use(helmet());
 server.use(bodyParser.urlencoded({ extended: true }))
 server.use(express.json())
 server.use('/v1', v1)

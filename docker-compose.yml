@@ -15,38 +15,31 @@ services:
         networks:
             - Internal
             - External
-        restart: unless-stopped
+        restart: always
 
-    frontend:
-        container_name: frontend
-        build: webserver/frontend/
-        image: frontend
-        ports:
-        - "4200:4200"
-        volumes:
-        - ./webserver/frontend/angular/:/app/frontend
-        depends_on:
-            - backend
-        networks:
-            - Internal
-            - External
-        restart: unless-stopped
+    # frontend_build:
+    #     container_name: frontend
+    #     build: webserver/frontend/
+    #     image: frontend
+    #     volumes:
+    #     - ./webserver/frontend/angular/:/app/frontend
+    #     networks:
+    #         - External
 
     mongodb:
         container_name: mongodb
         image: mongo
-        restart: always
         ports:
         - "27017:27017"
         volumes:
          - ./db/mongodb:/data/db
         networks:
             - Internal
-            - External
+        restart: always
+
     redis:
         container_name: redis
         image: redis:7.2.0-alpine
-        restart: always
         ports:
         - '6379:6379'
         command: redis-server --save 20 1 --loglevel warning
@@ -54,6 +47,7 @@ services:
         - ./db/redis:/data/
         networks:
             - Internal
+        restart: always
             
     reverseproxy:
         build: reverseproxy/
@@ -66,11 +60,11 @@ services:
             - "80:80"
             - "443:443"
         volumes:
-        - ./reverseproxy/contents/certificates:/etc/nginx/ssl
+        - ./webserver/frontend/angular/dist/angular:/usr/share/nginx/html
         depends_on:
-            - frontend
+            # - frontend_build
             - backend
-        restart: unless-stopped          
+        restart: always          
 
 
 networks:

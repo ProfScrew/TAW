@@ -36,11 +36,11 @@ export class LoginComponent implements OnInit {
       this.auth.login(this.username, this.password, this.rememberMe).subscribe({
         next: (response:any) => {
           this.router.navigate(['/core']);
-          console.log(response);
+          //console.log(response);
           this.notifier.showSuccess(response.status, response.body.message);
         },
         error: (err) => {
-          console.log(err);
+          //console.log(err);
           if(err.status==0|| err.status==404 && err.error.message=="Server is down"){
             this.notifier.showError(404,"Error: Server is down");
           }else{

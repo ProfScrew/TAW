@@ -4,8 +4,9 @@
   "scripts": {
     "ng": "ng",
     "setup-dev": "yarn install && yarn start",
+    "setup-prod": "yarn install && yarn build",
     "start": "npx ng serve --open --host 0.0.0.0 --poll=500 --disable-host-check",
-    "build": "npx ng build --prod demo",
+    "build": "npx ng build --optimization",
     "test": "npx ng test --browsers=ChromeHeadless",
     "lint": "npx ng lint",
     "e2e": "npx ng e2e"

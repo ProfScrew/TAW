@@ -78,7 +78,7 @@ export class MasterContainerComponent {
       Breakpoints.Web,
     ])
     .pipe(
-      tap((value) => console.log(value)),
+      //tap((value) => console.log(value)),
       distinctUntilChanged()
     );
 
