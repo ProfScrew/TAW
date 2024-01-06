@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
-import { tap } from 'rxjs/operators';
-import { Observable} from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { throwError,Observable } from 'rxjs';
 import jwt_decode from "jwt-decode";
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
@@ -61,6 +61,10 @@ export class AuthService {
       tap((response: any) => {
         const token = response.body.payload as string;
         this.set_token(token, remember);
+      }),
+      catchError((error: any) => {
+        //console.error('Error in login request:', error);
+        return throwError(error);
       })
     );
   }
