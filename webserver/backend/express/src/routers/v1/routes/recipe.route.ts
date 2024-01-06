@@ -220,7 +220,7 @@ recipes.put('/:id', authorize, async (req, res, next) => {
                 io.emit(eListenChannels.recipes, { message: 'Recipes list updated!' });
                 return next(cResponse.genericMessage(eHttpCode.OK, data));
             }).catch((err) => {
-                console.log(err)
+                //console.log(err)
                 return next(cResponse.serverError(eHttpCode.INTERNAL_SERVER_ERROR, '3 DB error: ' + err));
             });
         }).catch((err) => {

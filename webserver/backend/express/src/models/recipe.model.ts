@@ -31,7 +31,7 @@ const RecipeSchema = new Schema<iRecipe>({
 });
 
 export function verifyRecipeData(recipe: iRecipe): boolean {
-    console.log(recipe);
+    //console.log(recipe);
     if (!recipe.name || recipe.name === '') return false;
     if (!recipe.ingredients || recipe.ingredients.length === 0) return false;
     if (!recipe.base_price || recipe.base_price < 0) return false;

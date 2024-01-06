@@ -24,7 +24,8 @@
     "redis": "^4.6.10",
     "socket.io": "^4.6.1",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "helmet": "^4.6.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.11",

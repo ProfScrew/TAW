@@ -47,8 +47,6 @@ v1.get("/docs.json", (req: Request, res: Response) => {
 });
 
 v1.get('/', (req: Request, res: Response) => {
-    console.log('Redirecting to /v1/docs'.green);
-
     res.redirect('/v1/docs');
 });
 
