@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
-import { tap } from 'rxjs/operators';
-import { Observable} from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { throwError,Observable } from 'rxjs';
 import jwt_decode from "jwt-decode";
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
