@@ -39,13 +39,13 @@ export class LoginComponent implements OnInit {
           //console.log(response);
           this.notifier.showSuccess(response.status, response.body.message);
         },
-        error: (err) => {
+        error: (err:any) => {
           //console.log(err);
-          if(err.status==0|| err.status==404 && err.error.message=="Server is down"||err.status==400){
-            this.notifier.showError(404,"Error: Server is down");
-          }else{
+          if(err!=undefined && err.status!=undefined && err.error!=undefined && err.error.message!=undefined){
             this.notifier.showError(err.status, err.error.message);
-          }
+          }else{
+            this.notifier.showError(404,"Error: Server is down");
+          }  
         }
       });
     }
