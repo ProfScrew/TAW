@@ -61,7 +61,7 @@ services:
             - "80:80"
             - "443:443"
         volumes:
-        - ./webserver/frontend/angular/dist/angular:/usr/share/nginx/html
+        - ./reverseproxy/contents/certificates:/etc/nginx/ssl
         depends_on:
             - frontend
             - backend
