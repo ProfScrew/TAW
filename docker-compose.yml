@@ -13,18 +13,19 @@ services:
             - mongodb
             - redis
         networks:
-            - Internal
             - External
+            - Internal
         restart: always
 
-    # frontend_build:
-    #     container_name: frontend
-    #     build: webserver/frontend/
-    #     image: frontend
-    #     volumes:
-    #     - ./webserver/frontend/angular/:/app/frontend
-    #     networks:
-    #         - External
+    frontend:
+        container_name: frontend
+        build: webserver/frontend/
+        image: frontend
+        volumes:
+        - ./webserver/frontend/angular/:/app/frontend
+        networks:
+            - External
+            - Internal
 
     mongodb:
         container_name: mongodb
@@ -62,7 +63,7 @@ services:
         volumes:
         - ./webserver/frontend/angular/dist/angular:/usr/share/nginx/html
         depends_on:
-            # - frontend_build
+            - frontend
             - backend
         restart: always          
 
