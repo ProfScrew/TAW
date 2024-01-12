@@ -1,5 +1,5 @@
-# TAW
-## Setup Guide:
+# CookHub Project TAW 2022/23
+## Setup Guide Development Branch:
 In order to run this application you will only need docker and docker-compose that you can install from the major repositories.
 
 After you have installed docker and docker-compose you can type the following comand into the terminal for start the project(in the project folder):
@@ -49,7 +49,7 @@ Here is the table of the users generate by the script(you can also find them in 
 | ChandlerCashier| password     | Chandler  | Bing         | cashier    |
 | RossAnalitics  | password     | Ross      | Geller       | analitics  |
 
-**Note**: If you want to use all the features in one account you can use the 'admin' account
+**Note**: If you want to use all the features in one account you can use the 'admin' account, that have all the role.
 
 **Possible-Erros**: Rarely happen when we syncronize the volume of the database with the volume in github that corrupted the database and mongo exit with an error code, in this case you can solve the problem by deleting the volume of the database and restart the project, remember after that to start the populate data script.
 
@@ -59,4 +59,3 @@ Here is the table of the users generate by the script(you can also find them in 
 - docker-compose down # stop all container
 - docker-compose down --rmi all -v --remove-orphans # stop all container and remove images
 - docker exec -it <container-name-or-id> sh
-
