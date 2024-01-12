@@ -1,1 +1,1 @@
-## Output Directory For The Builded Electron App
+## Output Directory For The Built Electron App
