@@ -105,8 +105,8 @@ order_archives.get("/", authorize, async (req, res, next) => {
         // Add date range to the query if provided
         if (dateFrom && dateTo) {
           query['logs_order.created_order.timestamp'] = {
-            $gte: new Date(dateFrom),
-            $lte: dateTocorrect,
+            $gte: new Date(dateFrom).toISOString(),
+            $lte: dateTocorrect.toISOString(),
           };
         }
   
