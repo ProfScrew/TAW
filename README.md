@@ -9,7 +9,7 @@ After you have installed docker and docker-compose you can type the following co
 Also it is essential to have data for the database, so we have provided simple python
 scripts to fill the database with information (if you not have it, please install python3).
 
-Note: START THE SCRIPTS AFTER THE CONTAINERS ARE ALL UP
+**Note**: START THE SCRIPTS AFTER THE CONTAINERS ARE ALL UP
 
 To start the scripts you will have to navigate to the script folder
 
