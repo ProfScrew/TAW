@@ -13,7 +13,6 @@ services:
             - mongodb
             - redis
         networks:
-            - External
             - Internal
         restart: always
 
@@ -26,7 +25,6 @@ services:
         volumes:
         - ./webserver/frontend/angular/:/app/frontend
         networks:
-            - External
             - Internal
 
     mongodb:
