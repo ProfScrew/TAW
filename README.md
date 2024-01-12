@@ -1,13 +1,13 @@
 # TAW
 ## Setup Guide:
-In order to run this application you will only need the docker.
+In order to run this application you will only need docker and docker-compose that you can install from the major repositories.
 
-By typing the following comand into the terminal(in the project folder):
+After you have installed docker and docker-compose you can type the following comand into the terminal for start the project(in the project folder):
 
 ``` docker-compose up ```
 
 Also it is essential to have data for the database, so we have provided simple python
-scripts to fill the database with information.
+scripts to fill the database with information (if you not have it, please install python3).
 
 Note: START THE SCRIPTS AFTER THE CONTAINERS ARE ALL UP
 
@@ -48,14 +48,12 @@ Here is the table of the users generate by the script(you can also find them in 
 | ChandlerCashier| password     | Chandler  | Bing         | cashier    |
 | RossAnalitics  | password     | Ross      | Geller       | analitics  |
 
-Note: that if you want to use all the features in one account you can use the 'admin' account
+**Note**: that if you want to use all the features in one account you can use the 'admin' account
 
-Security-Note: If you want to limit the number of the open ports you can edit the docker-compose file and remove from backend, frontend and mongodb container the External Network, in this way you can only access to these container from the reverse-proxy (IMPORTANT: The first time you run docker-compose up you must hold external network because the container need to download their dependency after that you can remove)
+**Possible-Erros**: Rarely happen when we syncronize the volume of the database with the volume in github that corrupted the database and mongo exit with an error code, in this case you can solve the problem by deleting the volume of the database and restart the project, remember after that to start the populate data script.
 
-# Generate Cordova and Electron Application
-For build and generate starting from angular app the cordova and electron app you have to see the README.md in the folder multi_platform_generate
 
-# Useful commands
+# Useful commands for docker and docker-compose
 - docker-compose up # start all container with log
 - docker-compose down # stop all container
 - docker-compose down --rmi all -v --remove-orphans # stop all container and remove images
