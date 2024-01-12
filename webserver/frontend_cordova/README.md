@@ -1,1 +1,1 @@
-## Output Directory For The Builded Cordova App
+## Output Directory For The Built Cordova App
