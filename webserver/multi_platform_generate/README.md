@@ -12,4 +12,4 @@ This script will generate an angular app for electron and cordova.
 
 - Launch the script with ```./generate_angular_multi_platform [--electron] [--cordova] [--all] [--clean] ```
 
-**After the generation of the app you will find where the build app is located in the terminal output!!**
+**After the generation of the app you will find where the built app is located in the terminal output!!**
