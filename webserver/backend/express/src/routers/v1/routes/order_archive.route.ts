@@ -94,7 +94,7 @@ order_archives.get("/", authorize, async (req, res, next) => {
         // Date range
         const dateFrom = req.query.dateFrom as string;
         const dateTo = req.query.dateTo as string;
-      
+        
         const query: any = id ? { _id: id } : {};
 
         let dateTocorrect = new Date(dateTo); // Replace this line with your actual Date object
@@ -105,11 +105,12 @@ order_archives.get("/", authorize, async (req, res, next) => {
         // Add date range to the query if provided
         if (dateFrom && dateTo) {
           query['logs_order.created_order.timestamp'] = {
-            $gte: new Date(dateFrom).toISOString(),
-            $lte: dateTocorrect.toISOString(),
+            $gte: new Date(dateFrom + "T00:00:00.000Z").toISOString(),
+            $lte: new Date(dateTo + "T23:59:59.999Z").toISOString(),
           };
         }
   
+
         const totalItems = await OrderArchive.countDocuments(query);
   
         // sort by date descending
