@@ -4,7 +4,6 @@ import pymongo
 from bson import ObjectId
 import datetime
 
-
 # MongoDB connection details
 client = pymongo.MongoClient("localhost", 27017)
 db = client["CookHub"]
@@ -13,7 +12,6 @@ collectionUsers = db["Users"]
 collectionCategories = db["Categories"]
 collectionRecipes = db["Recipes"]
 collectionTables = db["Tables"]
-
 
 recipesIds = []
 recipesPrices = []
@@ -30,10 +28,8 @@ productionSurnames = []
 
 charge_per_person = 3
 
-
 dateBegin = datetime.datetime(2024, 1, 1, 0, 0, 0)
 dateEnd = datetime.datetime(2024, 12, 31, 23, 59, 59)
-
 
 
 def get_tables():
@@ -42,7 +38,6 @@ def get_tables():
         table["_id"] = str(table["_id"])
         tablesNames.append(table["name"])
         tablesCapacity.append(table["capacity"])
-
 
 
 def get_recipes():
@@ -68,35 +63,37 @@ def get_user():
                 productionNames.append(u["name"])
                 productionSurnames.append(u["surname"])
 
-        
+
 def init_order_archives():
-
-    #for each day between the range
-
+    # for each day between the range
     days = (dateEnd - dateBegin).days + 1
 
     for i in range(days):
         date = dateBegin + datetime.timedelta(days=i)
-        #random number of orders
+        # random number of orders
         numbersOfOrders = random.randint(1, 4)
         for j in range(numbersOfOrders):
             finalPrice = 0
-            #random waiter
+            # random waiter
             choiseWaiter = random.randint(0, len(waitersUsernames) - 1)
             choosenWaiter = waitersUsernames[choiseWaiter]
             choosenWaiterName = waiterNames[choiseWaiter]
             choosenWaiterSurname = waiterSurnames[choiseWaiter]
-            #random table
+            # random table
             choiseTable = random.randint(0, len(tablesNames) - 1)
             chosenTable = tablesNames[choiseTable]
             choosenCapacity = tablesCapacity[choiseTable]
-            #random number of people
+            # random number of people
             numberOfPeople = random.randint(1, choosenCapacity)
 
-            #date of the order
-            date = date + datetime.timedelta(hours=random.randint(0, 23), minutes=random.randint(0, 59), seconds=random.randint(0, 59))
+            # date of the order
+            date = date + datetime.timedelta(
+                hours=random.randint(0, 23),
+                minutes=random.randint(0, 59),
+                seconds=random.randint(0, 59),
+            )
 
-            #course
+            # course
             numberOfCourses = random.randint(1, 5)
             courses = []
             for k in range(numberOfCourses):
@@ -107,24 +104,35 @@ def init_order_archives():
                     chosenDish = recipesIds[choiceDishNumber]
                     chosenDishPrice = recipesPrices[choiceDishNumber]
 
-                    choosenProductionNumberDish = random.randint(0, len(productionUsernames) - 1)
-                    choosenProductionDish = productionUsernames[choosenProductionNumberDish]
-                    choosenProductionNameDish = productionNames[choosenProductionNumberDish]
-                    choosenProductionSurnameDish = productionSurnames[choosenProductionNumberDish]
-                    
-                    tempDishDate = date + datetime.timedelta(minutes=random.randint(0, 59), seconds=random.randint(0, 59))
+                    choosenProductionNumberDish = random.randint(
+                        0, len(productionUsernames) - 1
+                    )
+                    choosenProductionDish = productionUsernames[
+                        choosenProductionNumberDish
+                    ]
+                    choosenProductionNameDish = productionNames[
+                        choosenProductionNumberDish
+                    ]
+                    choosenProductionSurnameDish = productionSurnames[
+                        choosenProductionNumberDish
+                    ]
+
+                    tempDishDate = date + datetime.timedelta(
+                        minutes=random.randint(0, 59),
+                        seconds=random.randint(0, 59),
+                    )
                     tempDish = {
                         "_id": ObjectId(),
                         "recipe": chosenDish,
                         "actual_price": chosenDishPrice,
-                        "logs_status":{
+                        "logs_status": {
                             "start_cooking": {
                                 "actor": {
                                     "username": choosenProductionDish,
                                     "name": choosenProductionNameDish,
                                     "surname": choosenProductionSurnameDish,
                                 },
-                                "timestamp":  tempDishDate,
+                                "timestamp": tempDishDate.isoformat(),
                             },
                             "finish_cooking": {
                                 "actor": {
@@ -132,7 +140,13 @@ def init_order_archives():
                                     "name": choosenProductionNameDish,
                                     "surname": choosenProductionSurnameDish,
                                 },
-                                "timestamp": tempDishDate + datetime.timedelta(minutes=random.randint(0, 59), seconds=random.randint(0, 59)),
+                                "timestamp": (
+                                    tempDishDate
+                                    + datetime.timedelta(
+                                        minutes=random.randint(0, 59),
+                                        seconds=random.randint(0, 59),
+                                    )
+                                ).isoformat(),
                             },
                         },
                         "modifications": [],
@@ -140,13 +154,19 @@ def init_order_archives():
                     dishes.append(tempDish)
                     finalPrice += chosenDishPrice
 
-                
-                choosenProductionNumber = random.randint(0, len(productionUsernames) - 1)
+                choosenProductionNumber = random.randint(
+                    0, len(productionUsernames) - 1
+                )
                 choosenProduction = productionUsernames[choosenProductionNumber]
                 choosenProductionName = productionNames[choosenProductionNumber]
-                choosenProductionSurname = productionSurnames[choosenProductionNumber]
+                choosenProductionSurname = productionSurnames[
+                    choosenProductionNumber
+                ]
 
-                dateReadyCourse = date + datetime.timedelta(minutes=random.randint(0, 59), seconds=random.randint(0, 59))
+                dateReadyCourse = date + datetime.timedelta(
+                    minutes=random.randint(0, 59),
+                    seconds=random.randint(0, 59),
+                )
 
                 tempCourse = {
                     "_id": ObjectId(),
@@ -157,7 +177,7 @@ def init_order_archives():
                                 "name": choosenWaiterName,
                                 "surname": choosenWaiterSurname,
                             },
-                            "timestamp": date,
+                            "timestamp": date.isoformat(),
                         },
                         "served_course": {
                             "actor": {
@@ -165,24 +185,29 @@ def init_order_archives():
                                 "name": choosenWaiterName,
                                 "surname": choosenWaiterSurname,
                             },
-                            "timestamp": dateReadyCourse + datetime.timedelta(minutes=random.randint(0, 10), seconds=random.randint(0, 59)),
+                            "timestamp": (
+                                dateReadyCourse
+                                + datetime.timedelta(
+                                    minutes=random.randint(0, 10),
+                                    seconds=random.randint(0, 59),
+                                )
+                            ).isoformat(),
                         },
-                        "ready_course": {   
+                        "ready_course": {
                             "actor": {
                                 "username": choosenProduction,
                                 "name": choosenProductionName,
                                 "surname": choosenProductionSurname,
                             },
-                            "timestamp": dateReadyCourse,
+                            "timestamp": dateReadyCourse.isoformat(),
                         },
                     },
                     "dishes": dishes,
                 }
                 courses.append(tempCourse)
 
-
             finalPrice = finalPrice + charge_per_person * numberOfPeople
-            #insert into db
+            # insert into db
             record = {
                 "_id": ObjectId(),
                 "tables": [chosenTable],
@@ -195,18 +220,24 @@ def init_order_archives():
                             "name": choosenWaiterName,
                             "surname": choosenWaiterSurname,
                         },
-                        "timestamp": date,
+                        "timestamp": date.isoformat(),
                     }
                 },
                 "courses": courses,
-                "charges_persons": charge_per_person*numberOfPeople,
-                "final_price": finalPrice
-
+                "charges_persons": charge_per_person * numberOfPeople,
+                "final_price": finalPrice,
             }
 
             result = collectionArchive.insert_one(record)
             if result.inserted_id:
-                print("Inserted order archive with id: " + str(result.inserted_id)+ " date: " + str(date) + " numberOfOrder " + str(j) )
+                print(
+                    "Inserted order archive with id: "
+                    + str(result.inserted_id)
+                    + " date: "
+                    + str(date)
+                    + " numberOfOrder "
+                    + str(j)
+                )
 
 
 if __name__ == "__main__":
@@ -215,6 +246,6 @@ if __name__ == "__main__":
     get_user()
 
     print(productionUsernames)
-    #wait 5 second
+    # wait 5 second
     time.sleep(2)
     init_order_archives()
