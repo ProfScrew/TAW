@@ -54,6 +54,7 @@ services:
         - ./db/redis:/data/
         networks:
             - Internal
+            - External
             
     reverseproxy:
         build: reverseproxy/
