@@ -138,5 +138,8 @@ old
 
 db/mongodb/diagnostic.data
 db/mongodb/journal
+db/mongodb/*
+
+db/redis/dump.rdb
 
 scripts/venv
