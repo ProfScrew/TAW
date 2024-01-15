@@ -342,6 +342,7 @@ order_archives.post("/:id", authorize, async (req, res, next) => {
     // when databse is up again, we can recover the data from reddis/file and save it to database
 
     io.emit(eListenChannels.orders, { message: 'Order list updated!' });
+    io.emit(eListenChannels.tables, { message: 'Table list updated!' });
     return next(cResponse.genericMessage(eHttpCode.OK, orderArchive));
 
 });
