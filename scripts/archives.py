@@ -31,7 +31,6 @@ charge_per_person = 3
 dateBegin = datetime.datetime(2024, 1, 1, 0, 0, 0)
 dateEnd = datetime.datetime(2024, 12, 31, 23, 59, 59)
 
-
 def get_tables():
     tables = list(collectionTables.find({}))
     for table in tables:
@@ -65,6 +64,7 @@ def get_user():
 
 
 def init_order_archives():
+    
     # for each day between the range
     days = (dateEnd - dateBegin).days + 1
 
@@ -229,6 +229,9 @@ def init_order_archives():
             }
 
             result = collectionArchive.insert_one(record)
+            if not result.inserted_id:
+                print("Error inserting order archive")
+
 
 
 if __name__ == "__main__":
@@ -240,3 +243,4 @@ if __name__ == "__main__":
     # wait 5 second
     time.sleep(2)
     init_order_archives()
+    print("Order archives created")
