@@ -229,15 +229,6 @@ def init_order_archives():
             }
 
             result = collectionArchive.insert_one(record)
-            if result.inserted_id:
-                print(
-                    "Inserted order archive with id: "
-                    + str(result.inserted_id)
-                    + " date: "
-                    + str(date)
-                    + " numberOfOrder "
-                    + str(j)
-                )
 
 
 if __name__ == "__main__":
