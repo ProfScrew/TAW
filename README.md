@@ -37,7 +37,6 @@ Use the MongoDB shell or Compass to access the database and insert data. Below i
   "room": []
 }
 ```
-Ensure to edit the information as needed. The password hash and salt are set up with the key in the environment file "SUPER_DUPER_SECRET_PASSWORD".
 
 **Alternatively, if you have Node.js installed, follow the instructions below.**
 
