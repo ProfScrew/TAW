@@ -1,13 +1,45 @@
 # CookHub Project TAW 2022/23
-## Setup Guide Development Branch:
+## Development Branch Setup Guide
 In order to run this application you will only need docker and docker-compose that you can install from the major repositories.
 
-After you have installed docker and docker-compose you can type the following comand into the terminal for start the project(in the project folder):
+### Running the Application
+After installing Docker and Docker Compose, navigate to the project folder in your terminal and execute the following command:
 
 ``` docker-compose up ```
 
-Also it is essential to have data for the database, so we have provided simple python
-scripts to fill the database with information (if you not have it, please install python3).
+### Database Initialization
+
+It's crucial to have data in the database. For this purpose, we've provided simple Python scripts to populate the database. Ensure Python3 and PIP is installed before proceeding.
+
+**Note: Running the scripts requires a Node.js runtime on your Linux system for parts of the script where user passwords are encrypted. If you are unable or unwilling to install the Node runtime, you can manually start each script in the order listed in the init.py file. However, refrain from starting the users.py script, as you will need to manually insert user data into the database. Also, do not start the archives.py script if you do not have accounts in the database with the waiter and production roles.**
+
+Use the MongoDB shell or Compass to access the database and insert data. Below is an example document:
+
+```json
+{
+  "_id": {
+    "$oid": "65a5538db73ca1900f71e7c5"
+  },
+  "username": "admin",
+  "name": "admin",
+  "surname": "admin",
+  "phone": "3506342301",
+  "role": {
+    "admin": true,
+    "waiter": true,
+    "production": true,
+    "cashier": true,
+    "analytics": true
+  },
+  "password_salt": "4ce97b495c8537910950e55e85c02674",
+  "password_hash": "3ac7ab67ed48d928f063a6f60105ef5152b1a6d7826d3af1d64415fc44e305ffe3c741cf4976391deee899106c4c43182decf69c0e61eecb1be3f6828d9f087c",
+  "category": [],
+  "room": []
+}
+```
+Ensure to edit the information as needed. The password hash and salt are set up with the key in the environment file "SUPER_DUPER_SECRET_PASSWORD".
+
+**Alternatively, if you have Node.js installed, follow the instructions below.**
 
 **Note**: START THE SCRIPTS AFTER THE CONTAINERS ARE ALL UP
 
